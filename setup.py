@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="czbiohub.purifier",
+    name="czpurifier",
     version="0.0.1",
     author="Robert R. Puccinelli",
     author_email="robert.puccinelli@outlook.com",
@@ -10,7 +10,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*",
                                                "tests.*", "tests"]),
     install_requires=[
-
+        'smbus2',
     ],
     test_suite="tests",
     classifiers=[
