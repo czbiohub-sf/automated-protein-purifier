@@ -5,7 +5,13 @@ This repository contains the Python application and custom **czbiohub.purifier**
 
 ## Contents
 
+* __RotaryController__ - Base class for a rotary valve
+* __RotaryControllerTic__ - Rotary valve for use with a Tic stepper driver
+* __ValveController__ - Base class for a valve controller
+* __ValveControllerI2c__ - Valve controller utilizing the I2C protocol
+
 ## Dependencies
+ValveControllerI2c :: smbus2
 
 
 ## Installation and Use
