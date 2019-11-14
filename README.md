@@ -9,6 +9,12 @@ This repository contains the Python application and custom **czpurifier** packag
 * __RotaryControllerTic__ - Rotary valve for use with a Tic stepper driver
 * __ValveController__ - Base class for a valve controller
 * __ValveControllerI2c__ - Valve controller utilizing the I2C protocol
+<<<<<<< HEAD
+=======
+
+## Dependencies
+ValveControllerI2c :: smbus2
+>>>>>>> 4a7b1865cc391f2864b83e9db018adedfab826c1
 
 ## Dependencies
 ValveControllerI2c :: smbus2<br>
