@@ -1,4 +1,9 @@
 from enum import Enum, auto
+import logging
+from logging import NullHandler
+
+LOG = logging.getLogger(__name__)
+LOG.addHandler(NullHandler())
 
 
 class TimeUnits(Enum):
@@ -29,9 +34,10 @@ class PumpController():
         elif TimeUnits[unit_of_time] is TimeUnits.h:
             self._UNIT_TIME = 3600
         else:
-            raise ValueError('Unit of time `%s` is not supported.' % unit_of_time)
+            raise ValueError('Unit of time `%s` is not supported.', unit_of_time)
         self._VOL_PER_REV = vol_per_rev
         self._revs_per_second = 0
+        LOG.debug('Pump controller initialized.')
 
     def __del__(self):
         self.stop()
@@ -52,11 +58,13 @@ class PumpController():
         """
         self._revs_per_second = target_rate / (self._VOL_PER_REV * self._UNIT_TIME)
         self._updateVelocity(self._revs_per_second)
+        LOG.info('Pump controller set to %s units per %s second(s).', str(target_rate), str(self._UNIT_TIME))
 
     def stop(self):
         """Stop the pump."""
         self._revs_per_second = 0
         self._stop()
+        LOG.info('Pump stopped.')
 
     def _updateVelocity(self, revs_per_second):
         raise NotImplementedError()

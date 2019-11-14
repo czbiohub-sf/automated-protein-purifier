@@ -3,6 +3,11 @@ try:  # Import I2C module
     from smbus2 import SMBus, i2c_msg
 except ImportError:
     print('Unable to import smbus2 for I2C communication.')
+import logging
+from logging import NullHandler
+
+LOG = logging.getLogger(__name__)
+LOG.addHandler(NullHandler())
 
 
 class ValveController():
@@ -23,6 +28,7 @@ class ValveController():
     def __init__(self, init_valve_states: int = 0):
         self._valve_states = init_valve_states
         self.valve_states = self._valve_states
+        LOG.debug('Valve controller initialized.')
 
     def valve_activate(self, valve_number):
         """
@@ -36,6 +42,7 @@ class ValveController():
         """
         self.valve_states = self.valve_states | 1 << valve_number
         self._write()
+        LOG.info('Valve activated: %s', str(valve_number))
 
     def valve_deactivate(self, valve_number):
         """
@@ -51,6 +58,7 @@ class ValveController():
         off_inverse = inverse | 1 << valve_number
         self.valve_states = ~off_inverse + 1
         self._write()
+        LOG.info('Valve deactivated: %s', str(valve_number))
 
     def _write(self):
         """Write valve binary states to hardware."""
@@ -81,6 +89,7 @@ class ValveController():
         """
         self._valve_states = states
         self._write()
+        LOG.info('Valve controller states set: %s', str(states))
 
 
 class ValveControllerI2c(ValveController):
@@ -96,6 +105,7 @@ class ValveControllerI2c(ValveController):
         bus = device_info[0]
         self.address = device_info[1]
         self.bus = SMBus(bus)
+        LOG.debug('Valve controller I2C bus, address: %s, %s', str(bus), str(self.address))
         super().__init__(init_valve_states)
 
     def _write(self):
