@@ -94,10 +94,10 @@ class PumpControllerTic(PumpController):
         Units of time to use when calling the flowrate method.
     """
 
-    def __init__(self, MotorObj, vol_per_rev, unit_of_time):
+    def __init__(self, MotorObj, vol_per_rev, unit_of_time, initial_flowrate):
         self._motor = MotorObj
         self._motor.enable = True
-        super().__init__(vol_per_rev, unit_of_time)
+        super().__init__(vol_per_rev, unit_of_time, initial_flowrate)
 
     def __del__(self):
         self.stop()

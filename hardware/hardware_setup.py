@@ -1,6 +1,11 @@
+"""Hardware peripheral initialization."""
+
 from enum import Enum, auto
 import logging
 from logging import NullHandler
+from pump_controller import PumpControllerTic
+from rotary_controller import RotaryControllerTic
+from valve_controller import ValveControllerI2c
 from pyconfighandler import validateConfig
 from pymotors import TicStepper, TicStage
 
@@ -44,12 +49,33 @@ class PurifierHardwareSetup():
         log.debug('Hardware configuration object initialized.')
 
     def configValidation(self, path_to_config, required_config_fields):
-        """Validate configuration file."""
+        """Validate configuration file before use.
+
+        Parameters
+        ----------
+        path_to_config : str
+            System path to configuration file.
+        required_config_fields : Enum
+            Matches required fields to config file.
+        """
         self._config, self.config_options = validateConfig(path_to_config, required_config_fields)
         self.config_valid = True
 
     def initializeConfig(self, config_mode: str):
-        """Use configuration options to initialize peripherals."""
+        """Use configuration options to initialize peripherals.
+
+        Parameters
+        ----------
+        config_mode : str
+            Collects values for config options in the `DEFAULT` and
+            `config_mode` sections of the configuration file.
+
+        Returns
+        -------
+        subunits : dict
+            A dictionary containing control objects for peripherals and
+            relevant constants.
+        """
         log.info('Initializing config file with option `%s`.', config_mode)
         if self.config_valid is False:
             log.warning('Validate configuration file before initializing.')
