@@ -2,8 +2,8 @@
 import logging
 from logging import NullHandler
 
-LOG = logging.getLogger(__name__)
-LOG.addHandler(NullHandler())
+log = logging.getLogger(__name__)
+log.addHandler(NullHandler())
 
 
 class RotaryController():
@@ -13,7 +13,7 @@ class RotaryController():
 
         self._position_known = False
         self._current_port = -1
-        LOG.info('Rotary controller initialized.')
+        log.info('Rotary controller initialized.')
 
     def moveToPort(self, port: int):
         """Travel to the desired port.
@@ -28,11 +28,11 @@ class RotaryController():
             Target port index, do not use negative numbers.
         """
         if not self._position_known:
-            LOG.debug('Controller not homed. Homing now.')
+            log.debug('Controller not homed. Homing now.')
             self.home()
 
         ports_to_move = port - self._current_port
-        LOG.info('Moving %s ports away from current port #%s.', str(ports_to_move), str(self._current_port))
+        log.info('Moving %s ports away from current port #%s.', str(ports_to_move), str(self._current_port))
         if ports_to_move < 0:
             move_fwd = False
             decrement = 1

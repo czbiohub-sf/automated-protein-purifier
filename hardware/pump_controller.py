@@ -2,8 +2,8 @@ from enum import Enum, auto
 import logging
 from logging import NullHandler
 
-LOG = logging.getLogger(__name__)
-LOG.addHandler(NullHandler())
+log = logging.getLogger(__name__)
+log.addHandler(NullHandler())
 
 
 class TimeUnits(Enum):
@@ -26,7 +26,7 @@ class PumpController():
 
     """
 
-    def __init__(self, vol_per_rev, unit_of_time):
+    def __init__(self, vol_per_rev, unit_of_time, initial_flowrate):
         if TimeUnits[unit_of_time] is TimeUnits.s:
             self._UNIT_TIME = 1
         elif TimeUnits[unit_of_time] is TimeUnits.m:
@@ -36,8 +36,9 @@ class PumpController():
         else:
             raise ValueError('Unit of time `%s` is not supported.', unit_of_time)
         self._VOL_PER_REV = vol_per_rev
-        self._revs_per_second = 0
-        LOG.debug('Pump controller initialized.')
+        self._revs_per_second = initial_flowrate / (self._VOL_PER_REV * self._UNIT_TIME)
+        self.running = False
+        log.debug('Pump controller initialized.')
 
     def __del__(self):
         self.stop()
@@ -57,14 +58,21 @@ class PumpController():
             Target volume to output over the time period specified in init.
         """
         self._revs_per_second = target_rate / (self._VOL_PER_REV * self._UNIT_TIME)
+        if self.running:
+            self._updateVelocity(self._revs_per_second)
+        log.info('Pump controller set to %s units per %s second(s).', str(target_rate), str(self._UNIT_TIME))
+
+    def start(self):
+        """Start the pump."""
+        self.running = True
         self._updateVelocity(self._revs_per_second)
-        LOG.info('Pump controller set to %s units per %s second(s).', str(target_rate), str(self._UNIT_TIME))
+        log.info('Pump started.')
 
     def stop(self):
         """Stop the pump."""
-        self._revs_per_second = 0
         self._stop()
-        LOG.info('Pump stopped.')
+        self.running = False
+        log.info('Pump stopped.')
 
     def _updateVelocity(self, revs_per_second):
         raise NotImplementedError()
