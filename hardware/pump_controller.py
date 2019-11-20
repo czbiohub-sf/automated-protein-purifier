@@ -44,13 +44,13 @@ class PumpController():
         self.stop()
 
     @property
-    def flowrate(self):
-        """Retrieve the target flowrate of the pump."""
+    def flow_rate(self):
+        """Retrieve the target flow rate of the pump."""
         return self._VOL_PER_REV * self._revs_per_second * self._UNIT_TIME
 
-    @flowrate.setter
-    def flowrate(self, target_rate):
-        """Set the target flowrate of the pump.
+    @flow_rate.setter
+    def flow_rate(self, target_rate):
+        """Set the target flow rate of the pump.
 
         Parameters
         ----------

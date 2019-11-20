@@ -48,7 +48,7 @@ class PurifierHardwareSetup():
         self.frac_c_standby = False
         log.debug('Hardware configuration object initialized.')
 
-    def configValidation(self, path_to_config, required_config_fields):
+    def configValidation(self, path_to_config, required_config_fields=DefaultConfigFields):
         """Validate configuration file before use.
 
         Parameters
@@ -123,7 +123,7 @@ class PurifierHardwareSetup():
         motor_current = int(config[config_mode]['SELECT_MOTOR_CURR'])
         home_dir = config[config_mode].getboolean('SELECT_HOME')
         encoder_pin = config[config_mode]['SELECT_ENCODE_PIN']
-        num_ports = int(config[config_mode]['SELECT_PORTS'])
+        num_ports = int(config[config_mode]['SELECT_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
         addr = int(config[config_mode]['SELECT_ADDR'])
 
@@ -131,7 +131,7 @@ class PurifierHardwareSetup():
 
         for i in range(0, num_ports):
             try:
-                port_names[i] = config[config_mode]['SELECT_%s' % str(i+1)]
+                port_names[i] = config[config_mode]['SELECT_%s' % str(i + 1)]
             except Exception:
                 pass
 
@@ -140,7 +140,7 @@ class PurifierHardwareSetup():
         motor.setCurrentLimit(motor_current)
 
         rotary = RotaryControllerTic(MotorObj=motor, home_fwd=home_dir, analog_pin=encoder_pin)
-        rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, }
+        rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
     @staticmethod
@@ -158,22 +158,29 @@ class PurifierHardwareSetup():
         pumps = []
 
         for i in range(0, num_columns):
-            motor = TicStepper(com_type='I2C', port_params=bus, address=addr+i, input_steps_per_rev=steps_rev)
+            motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev)
             motor.microsteps = 1 / micros
             motor.setCurrentLimit(motor_current)
+            motor.enable = True
             pumps.append(PumpControllerTic(MotorObj=motor, vol_per_rev=vol_rev, unit_of_time=time_unit, initial_flowrate=flowrate))
 
-        return {'PUMPS': pumps}
+        pumps = {'PUMPS': pumps, 'NUM_COLS': num_columns, }
+
+        return pumps
 
     @staticmethod
     def _initializeValves(config, config_mode):
-        num_columns = int(config[config_mode]['NUM_COLUMNS'])
         bus = int(config[config_mode]['BUS'])
         input_addr = int(config[config_mode]['VALVES_ADDR_IN'])
         waste_addr = int(config[config_mode]['VALVES_ADDR_WASTE'])
+        initial_in = int(config[config_mode]['INIT_IN_STATES'])
+        initial_waste = int(config[config_mode]['INIT_WASTE_STATES'])
 
         v_in = ValveControllerI2c(device_info=[bus, input_addr])
         v_waste = ValveControllerI2c(device_info=[bus, waste_addr])
+
+        v_in.valve_states = initial_in
+        v_waste.valve_states = initial_waste
 
         valves = {'VALVES_IN': v_in, 'VALVES_WASTE': v_waste, }
 
@@ -186,8 +193,10 @@ class PurifierHardwareSetup():
         steps_rev = int(config[config_mode]['PUMP_STEPS_REV'])
         micros = int(config[config_mode]['PUMP_MICROS'])
         motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
+        frac_home_dir = config[config_mode]['FRAC_HOME_DIR']
         pos_frac1 = int(config[config_mode]['POSITION_FRAC1'])
         pos_flwthru1 = int(config[config_mode]['POSITION_FLWTHRU1'])
+        pos_safe = int(config[config_mode]['POSITION_SAFE'])
         offset_frac = int(config[config_mode]['OFFSET_FRACTIONS'])
         offset_flwthru = int(config[config_mode]['OFFSET_FLWTHRU'])
         num_frac = int(config[config_mode]['NUM_FRACTIONS'])
@@ -198,6 +207,7 @@ class PurifierHardwareSetup():
         motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev)
         motor.setCurrentLimit(motor_current)
         stage = TicStage(ticStepper=motor, microStepFactor=micros)
+        stage.enable()
 
         position_map = {}
         for i in range(0, num_frac):
@@ -206,7 +216,9 @@ class PurifierHardwareSetup():
         for i in range(0, num_flwthru):
             position_map['Flow' + str(i)] = pos_flwthru1 + offset_flwthru * i
 
+        position_map['Safe'] = pos_safe
+
         stage.setIndexedPositions(positionMap=position_map)
-        frac_collector = {'FRAC_COLLECTOR': stage, 'VOL_FRAC': vol_frac, 'VOL_FLOWTHRU': vol_flwthru, }
+        frac_collector = {'FRAC_COLLECTOR': stage, 'FRAC_HOME_DIR': frac_home_dir, 'VOL_FRAC': vol_frac, 'VOL_FLOWTHRU': vol_flwthru, }
 
         return frac_collector
