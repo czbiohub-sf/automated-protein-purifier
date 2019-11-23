@@ -56,11 +56,11 @@ class HardwareController():
 # FRACTION COLLECTOR COMMANDS #
 ###############################
 
-    def reportCollectorPositions(self):
+    def reportFracCollectorPositions(self):
         """Return positions indexed on the fraction collector."""
         return self.subunits['FRAC_COLLECTOR'].getIndexedPositions()
 
-    def moveFractionCollector(self, position: str):
+    def moveFracCollector(self, position: str):
         """Move the fraction collector to an indexed position.
 
         Parameters
