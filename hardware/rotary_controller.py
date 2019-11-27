@@ -12,7 +12,7 @@ class RotaryController():
     def __init__(self):
 
         self._position_known = False
-        self._current_port = -1
+        self.current_port = -1
         log.info('Rotary controller initialized.')
 
     def moveToPort(self, port: int):
@@ -31,8 +31,8 @@ class RotaryController():
             log.debug('Controller not homed. Homing now.')
             self.home()
 
-        ports_to_move = port - self._current_port
-        log.info('Moving %s ports away from current port #%s.', str(ports_to_move), str(self._current_port))
+        ports_to_move = port - self.current_port
+        log.info('Moving %s ports away from current port #%s.', str(ports_to_move), str(self.current_port))
         if ports_to_move < 0:
             move_fwd = False
             decrement = 1
@@ -43,7 +43,7 @@ class RotaryController():
         while abs(ports_to_move):
             self._seekPort(move_fwd)
             ports_to_move = ports_to_move + decrement
-            self._current_port = self._current_port - decrement
+            self.current_port = self.current_port - decrement
 
     def _seekPort(self, move_fwd: bool):
         """Advance to the next port in the specified direction."""
@@ -138,7 +138,7 @@ class RotaryControllerTic(RotaryController):
         while not self._motor.isHomed():
             pass
         self._position_known = True
-        self._current_port = -1
+        self.current_port = -1
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""

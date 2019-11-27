@@ -52,9 +52,9 @@ class HardwareController():
         """Return names of subunits and constants system is configured with."""
         return self.subunits.keys()
 
-###############################
-# FRACTION COLLECTOR COMMANDS #
-###############################
+    ###############################
+    # FRACTION COLLECTOR COMMANDS #
+    ###############################
 
     def reportFracCollectorPositions(self):
         """Return positions indexed on the fraction collector."""
@@ -85,9 +85,9 @@ class HardwareController():
         self.collector_homed = True
         log.info('Fraction collector homed.')
 
-###########################
-# SOLENOID VALVE COMMANDS #
-###########################
+    ###########################
+    # SOLENOID VALVE COMMANDS #
+    ###########################
 
     def setInputValves(self, states: int):
         """Set multiple input valve states at once with an integer.
@@ -119,13 +119,22 @@ class HardwareController():
         """Return waste valve states."""
         return self.subunits['VALVES_WASTE'].valve_states
 
-#########################
-# ROTARY VALVE COMMANDS #
-#########################
+    #########################
+    # ROTARY VALVE COMMANDS #
+    #########################
 
     def reportRotaryPorts(self):
-        """Return current aliases of rotary ports."""
+        """Return aliases of rotary ports."""
         return self.subunits['PORTS']
+
+    def getCurrentPort(self):
+        """Return alias of currently selected port."""
+        port = self.subunits['ROTARY'].current_port
+        if port == -1:
+            port_name = 'Unknown'
+        else:
+            port_name = self.subunits['PORTS'][port]
+        return port_name
 
     def renameRotaryPort(self, port_num: int, name: str):
         """Change the alias of a port.
@@ -167,9 +176,28 @@ class HardwareController():
         self.rotary_homed = True
         log.info('Rotary valve homed.')
 
-#################
-# PUMP COMMANDS #
-#################
+    #################
+    # PUMP COMMANDS #
+    #################
+    def getPumpStatus(self, pump=-1):
+        """Return the operational status of the pump (running/not running).
+
+        Parameters
+        ----------
+        pump : int
+            Pump number beginning with `0` for the first pump. -1 is all pumps.
+        """
+        running = []
+        cols = self.subunits['NUM_COLS']
+        if pump >= cols:
+            log.warning('Pump index out of range. Choose pump between 0 and %s.', str(cols - 1))
+        else:
+            if pump < 0:
+                for i in range(0, cols):
+                    running.append(self.subunits['PUMPS'][i].running)
+            else:
+                running.append(self.subunits['PUMPS'][pump].running)
+        return running
 
     def getFlowRate(self, pump=-1):
         """Return the flow rate of a single pump or all pumps.

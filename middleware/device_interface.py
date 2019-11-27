@@ -7,22 +7,41 @@ from ..hardware_controller.hardware_setup import HardwareController
 
 def executeInput(input, cmd_dict):
     """Break input string into command and argument and execute command."""
-    cmd, init_arg = input.split(',')
 
-    try:
-        arg = int(init_arg)
+    split_input = input.split(',')
+    cmd = split_input[0]
+#    cmd, init_arg = input.split(',')
+    args = split_input[1:]
+    num_args = len(args)
+    arg = []
 
-    except ValueError:
-        arg = init_arg
+    for i in range(num_args):
+        if i != '':
+            try:
+                arg.append(int(args[i]))
 
-    if cmd in cmd_dict:
-        resp = cmd_dict[cmd[0]](arg)
+            except ValueError:
+                arg.append(args[i])
+        else:
+            num_args = 0
 
-        if resp is None:
-            resp = 'OK'
+    if cmd in cmd_dict and num_args == 0:
+        resp = cmd_dict[cmd]
+
+    elif cmd in cmd_dict and num_args == 1:
+        resp = cmd_dict[cmd](arg[0])
+
+    elif cmd in cmd_dict and num_args == 2:
+        resp = cmd_dict[cmd](arg[0], arg[1])
+
+    if resp is None:
+        resp = 'OK'
 
     elif cmd == 'disconnect':
         resp = cmd
+
+    else:
+        resp == 'cmd_unknown'
 
     return resp
 
@@ -39,9 +58,9 @@ if __name__ == '__main__':
 
     hardware_file = resource_filename(Requirement.parse("czpurifier"), "autopurifier_hardware.config")
     Hardware = []
-    t_last_contact = 0
 
     while True:
+        t_last_contact = 0
         device_id = None
         data_in = ''
         socket_availability.send_string('')  # device availability heartbeat
@@ -61,9 +80,11 @@ if __name__ == '__main__':
                             'getInputValves': Hardware.getInputValves,
                             'getWasteValves': Hardware.getWasteValves,
                             'reportRotaryPorts': Hardware.reportRotaryPorts,
+                            'getCurrentPort': Hardware.getCurrentPort,
                             'renameRotaryPort': Hardware.renameRotaryPort,
                             'moveRotaryValve': Hardware.moveRotaryValve,
                             'homeRotaryValve': Hardware.homeRotaryValve,
+                            'getPumpStatus': Hardware.getPumpStatus,
                             'getFlowRate': Hardware.getFlowRate,
                             'setFlowRate': Hardware.setFlowRate,
                             'startPumping': Hardware.startPumping,
