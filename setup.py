@@ -11,6 +11,8 @@ setuptools.setup(
                                                "tests.*", "tests"]),
     install_requires=[
         'smbus2',
+        'pymotors',
+        'pyconfighandler@git+https://github.com/czbiohub/PyConfigHandler#egg=pyconfighandler',
     ],
     test_suite="tests",
     classifiers=[

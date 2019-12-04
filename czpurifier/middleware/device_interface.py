@@ -5,7 +5,7 @@ from pkg_resources import Requirement, resource_filename
 from ..hardware_controller.hardware_setup import HardwareController
 
 
-def executeInput(input, cmd_dict):
+def executeDevice(input, cmd_dict):
     """Break input string into command and argument and execute command."""
 
     split_input = input.split(',')

@@ -3,9 +3,9 @@
 from enum import Enum, auto
 import logging
 from logging import NullHandler
-from pump_controller import PumpControllerTic
-from rotary_controller import RotaryControllerTic
-from valve_controller import ValveControllerI2c
+from .pump_controller import PumpControllerTic
+from .rotary_controller import RotaryControllerTic
+from .valve_controller import ValveControllerI2c
 from pyconfighandler import validateConfig
 from pymotors import TicStepper, TicStage
 

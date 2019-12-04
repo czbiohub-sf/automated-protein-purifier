@@ -142,4 +142,5 @@ class RotaryControllerTic(RotaryController):
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""
-        return self._motor.com.send(self._analog[0], self._analog[1])
+        analog_reading = self._motor.com.send(self._analog[0], self._analog[1])
+        return self._motor.bytesToInt(analog_reading)

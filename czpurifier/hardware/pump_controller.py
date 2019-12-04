@@ -109,4 +109,4 @@ class PumpControllerTic(PumpController):
         self._motor.velocityControl(steps_per_s * 10000)
 
     def _stop(self):
-        self._motor.stop()
+        self._motor.halt()

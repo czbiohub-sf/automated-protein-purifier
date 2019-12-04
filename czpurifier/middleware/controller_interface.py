@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
 
 
-class HardwareModel():
+class ControllerInterface():
     """Hardware communication interface and virutal hardware objects."""
 
     def __init__(self):
