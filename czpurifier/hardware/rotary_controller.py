@@ -86,6 +86,7 @@ class RotaryControllerTic(RotaryController):
         self._thresh = [thresh_lower, thresh_upper]
         self._motor = MotorObj
         self._motor.enable = True
+        self._motor.setCurrentLimit(0)
 
         if analog_pin == 'TX':
             self._analog = [self._motor._command_dict['gVariable'],
@@ -121,12 +122,14 @@ class RotaryControllerTic(RotaryController):
             vel = self._seek_vel
         else:
             vel = -self._seek_vel
+        self._motor.setCurrentLimit(12)
         self._motor.velocityControl(vel)
         while self._readAnalog() < self._thresh[1]:
             pass
         while self._readAnalog() > self._thresh[0]:
             pass
         self._motor.stop()
+        self._motor.setCurrentLimit(0)
 
     def home(self):
         """Reset the position index of the selector valve to match the encoder.
@@ -134,11 +137,13 @@ class RotaryControllerTic(RotaryController):
         This is used for returning to a known location near Port0. The position
         of Port0 will still need to be discovered after homing.
         """
+        self._motor.setCurrentLimit(12)
         self._motor.home(self._home_dir)
         while not self._motor.isHomed():
             pass
         self._position_known = True
         self.current_port = -1
+        self._motor.setCurrentLimit(0)
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""
