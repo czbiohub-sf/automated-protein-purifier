@@ -27,10 +27,10 @@ class ValveController():
 
     def __init__(self, init_valve_states: int = 0):
         self._valve_states = init_valve_states
-        self.valve_states = self._valve_states
+        self.states = self._valve_states
         log.debug('Valve controller initialized.')
 
-    def valve_activate(self, valve_number):
+    def activate(self, valve_number):
         """
         Activate a single valve.
 
@@ -40,11 +40,10 @@ class ValveController():
             The valve to activate.
 
         """
-        self.valve_states = self.valve_states | 1 << valve_number
-        self._write()
+        self.states = self.states | 1 << valve_number
         log.info('Valve activated: %s', str(valve_number))
 
-    def valve_deactivate(self, valve_number):
+    def deactivate(self, valve_number):
         """
         Deactivate a single valve.
 
@@ -54,10 +53,7 @@ class ValveController():
             The valve to deactivate.
 
         """
-        inverse = ~self.valve_states + 1
-        off_inverse = inverse | 1 << valve_number
-        self.valve_states = ~off_inverse + 1
-        self._write()
+        self.states = self.states & ~(1 << valve_number)
         log.info('Valve deactivated: %s', str(valve_number))
 
     def _write(self):
@@ -65,7 +61,7 @@ class ValveController():
         raise NotImplementedError()
 
     @property
-    def valve_states(self):
+    def states(self):
         """
         Read the current states of all valves.
 
@@ -76,8 +72,8 @@ class ValveController():
         """
         return self._valve_states
 
-    @valve_states.setter
-    def valve_states(self, states):
+    @states.setter
+    def states(self, states):
         """
         Overwrite the states of all valves at once.
 
@@ -111,5 +107,5 @@ class ValveControllerMCP23017(ValveController):
         super().__init__(init_valve_states)
 
     def _write(self):
-        msg = i2c_msg.write(self.address, [0x12, self.valve_states])
+        msg = i2c_msg.write(self.address, [0x12, self._valve_states])
         self.bus.i2c_rdwr(msg)
