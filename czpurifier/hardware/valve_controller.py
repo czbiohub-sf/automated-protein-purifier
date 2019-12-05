@@ -92,8 +92,8 @@ class ValveController():
         log.info('Valve controller states set: %s', str(states))
 
 
-class ValveControllerI2c(ValveController):
-    """Valve controller with I2C support.
+class ValveControllerMCP23017(ValveController):
+    """MCP23017 valve controller with I2C support.
 
     Parameters
     ----------
@@ -105,8 +105,11 @@ class ValveControllerI2c(ValveController):
         bus = device_info[0]
         self.address = device_info[1]
         self.bus = SMBus(bus)
+        output_mode = i2c_msg.write(self.address, [0x00, 0x00])
+        self.bus.i2c_rdwr(output_mode)
         log.debug('Valve controller I2C bus, address: %s, %s', str(bus), str(self.address))
         super().__init__(init_valve_states)
 
     def _write(self):
-        i2c_msg.write(self.address, self.valve_states)
+        msg = i2c_msg.write(self.address, [0x12, self.valve_states])
+        self.bus.i2c_rdwr(msg)
