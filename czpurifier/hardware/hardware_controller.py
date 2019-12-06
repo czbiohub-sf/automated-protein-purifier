@@ -1,4 +1,6 @@
-from ..hardware.hardware_setup import PurifierHardwareSetup
+"""Methods for controlling purifier hardware."""
+
+from .hardware_setup import PurifierHardwareSetup
 import logging
 from logging import NullHandler
 from time import sleep

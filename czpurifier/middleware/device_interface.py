@@ -2,7 +2,7 @@
 import time
 import zmq
 from pkg_resources import Requirement, resource_filename
-from ..hardware_controller.hardware_setup import HardwareController
+from ..hardware.hardware_setup import HardwareController
 
 
 def executeDevice(input, cmd_dict):

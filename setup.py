@@ -11,7 +11,8 @@ setuptools.setup(
                                                "tests.*", "tests"]),
     install_requires=[
         'smbus2',
-        'pymotors',
+        'zmq',
+        'pymotors@git+https://github.com/czbiohub/PyMotors#egg=pymotors',
         'pyconfighandler@git+https://github.com/czbiohub/PyConfigHandler#egg=pyconfighandler',
     ],
     test_suite="tests",

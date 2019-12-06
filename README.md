@@ -15,6 +15,11 @@ This repository contains the Python application and custom **czpurifier** packag
 
 ## Dependencies
 ValveControllerI2c :: smbus2<br>
+PurifierHardwareSetup :: pymotors<br>
+PurifierHardwareSetup :: pyconfighandler<br>
+ControllerInterface :: zmq<br>
+device_interface.py :: zmq<br>
+
 
 ## Installation and Use
 ### Installing Module
