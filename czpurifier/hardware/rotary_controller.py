@@ -1,4 +1,5 @@
 """Rotary valve controller classes."""
+from time import sleep
 import logging
 from logging import NullHandler
 
@@ -125,9 +126,9 @@ class RotaryControllerTic(RotaryController):
         self._motor.setCurrentLimit(12)
         self._motor.velocityControl(vel)
         while self._readAnalog() < self._thresh[1]:
-            pass
+            sleep(.01)
         while self._readAnalog() > self._thresh[0]:
-            pass
+            sleep(.01)
         self._motor.stop()
         self._motor.setCurrentLimit(0)
 
@@ -140,7 +141,7 @@ class RotaryControllerTic(RotaryController):
         self._motor.setCurrentLimit(12)
         self._motor.home(self._home_dir)
         while not self._motor.isHomed():
-            pass
+            sleep(.01)
         self._position_known = True
         self.current_port = -1
         self._motor.setCurrentLimit(0)
