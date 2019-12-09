@@ -87,7 +87,7 @@ class RotaryControllerTic(RotaryController):
         self._thresh = [thresh_lower, thresh_upper]
         self._motor = MotorObj
         self._motor.enable = True
-        self._motor.setCurrentLimit(0)
+        self._motor.setCurrentLimit(2)
 
         if analog_pin == 'TX':
             self._analog = [self._motor._command_dict['gVariable'],
@@ -130,7 +130,7 @@ class RotaryControllerTic(RotaryController):
         while self._readAnalog() > self._thresh[0]:
             sleep(.01)
         self._motor.stop()
-        self._motor.setCurrentLimit(0)
+        self._motor.setCurrentLimit(2)
 
     def home(self):
         """Reset the position index of the selector valve to match the encoder.
@@ -144,7 +144,7 @@ class RotaryControllerTic(RotaryController):
             sleep(.01)
         self._position_known = True
         self.current_port = -1
-        self._motor.setCurrentLimit(0)
+        self._motor.setCurrentLimit(2)
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""
