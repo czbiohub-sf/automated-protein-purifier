@@ -5,7 +5,7 @@ import logging
 from logging import NullHandler
 from .pump_controller import PumpControllerTic
 from .rotary_controller import RotaryControllerTic
-from .valve_controller import ValveControllerI2c
+from .valve_controller import ValveControllerMCP23017
 from pyconfighandler import validateConfig
 from pymotors import TicStepper, TicStage
 
