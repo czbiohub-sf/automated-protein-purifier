@@ -18,7 +18,6 @@ class DefaultConfigFields(Enum):
     ROTARY_STEPS_REV = auto()
     ROTARY_MICROS = auto()
     ROTARY_HOME_FWD = auto()
-    ROTARY_POTS = auto()
     PUMP_STEPS_REV = auto()
     PUMP_MICROS = auto()
     ROTARY_ADDR_START = auto()
@@ -131,7 +130,7 @@ class PurifierHardwareSetup():
 
         for i in range(0, num_ports):
             try:
-                port_names[i] = config[config_mode]['ROTARY_%s' % str(i + 1)]
+                port_names[i] = config[config_mode]['ROTARY_PORT_%s' % str(i + 1)]
             except Exception:
                 pass
 
