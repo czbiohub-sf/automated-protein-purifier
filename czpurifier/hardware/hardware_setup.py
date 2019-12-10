@@ -20,10 +20,10 @@ class DefaultConfigFields(Enum):
     ROTARY_HOME_FWD = auto()
     PUMP_STEPS_REV = auto()
     PUMP_MICROS = auto()
-    ROTARY_ADDR_START = auto()
+    ROTARY_ADDR = auto()
     VALVES_ADDR_IN = auto()
     VALVES_ADDR_WASTE = auto()
-    PUMP_ADDR = auto()
+    PUMP_ADDR_START = auto()
     PUMP_MOTOR_CURR = auto()
     ROTARY_MOTOR_CURR = auto()
 
