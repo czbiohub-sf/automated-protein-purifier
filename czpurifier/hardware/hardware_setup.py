@@ -15,18 +15,18 @@ log.addHandler(NullHandler())
 
 class DefaultConfigFields(Enum):
     NUM_COLUMNS = auto()
-    SELECT_STEPS_REV = auto()
-    SELECT_MICROS = auto()
-    SELECT_HOME = auto()
-    SELECT_POTS = auto()
+    ROTARY_STEPS_REV = auto()
+    ROTARY_MICROS = auto()
+    ROTARY_HOME_FWD = auto()
+    ROTARY_POTS = auto()
     PUMP_STEPS_REV = auto()
     PUMP_MICROS = auto()
-    SELECT_ADDR_START = auto()
+    ROTARY_ADDR_START = auto()
     VALVES_ADDR_IN = auto()
     VALVES_ADDR_WASTE = auto()
     PUMP_ADDR = auto()
     PUMP_MOTOR_CURR = auto()
-    SELECT_MOTOR_CURR = auto()
+    ROTARY_MOTOR_CURR = auto()
 
 
 class PurifierHardwareSetup():
@@ -118,20 +118,20 @@ class PurifierHardwareSetup():
 
     @staticmethod
     def _initializeRotaryValve(config, config_mode):
-        steps_rev = int(config[config_mode]['SELECT_STEPS_REV'])
-        micros = int(config[config_mode]['SELECT_MICROS'])
-        motor_current = int(config[config_mode]['SELECT_MOTOR_CURR'])
-        home_dir = config[config_mode].getboolean('SELECT_HOME')
-        encoder_pin = config[config_mode]['SELECT_ENCODE_PIN']
-        num_ports = int(config[config_mode]['SELECT_NUM_PORTS'])
+        steps_rev = int(config[config_mode]['ROTARY_STEPS_REV'])
+        micros = int(config[config_mode]['ROTARY_MICROS'])
+        motor_current = int(config[config_mode]['ROTARY_MOTOR_CURR'])
+        home_dir = config[config_mode].getboolean('ROTARY_HOME')
+        encoder_pin = config[config_mode]['ROTARY_ENCODE_PIN']
+        num_ports = int(config[config_mode]['ROTARY_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['SELECT_ADDR'])
+        addr = int(config[config_mode]['ROTARY_ADDR'])
 
         port_names = ['NONE'] * num_ports
 
         for i in range(0, num_ports):
             try:
-                port_names[i] = config[config_mode]['SELECT_%s' % str(i + 1)]
+                port_names[i] = config[config_mode]['ROTARY_%s' % str(i + 1)]
             except Exception:
                 pass
 
