@@ -124,7 +124,7 @@ class PurifierHardwareSetup():
         encoder_pin = config[config_mode]['ROTARY_ENCODE_PIN']
         num_ports = int(config[config_mode]['ROTARY_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['ROTARY_ADDR'])
+        addr = int(config[config_mode]['ROTARY_ADDR'], 16)
 
         port_names = ['NONE'] * num_ports
 
@@ -152,7 +152,7 @@ class PurifierHardwareSetup():
         time_unit = config[config_mode]['PUMP_TIME_UNIT']
         flowrate = config[config_mode]['FLOWRATE']
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['PUMP_ADDR_START'])
+        addr = int(config[config_mode]['PUMP_ADDR_START'], 16)
 
         pumps = []
 
@@ -170,13 +170,13 @@ class PurifierHardwareSetup():
     @staticmethod
     def _initializeValves(config, config_mode):
         bus = int(config[config_mode]['BUS'])
-        input_addr = int(config[config_mode]['VALVES_ADDR_IN'])
-        waste_addr = int(config[config_mode]['VALVES_ADDR_WASTE'])
+        input_addr = int(config[config_mode]['VALVES_ADDR_IN'], 16)
+        waste_addr = int(config[config_mode]['VALVES_ADDR_WASTE'], 16)
         initial_in = int(config[config_mode]['INIT_IN_STATES'])
         initial_waste = int(config[config_mode]['INIT_WASTE_STATES'])
 
-        v_in = ValveControllerI2c(device_info=[bus, input_addr])
-        v_waste = ValveControllerI2c(device_info=[bus, waste_addr])
+        v_in = ValveControllerMCP23017(device_info=[bus, input_addr])
+        v_waste = ValveControllerMCP23017(device_info=[bus, waste_addr])
 
         v_in.valve_states = initial_in
         v_waste.valve_states = initial_waste
@@ -188,7 +188,7 @@ class PurifierHardwareSetup():
     @staticmethod
     def _initializeFracCol(config, config_mode):
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['FRAC_ADDR'])
+        addr = int(config[config_mode]['FRAC_ADDR'], 16)
         steps_rev = int(config[config_mode]['PUMP_STEPS_REV'])
         micros = int(config[config_mode]['PUMP_MICROS'])
         motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
