@@ -150,7 +150,7 @@ class PurifierHardwareSetup():
         motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
         vol_rev = float(config[config_mode]['PUMP_VOL_REV'])
         time_unit = config[config_mode]['PUMP_TIME_UNIT']
-        flowrate = config[config_mode]['FLOWRATE']
+        flowrate = float(config[config_mode]['FLOWRATE'])
         bus = int(config[config_mode]['BUS'])
         addr = int(config[config_mode]['PUMP_ADDR_START'], 16)
 
