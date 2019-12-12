@@ -160,11 +160,16 @@ class HardwareController():
             Alias or port number to travel to
         """
         if self.rotary_homed:
-            if type(id) == int & id >= 0 & id <= self.subunits['NUM_PORTS']:
-                port_num = id
-            elif type(id) == str & id in self.subunits['PORTS']:
-                port_num = self.subunits['PORTS'].index(id)
-            else:
+            id_found = False
+            if type(id) == int:
+                if id >= 0 & id <= self.subunits['NUM_PORTS']:
+                    port_num = id
+                    id_found = True
+            elif type(id) == str:
+                if id in self.subunits['PORTS']:
+                    port_num = self.subunits['PORTS'].index(id)
+                    id_found = True
+            if not id_found:
                 log.warning('Port ID `%s` not valid. Use port number or name.')
                 return
             self.subunits['ROTARY'].moveToPort(port_num)

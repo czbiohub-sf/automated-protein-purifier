@@ -134,7 +134,7 @@ class PurifierHardwareSetup():
             except Exception:
                 pass
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=30)
         motor.microsteps = 1 / micros
         motor.setCurrentLimit(motor_current)
 
@@ -157,7 +157,7 @@ class PurifierHardwareSetup():
         pumps = []
 
         for i in range(0, num_columns):
-            motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev, input_rpm=60)
+            motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev, input_rpm=500)
             motor.microsteps = 1 / micros
             motor.setCurrentLimit(motor_current)
             motor.enable = True
