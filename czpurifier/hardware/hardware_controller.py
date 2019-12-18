@@ -286,5 +286,5 @@ class HardwareController():
         """Time to fill fractions at the current flow rates."""
         times = []
         for i in range(0, self.subunits['NUM_COLS']):
-            times.append(self.subunits['VOL_FRAC'] / self.getFlowRate(i) * self.subunits['PUMP'][i]._UNIT_TIME)
+            times.append(self.subunits['VOL_FRAC'] / self.getFlowRate()[i] * self.subunits['PUMP'][i]._UNIT_TIME)
         return times
