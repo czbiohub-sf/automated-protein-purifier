@@ -71,7 +71,7 @@ class HardwareController():
             Name of indexed position to travel to.
         """
         if self.collector_homed:
-            if position in self.reportCollectorPositions():
+            if position in self.reportFracCollectorPositions():
                 self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position)
                 log.info('Fraction collector moved to indexed position `%s`', position)
             else:

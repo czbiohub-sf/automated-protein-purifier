@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
             if data_waiting:
                 input = socket_data_in.recv_string()
-                resp = executeInput(input, cmd_dict)
+                resp = executeDevice(input, cmd_dict)
                 t_last_contact = time.monotonic()
                 socket_data_out.send_pyobj([device_id, resp])
                 if resp == 'disconnect':
