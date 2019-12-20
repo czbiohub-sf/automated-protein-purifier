@@ -120,7 +120,7 @@ class PurifierHardwareSetup():
         steps_rev = int(config[config_mode]['ROTARY_STEPS_REV'])
         micros = int(config[config_mode]['ROTARY_MICROS'])
         motor_current = int(config[config_mode]['ROTARY_MOTOR_CURR'])
-        home_dir = config[config_mode].getboolean('ROTARY_HOME_DIR')
+        home_dir = config[config_mode]['ROTARY_HOME_DIR']
         encoder_pin = config[config_mode]['ROTARY_ENCODE_PIN']
         num_ports = int(config[config_mode]['ROTARY_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
