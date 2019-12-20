@@ -138,7 +138,7 @@ class PurifierHardwareSetup():
         motor.microsteps = 1 / micros
         motor.setCurrentLimit(motor_current)
 
-        rotary = RotaryControllerTic(MotorObj=motor, home_fwd=home_dir, analog_pin=encoder_pin)
+        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin)
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
