@@ -75,13 +75,10 @@ class RotaryControllerTic(RotaryController):
         Velocity to use when searching for a neighboring port. Steps / 10000s
     """
 
-    def __init__(self, MotorObj, home_fwd=True, analog_pin='TX',
+    def __init__(self, MotorObj, home_dir='fwd', analog_pin='TX',
                  thresh_lower=0x2000, thresh_upper=0xE000, seek_vel=2000000):
         super().__init__()
-        if home_fwd:
-            self._home_dir = 'fwd'
-        else:
-            self._home_dir = 'rev'
+        self._home_dir = home_dir
         self._analog_pin = analog_pin
         self._seek_vel = seek_vel
         self._thresh = [thresh_lower, thresh_upper]
