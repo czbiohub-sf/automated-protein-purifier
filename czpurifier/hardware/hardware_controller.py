@@ -72,7 +72,7 @@ class HardwareController():
         """
         if self.collector_homed:
             if position in self.reportFracCollectorPositions():
-                self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position)
+                self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position, open_loop_assert=True)
                 log.info('Fraction collector moved to indexed position `%s`', position)
             else:
                 log.warning('Index position `%s` not valid.', position)
