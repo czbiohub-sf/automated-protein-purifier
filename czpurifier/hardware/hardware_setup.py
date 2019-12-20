@@ -17,7 +17,7 @@ class DefaultConfigFields(Enum):
     NUM_COLUMNS = auto()
     ROTARY_STEPS_REV = auto()
     ROTARY_MICROS = auto()
-    ROTARY_HOME_FWD = auto()
+    ROTARY_HOME_DIR = auto()
     PUMP_STEPS_REV = auto()
     PUMP_MICROS = auto()
     ROTARY_ADDR = auto()
