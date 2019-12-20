@@ -119,7 +119,7 @@ class RotaryControllerTic(RotaryController):
         if move_fwd:
             vel = self._seek_vel
         else:
-            vel = -self._seek_vel
+            vel = self._seek_vel
         self._motor.setCurrentLimit(12)
         self._motor.velocityControl(vel)
         while self._readAnalog() < self._thresh[1]:
