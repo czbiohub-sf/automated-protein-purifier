@@ -117,9 +117,9 @@ class RotaryControllerTic(RotaryController):
 
         """
         if move_fwd:
-            vel = -self._seek_vel
-        else:
             vel = self._seek_vel
+        else:
+            vel = -self._seek_vel
         self._motor.setCurrentLimit(12)
         self._motor.velocityControl(vel)
         while self._readAnalog() < self._thresh[1]:
@@ -140,7 +140,7 @@ class RotaryControllerTic(RotaryController):
         while not self._motor.isHomed():
             sleep(.01)
         self._position_known = True
-        self.current_port = -1
+        self.current_port = 0
         self._motor.setCurrentLimit(2)
 
     def _readAnalog(self):
