@@ -2,7 +2,7 @@
 import time
 import zmq
 from pkg_resources import Requirement, resource_filename
-from ..hardware.hardware_setup import HardwareController
+from czpurifier.hardware import HardwareController
 
 
 def executeDevice(input, cmd_dict):
@@ -50,11 +50,11 @@ if __name__ == '__main__':
 
     context = zmq.Context()
     socket_availability = context.socket(zmq.PUSH)
-    socket_availability.bind("tcp://localhost:5000")
+    socket_availability.bind("tcp://127.0.0.1:5000")
     socket_data_in = context.socket(zmq.PULL)
-    socket_data_in.bind("tcp://localhost:5100")
+    socket_data_in.bind("tcp://127.0.0.1:5100")
     socket_data_out = context.socket(zmq.PUSH)
-    socket_data_out.bind("tcp://localhost:5200")
+    socket_data_out.bind("tcp://127.0.0.1:5200")
 
     hardware_file = resource_filename(Requirement.parse("czpurifier"), "autopurifier_hardware.config")
     Hardware = []
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     while True:
         t_last_contact = 0
         device_id = None
-        data_in = ''
+        data_in = ['None']
         socket_availability.send_string('')  # device availability heartbeat
         data_waiting = socket_data_in.poll(timeout=1000)
 

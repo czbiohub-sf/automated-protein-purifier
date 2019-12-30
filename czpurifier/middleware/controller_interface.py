@@ -26,7 +26,7 @@ class ControllerInterface():
 
         # Communication interface
         context = zmq.Context()
-        self._socket_availablility = context.socket(zmq.PULL)
+        self._socket_availability = context.socket(zmq.PULL)
         self._socket_data_out = context.socket(zmq.PUSH)
         self._socket_data_in = context.socket(zmq.PULL)
 
@@ -44,9 +44,9 @@ class ControllerInterface():
         alias : str
             Alias to give to the system when connected.
         """
-        if not self.devices[alias]:
+        if alias not in self.devices:
             protocol_address = 'tcp://' + address
-            self._socket_availablility.connect(protocol_address + ':5000')
+            self._socket_availability.connect(protocol_address + ':5000')
             available = self._socket_availablility.poll(timeout=1500)
             self._socket_availability.disconnect(protocol_address + ':5000')
 
@@ -55,7 +55,7 @@ class ControllerInterface():
                 self._socket_data_in.connect(protocol_address + ':5200')
                 self.devices[alias] = address
                 data_out = 'connect,' + alias
-                self._send(data_out)
+                self.send(data_out)
 
     def disconnect(self, alias: str = 'device'):
         """Disconnect from a currently connected device.
@@ -77,7 +77,7 @@ class ControllerInterface():
             address = self.devices[device]
             self.disconnect(device)
             self.connect(address, device)
-        self._send('load_config' + self.config_mode)
+        self.send('load_config' + self.config_mode)
 
     def send(self, command, response_func):
         """Transmit and receive data.
@@ -102,7 +102,7 @@ class ControllerInterface():
                 log.error('Response unknown: %s', str(resp))
 
     def _tx(self, data_out: str):
-        self.socket_data_out.send_string(data_out)
+        self._socket_data_out.send_string(data_out)
 
     def _rx(self, t_out=1000):
         resp = []
