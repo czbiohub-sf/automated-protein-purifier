@@ -27,7 +27,7 @@ class DeviceInterface():
         self.socket_data_out.bind("tcp://" + ip_address + ":5200")
 
         # Set other class parameters.
-        self.device_id = None
+        self._device_id = None
         self.timeout_recv = timeout_recv
         self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "autopurifier_hardware.config")
         self.cmd_dict = {'connect': self.connect,
@@ -53,11 +53,11 @@ class DeviceInterface():
         device_id : str
             Identity of device. Used for transimtting data and availability.
         """
-        self.device_id = device_id
+        self._device_id = device_id
 
     def disconnect(self):
         """Make device available."""
-        self.device_id = None
+        self._device_id = None
 
     def executeCall(self, input):
         """Convert arguments and execute command.
@@ -141,9 +141,9 @@ class DeviceInterface():
         data
             A python object to be transmitted.
         """
-        self.socket_data_out.send_pyobj([self.device_id, data])
+        self.socket_data_out.send_pyobj([self._device_id, data])
 
     def signalAvailability(self):
         """Put data on 'availability' socket if device not in use."""
-        if self.device_id is None:
+        if self._device_id is None:
             self.socket_availability.send_string('')
