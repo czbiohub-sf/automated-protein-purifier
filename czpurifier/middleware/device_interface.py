@@ -147,9 +147,3 @@ class DeviceInterface():
         """Put data on 'availability' socket if device not in use."""
         if self.device_id is None:
             self.socket_availability.send_string('')
-
-
-if __name__ == '__main__':
-
-    di = DeviceInterface()
-    di.autorun()
