@@ -2,6 +2,11 @@
 import zmq
 from pkg_resources import Requirement, resource_filename
 from czpurifier.hardware import HardwareController
+import logging
+from logging import NullHandler
+
+log = logging.getLogger(__name__)
+log.addHandler(NullHandler())
 
 
 class DeviceInterface():
@@ -131,7 +136,9 @@ class DeviceInterface():
         """Temporarily wait for data in receive buffer and split it."""
         data_waiting = self.socket_data_in.poll(timeout=self.timeout_recv * 1000)
         if data_waiting:
-            return self.socket_data_in.recv_string().split(',')
+            data = self.socket_data_in.recv_string().split(',')
+            logging.debug('Received data: '.join(data))
+            return data
 
     def sendData(self, data):
         """Transmit data with device ID prefix.
@@ -142,8 +149,10 @@ class DeviceInterface():
             A python object to be transmitted.
         """
         self.socket_data_out.send_pyobj([self._device_id, data])
+        logging.debug('Transmitting data: %s', str(data))
 
     def signalAvailability(self):
         """Put data on 'availability' socket if device not in use."""
         if self._device_id is None:
             self.socket_availability.send_string('')
+            logging.debug('Signalled availability.')
