@@ -79,14 +79,17 @@ class DeviceInterface():
         num_args = len(args)
         arg = []
 
-        # For each argument, attempt to convert to int or leave as string.
+        # For each argument, attempt to convert to int or float before string.
         for i in range(num_args):
             if i != '':
                 try:
-                    arg.append(float(args[i]))
+                    arg.append(int(args[i]))
 
                 except ValueError:
-                    arg.append(args[i])
+                    try:
+                        arg.append(float(args[i]))
+                    except ValueError:
+                        arg.append(args[i])
             else:
                 num_args = 0
 
