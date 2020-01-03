@@ -148,8 +148,14 @@ class HardwareController():
         name : str
             Alias to give the selected port
         """
-        self.subunits['PORTS'][port_num] = name
-        log.info('Rotary port %s aliased as %s.', str(port_num), name)
+        num_ports = self.subunits['NUM_PORTS']
+        if port_num < num_ports and port_num >= 0:
+            self.subunits['PORTS'][port_num] = name
+            log.info('Rotary port %s aliased as %s.', str(port_num), name)
+        else:
+            msg = 'Port number `%s` is out of bounds. Use a value from 0 to %s.' % (port_num, num_ports-1)
+            log.warning(msg)
+            return msg
 
     def moveRotaryValve(self, id):
         """Move to a rotary port as specified by port number or alias.
@@ -162,7 +168,7 @@ class HardwareController():
         if self.rotary_homed:
             id_found = False
             if type(id) == int:
-                if id >= 0 & id <= self.subunits['NUM_PORTS']:
+                if id >= 0 & id < self.subunits['NUM_PORTS']:
                     port_num = id
                     id_found = True
             elif type(id) == str:
@@ -170,12 +176,15 @@ class HardwareController():
                     port_num = self.subunits['PORTS'].index(id)
                     id_found = True
             if not id_found:
-                log.warning('Port ID `%s` not valid. Use port number or name.')
-                return
+                msg = 'Port ID `%s` not valid. Use port number or name.' % id
+                log.warning(msg)
+                return msg
             self.subunits['ROTARY'].moveToPort(port_num)
             log.info('Moved to rotary port `%s`.', id)
         else:
-            log.warning('Home rotary valve before use.')
+            msg = 'Home rotary valve before use.'
+            log.warning(msg)
+            return msg
 
     def homeRotaryValve(self):
         """Home the rotary valve."""
