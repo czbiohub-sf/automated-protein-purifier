@@ -36,10 +36,8 @@ class DeviceInterface():
         self._disconnect = False
         self.timeout_recv = timeout_recv
         self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "config/autopurifier_hardware.config")
-        self.cmd_dict = {'connect': self.connect,
-                         'disconnect': self.disconnect,
-                         'loadConfig': self.loadConfig,
-                         }
+        self.cmd_dict = {}
+        self.initCmdDict()
 
     def autorun(self):
         """Wait for data and execute. Signal if device is available."""
@@ -66,6 +64,7 @@ class DeviceInterface():
     def disconnect(self):
         """Make device available."""
         self._disconnect = True
+        self.initCmdDict()
 
     def executeCall(self, input):
         """Convert arguments and execute command.
@@ -84,7 +83,7 @@ class DeviceInterface():
         for i in range(num_args):
             if i != '':
                 try:
-                    arg.append(int(args[i]))
+                    arg.append(float(args[i]))
 
                 except ValueError:
                     arg.append(args[i])
@@ -98,12 +97,19 @@ class DeviceInterface():
         elif cmd in self.cmd_dict and num_args == 2:
             resp = self.cmd_dict[cmd](arg[0], arg[1])
         else:
-            resp == 'cmd_unknown'
+            resp = 'cmd_unknown'
 
         if resp is None:
             resp = 'OK'
 
         return resp
+
+    def initCmdDict(self):
+        """Set cmd_dict to default commands."""
+        self.cmd_dict = {'connect': self.connect,
+                         'disconnect': self.disconnect,
+                         'loadConfig': self.loadConfig,
+                         }
 
     def loadConfig(self, config_mode: str):
         """Update command list with settings defined in config file.
