@@ -35,7 +35,7 @@ class DeviceInterface():
         self._device_id = None
         self._disconnect = False
         self.timeout_recv = timeout_recv
-        self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "autopurifier_hardware.config")
+        self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "config/autopurifier_hardware.config")
         self.cmd_dict = {'connect': self.connect,
                          'disconnect': self.disconnect,
                          'loadConfig': self.loadConfig,

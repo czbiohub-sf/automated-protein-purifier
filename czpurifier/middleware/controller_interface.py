@@ -158,7 +158,7 @@ class ControllerInterface():
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
-    def _updatePositions(self, new_positions):
+    def _updatePositions(self, new_positions):  # data is format ['device', {k:v pairs,}]
         resp = False
         if type(new_positions) is list:
             self.position_names = new_positions
