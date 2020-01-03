@@ -33,6 +33,7 @@ class DeviceInterface():
 
         # Set other class parameters.
         self._device_id = None
+        self._disconnect = False
         self.timeout_recv = timeout_recv
         self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "autopurifier_hardware.config")
         self.cmd_dict = {'connect': self.connect,
@@ -44,11 +45,13 @@ class DeviceInterface():
         """Wait for data and execute. Signal if device is available."""
         while True:
             self.signalAvailability()
-            data_in = ['None']
             data_in = self.receiveData()
-            if data_in != 'None':
+            if data_in is not None:
                 resp = self.executeCall(data_in)
                 self.sendData(resp)
+                if self._disconnect:
+                    self._device_id = None
+                    self._disconnect = False
 
     def connect(self, device_id):
         """Make device unavailable by granting it a device ID.
@@ -62,7 +65,7 @@ class DeviceInterface():
 
     def disconnect(self):
         """Make device available."""
-        self._device_id = None
+        self._disconnect = True
 
     def executeCall(self, input):
         """Convert arguments and execute command.
@@ -89,7 +92,7 @@ class DeviceInterface():
                 num_args = 0
 
         if cmd in self.cmd_dict and num_args == 0:
-            resp = self.cmd_dict[cmd]
+            resp = self.cmd_dict[cmd]()
         elif cmd in self.cmd_dict and num_args == 1:
             resp = self.cmd_dict[cmd](arg[0])
         elif cmd in self.cmd_dict and num_args == 2:
@@ -137,7 +140,7 @@ class DeviceInterface():
         data_waiting = self.socket_data_in.poll(timeout=self.timeout_recv * 1000)
         if data_waiting:
             data = self.socket_data_in.recv_string().split(',')
-            logging.debug('Received data: '.join(data))
+            logging.debug('Received data: ' + str(data))
             return data
 
     def sendData(self, data):
@@ -149,7 +152,7 @@ class DeviceInterface():
             A python object to be transmitted.
         """
         self.socket_data_out.send_pyobj([self._device_id, data])
-        logging.debug('Transmitting data: %s', str(data))
+        logging.debug('Transmitted data: %s', str(data))
 
     def signalAvailability(self):
         """Put data on 'availability' socket if device not in use."""
