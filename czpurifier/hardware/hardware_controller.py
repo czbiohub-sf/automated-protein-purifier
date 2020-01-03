@@ -75,9 +75,13 @@ class HardwareController():
                 self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position, open_loop_assert=True)
                 log.info('Fraction collector moved to indexed position `%s`', position)
             else:
-                log.warning('Index position `%s` not valid.', position)
+                msg = 'Index position `%s` not valid.' % position
+                log.warning(msg)
+                return msg
         else:
-            log.warning('Home fraction collector before moving to indexed position.')
+            msg = 'Home fraction collector before moving to indexed position.'
+            log.warning(msg)
+            return msg
 
     def homeFracCollector(self):
         """Home the fraction collector."""

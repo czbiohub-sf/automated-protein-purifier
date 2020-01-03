@@ -83,6 +83,11 @@ class ControllerInterface():
         self._socket_data_in.disconnect(protocol_address + ':5200')
         del self.devices[alias]
 
+    def flushBuffer(self):
+        """Discard anything that is in the receive buffer."""
+        while self._socket_data_in.poll(timeout=10):
+            self._socket_data_in.recv_pyobj()
+
     def loadConfig(self):
         """Load a configuration on all connected devices."""
         self.send('loadConfig,' + self.config_mode, self._okayResponseChecker)
@@ -97,6 +102,7 @@ class ControllerInterface():
         response_func : function
             Function that receives and parses the command output.
         """
+        self.flushBuffer()
         self._tx(command)
         for dev, _ in enumerate(self.devices):
             resp = self._rx()
@@ -158,10 +164,10 @@ class ControllerInterface():
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
-    def _updatePositions(self, new_positions):  # data is format ['device', {k:v pairs,}]
+    def _updatePositions(self, new_positions):
         resp = False
-        if type(new_positions) is list:
-            self.position_names = new_positions
+        if type(new_positions) is dict:
+            self.position_names = list(new_positions.keys())
             resp = True
         return resp
 
