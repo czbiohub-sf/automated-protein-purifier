@@ -10,7 +10,7 @@ log.addHandler(NullHandler())
 class ControllerInterface():
     """Hardware communication interface and virutal hardware objects."""
 
-    def __init__(self):
+    def __init__(self, timeout=10000):
         # Hardware states
         self.position_names = []
         self.port_names = []
@@ -23,7 +23,7 @@ class ControllerInterface():
         # System parameters
         self.config_mode = []
         self.devices = {}
-
+        self.timeout = timeout
         # Communication interface
         context = zmq.Context()
         self._socket_availability = context.socket(zmq.PULL)
@@ -103,17 +103,21 @@ class ControllerInterface():
             Function that receives and parses the command output.
         """
         self.flushBuffer()
-        self._tx(command)
-        for dev, _ in enumerate(self.devices):
-            resp = self._rx()
-            if resp[0] in self.devices:
-                resp_valid = response_func(resp[1])
-                if not resp_valid:
-                    log.error('Command `%s` generated invalid response `%s` from device `%s`', command, str(resp[1]), resp[0])
+        if self.devices:
+            self._tx(command)
+            for dev, _ in enumerate(self.devices):
+                resp = self._rx()
+                if resp[0] in self.devices:
+                    resp_valid = response_func(resp[1])
+                    if not resp_valid:
+                        log.error('Command `%s` generated invalid response `%s` from device `%s`', command, str(resp[1]), resp[0])
+                    else:
+                        log.debug('Command `%s` generated response `%s` from device `%s`', command, str(resp[1]), resp[0])
                 else:
-                    log.debug('Command `%s` generated response `%s` from device `%s`', command, str(resp[1]), resp[0])
-            else:
-                log.error('Response unknown: %s', str(resp))
+                    log.error('Response unknown: %s', str(resp))
+        else:
+            log.warning('Device must be connected prior to issuing commands.')
+
 
     def pollDeviceAvailability(self, ip_address: str):
         """Poll the availability socket of device at address."""
@@ -127,9 +131,9 @@ class ControllerInterface():
         self._socket_data_out.send_string(data_out)
         logging.debug('Transmitted data: %s', data_out)
 
-    def _rx(self, t_out=1000):
+    def _rx(self):
         resp = []
-        resp_waiting = self._socket_data_in.poll(timeout=t_out)
+        resp_waiting = self._socket_data_in.poll(timeout=self.timeout)
         if resp_waiting:
             resp = self._socket_data_in.recv_pyobj()
             logging.debug('Received data: %s', str(resp))
