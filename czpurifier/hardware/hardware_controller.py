@@ -71,13 +71,17 @@ class HardwareController():
             Name of indexed position to travel to.
         """
         if self.collector_homed:
-            if position in self.reportCollectorPositions():
-                self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position)
+            if position in self.reportFracCollectorPositions():
+                self.subunits['FRAC_COLLECTOR'].moveToIndexedPosition(position, open_loop_assert=True)
                 log.info('Fraction collector moved to indexed position `%s`', position)
             else:
-                log.warning('Index position `%s` not valid.', position)
+                msg = 'Index position `%s` not valid.' % position
+                log.warning(msg)
+                return msg
         else:
-            log.warning('Home fraction collector before moving to indexed position.')
+            msg = 'Home fraction collector before moving to indexed position.'
+            log.warning(msg)
+            return msg
 
     def homeFracCollector(self):
         """Home the fraction collector."""
@@ -110,7 +114,7 @@ class HardwareController():
         states : int
             A decimal representation of the binary valve states.
         """
-        self.subunits['VALVES_IN'].valve_states = states
+        self.subunits['VALVES_WASTE'].valve_states = states
         log.info('Waste valves set to %s.', str(states))
 
     def getInputValves(self):
@@ -148,8 +152,14 @@ class HardwareController():
         name : str
             Alias to give the selected port
         """
-        self.subunits['PORTS'][port_num] = name
-        log.info('Rotary port %s aliased as %s.', str(port_num), name)
+        num_ports = self.subunits['NUM_PORTS']
+        if port_num < num_ports and port_num >= 0:
+            self.subunits['PORTS'][port_num] = name
+            log.info('Rotary port %s aliased as %s.', str(port_num), name)
+        else:
+            msg = 'Port number `%s` is out of bounds. Use a value from 0 to %s.' % (port_num, num_ports-1)
+            log.warning(msg)
+            return msg
 
     def moveRotaryValve(self, id):
         """Move to a rotary port as specified by port number or alias.
@@ -160,17 +170,25 @@ class HardwareController():
             Alias or port number to travel to
         """
         if self.rotary_homed:
-            if type(id) == int & id >= 0 & id <= self.subunits['NUM_PORTS']:
-                port_num = id
-            elif type(id) == str & id in self.subunits['PORTS']:
-                port_num = self.subunits['PORTS'].index(id)
-            else:
-                log.warning('Port ID `%s` not valid. Use port number or name.')
-                return
+            id_found = False
+            if type(id) == int:
+                if id >= 0 & id < self.subunits['NUM_PORTS']:
+                    port_num = id
+                    id_found = True
+            elif type(id) == str:
+                if id in self.subunits['PORTS']:
+                    port_num = self.subunits['PORTS'].index(id)
+                    id_found = True
+            if not id_found:
+                msg = 'Port ID `%s` not valid. Use port number or name.' % id
+                log.warning(msg)
+                return msg
             self.subunits['ROTARY'].moveToPort(port_num)
             log.info('Moved to rotary port `%s`.', id)
         else:
-            log.warning('Home rotary valve before use.')
+            msg = 'Home rotary valve before use.'
+            log.warning(msg)
+            return msg
 
     def homeRotaryValve(self):
         """Home the rotary valve."""
@@ -281,5 +299,5 @@ class HardwareController():
         """Time to fill fractions at the current flow rates."""
         times = []
         for i in range(0, self.subunits['NUM_COLS']):
-            times.append(self.subunits['VOL_FRAC'] / self.getFlowRate(i) * self.subunits['PUMP'][i]._UNIT_TIME)
+            times.append(self.subunits['VOL_FRAC'] / self.getFlowRate()[i] * self.subunits['PUMPS'][i]._UNIT_TIME)
         return times

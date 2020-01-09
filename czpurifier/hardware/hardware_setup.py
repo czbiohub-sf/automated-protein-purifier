@@ -5,7 +5,7 @@ import logging
 from logging import NullHandler
 from .pump_controller import PumpControllerTic
 from .rotary_controller import RotaryControllerTic
-from .valve_controller import ValveControllerI2c
+from .valve_controller import ValveControllerMCP23017
 from pyconfighandler import validateConfig
 from pymotors import TicStepper, TicStage
 
@@ -17,14 +17,13 @@ class DefaultConfigFields(Enum):
     NUM_COLUMNS = auto()
     ROTARY_STEPS_REV = auto()
     ROTARY_MICROS = auto()
-    ROTARY_HOME_FWD = auto()
-    ROTARY_POTS = auto()
+    ROTARY_HOME_DIR = auto()
     PUMP_STEPS_REV = auto()
     PUMP_MICROS = auto()
-    ROTARY_ADDR_START = auto()
+    ROTARY_ADDR = auto()
     VALVES_ADDR_IN = auto()
     VALVES_ADDR_WASTE = auto()
-    PUMP_ADDR = auto()
+    PUMP_ADDR_START = auto()
     PUMP_MOTOR_CURR = auto()
     ROTARY_MOTOR_CURR = auto()
 
@@ -121,25 +120,25 @@ class PurifierHardwareSetup():
         steps_rev = int(config[config_mode]['ROTARY_STEPS_REV'])
         micros = int(config[config_mode]['ROTARY_MICROS'])
         motor_current = int(config[config_mode]['ROTARY_MOTOR_CURR'])
-        home_dir = config[config_mode].getboolean('ROTARY_HOME')
+        home_dir = config[config_mode]['ROTARY_HOME_DIR']
         encoder_pin = config[config_mode]['ROTARY_ENCODE_PIN']
         num_ports = int(config[config_mode]['ROTARY_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['ROTARY_ADDR'])
+        addr = int(config[config_mode]['ROTARY_ADDR'], 16)
 
         port_names = ['NONE'] * num_ports
 
         for i in range(0, num_ports):
             try:
-                port_names[i] = config[config_mode]['ROTARY_%s' % str(i + 1)]
+                port_names[i] = config[config_mode]['ROTARY_PORT_%s' % str(i + 1)]
             except Exception:
                 pass
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=30)
         motor.microsteps = 1 / micros
         motor.setCurrentLimit(motor_current)
 
-        rotary = RotaryControllerTic(MotorObj=motor, home_fwd=home_dir, analog_pin=encoder_pin)
+        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin)
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
@@ -151,14 +150,14 @@ class PurifierHardwareSetup():
         motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
         vol_rev = float(config[config_mode]['PUMP_VOL_REV'])
         time_unit = config[config_mode]['PUMP_TIME_UNIT']
-        flowrate = config[config_mode]['FLOWRATE']
+        flowrate = float(config[config_mode]['FLOWRATE'])
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['PUMP_ADDR_START'])
+        addr = int(config[config_mode]['PUMP_ADDR_START'], 16)
 
         pumps = []
 
         for i in range(0, num_columns):
-            motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev)
+            motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev, input_rpm=500)
             motor.microsteps = 1 / micros
             motor.setCurrentLimit(motor_current)
             motor.enable = True
@@ -171,13 +170,13 @@ class PurifierHardwareSetup():
     @staticmethod
     def _initializeValves(config, config_mode):
         bus = int(config[config_mode]['BUS'])
-        input_addr = int(config[config_mode]['VALVES_ADDR_IN'])
-        waste_addr = int(config[config_mode]['VALVES_ADDR_WASTE'])
+        input_addr = int(config[config_mode]['VALVES_ADDR_IN'], 16)
+        waste_addr = int(config[config_mode]['VALVES_ADDR_WASTE'], 16)
         initial_in = int(config[config_mode]['INIT_IN_STATES'])
         initial_waste = int(config[config_mode]['INIT_WASTE_STATES'])
 
-        v_in = ValveControllerI2c(device_info=[bus, input_addr])
-        v_waste = ValveControllerI2c(device_info=[bus, waste_addr])
+        v_in = ValveControllerMCP23017(device_info=[bus, input_addr])
+        v_waste = ValveControllerMCP23017(device_info=[bus, waste_addr])
 
         v_in.valve_states = initial_in
         v_waste.valve_states = initial_waste
@@ -189,7 +188,7 @@ class PurifierHardwareSetup():
     @staticmethod
     def _initializeFracCol(config, config_mode):
         bus = int(config[config_mode]['BUS'])
-        addr = int(config[config_mode]['FRAC_ADDR'])
+        addr = int(config[config_mode]['FRAC_ADDR'], 16)
         steps_rev = int(config[config_mode]['PUMP_STEPS_REV'])
         micros = int(config[config_mode]['PUMP_MICROS'])
         motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
@@ -204,7 +203,7 @@ class PurifierHardwareSetup():
         vol_frac = int(config[config_mode]['VOLUME_FRAC'])
         vol_flwthru = int(config[config_mode]['VOLUME_FLWTHRU'])
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
         motor.setCurrentLimit(motor_current)
         stage = TicStage(ticStepper=motor, microStepFactor=micros)
         stage.enable()
