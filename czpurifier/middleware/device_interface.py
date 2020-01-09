@@ -1,4 +1,4 @@
-"""Protein purifier device communication and execution script."""
+"""Interface between communcation and hardware layer."""
 import zmq
 from pkg_resources import Requirement, resource_filename
 from czpurifier.hardware import HardwareController
@@ -18,7 +18,6 @@ class DeviceInterface():
         Address to send and receive data.
     timeout_recv : float
         Number of seconds to wait for data.
-
     """
 
     def __init__(self, ip_address='127.0.0.1', timeout_recv=1):
@@ -40,7 +39,7 @@ class DeviceInterface():
         self.initCmdDict()
 
     def autorun(self):
-        """Wait for data and execute. Signal if device is available."""
+        """Loop > Wait for data and execute. Signal if device is available."""
         while True:
             self.signalAvailability()
             data_in = self.receiveData()
@@ -108,7 +107,7 @@ class DeviceInterface():
         return resp
 
     def initCmdDict(self):
-        """Set cmd_dict to default commands."""
+        """Set cmd_dict to initialized state."""
         self.cmd_dict = {'connect': self.connect,
                          'disconnect': self.disconnect,
                          'loadConfig': self.loadConfig,
@@ -121,7 +120,6 @@ class DeviceInterface():
         ----------
         config_mode : str
             Configuration option listed in config file.
-
         """
         Hardware = HardwareController(self.hardware_config_file, config_mode)
         self.cmd_dict.update({'reportFracCollectorPositions': Hardware.reportFracCollectorPositions,

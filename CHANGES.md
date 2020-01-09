@@ -8,5 +8,7 @@ All notable changes to this project will be documented in this file. This module
 - Add RotaryControllerTic class for Tic stepper driver support
 - Add PumpController class
 - Add PumpControllerTic class for Tic stepper driver support
-- Add device interface
-- Add controller interface
+- Add PurifierHardwareSetup class
+- Add HardwareController class
+- Add DeviceInterface class
+- Add ControllerInterface class

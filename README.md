@@ -5,20 +5,27 @@ This repository contains the Python application and custom **czpurifier** packag
 
 ## Contents
 
+### Classes
+/hardware/
+* __HardwareController__ - Interfaces with hardware peripherals
+* __PurifierHardwareSetup__ - Configures hardware peripherals according to specified file
+* __PumpController__ - Base class for a pump controller
+* __PumpControllerTic__ - Valve controller for use with a Tic stepper driver
 * __RotaryController__ - Base class for a rotary valve
 * __RotaryControllerTic__ - Rotary valve for use with a Tic stepper driver
 * __ValveController__ - Base class for a valve controller
 * __ValveControllerI2c__ - Valve controller utilizing the I2C protocol
-* __PumpController__ - Base class for a pump controller
-* __PumpControllerTic__ - Valve controller for use with a Tic stepper driver
 
+/middleware/
+* __ControllerInterface__ - Links user interface to communication interface
+* __DeviceInterface__ - Links communication interface to hardware interface
 
 ## Dependencies
-ValveControllerI2c :: smbus2<br>
 PurifierHardwareSetup :: pymotors<br>
 PurifierHardwareSetup :: pyconfighandler<br>
+ValveControllerI2c :: smbus2<br>
 ControllerInterface :: zmq<br>
-device_interface.py :: zmq<br>
+DeviceInterface :: zmq<br>
 
 
 ## Installation and Use
@@ -53,16 +60,7 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 2. Activate virtual environment with module installed
 3. Execute python script or application
 
-## Testing Module for Completeness
-Before using this code or updating to newer versions, it would be wise to check for completeness. Breaking changes that can impact your work occasionally occur during development. Although major and minor versioning of code helps indicate when specific interfaces may no longer be compatible with previous versions, there can also be smaller code breaks that cause methods to silently fail.
-
-This repository includes unit tests that can be used to assess the health of the code. Whenever a new feature is added, new tests are made to confirm that the feature behaves correctly. Whenever a feature is changed, the old tests should be updated to reflect the new behavior. If an author breaks code and does not fix the issue, the previously written tests should fail. You can evaluate these tests for yourself by running the command __make__ in the outer directory of the repository.
-
 ### Using Module
 1. Edit files to include `import czpurifier` or a variant such as `from czpurifier import {class_name}`
 2. Activate virtual environment with module installed
 3. Execute python script or application
-
-
-## How to Contribute
-If you would like to contribute to PyMotors, please review the guidelines described in [CONTRIBUTING.md](https://github.com/czbiohub/capper-decapper/blob/master/CONTRIBUTING.md).
