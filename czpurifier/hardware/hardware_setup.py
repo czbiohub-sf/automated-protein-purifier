@@ -134,7 +134,7 @@ class PurifierHardwareSetup():
             except Exception:
                 pass
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=30)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
         motor.microsteps = 1 / micros
         motor.setCurrentLimit(motor_current)
 
@@ -203,7 +203,7 @@ class PurifierHardwareSetup():
         vol_frac = int(config[config_mode]['VOLUME_FRAC'])
         vol_flwthru = int(config[config_mode]['VOLUME_FLWTHRU'])
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=120)
         motor.setCurrentLimit(motor_current)
         stage = TicStage(ticStepper=motor, microStepFactor=micros)
         stage.enable()
