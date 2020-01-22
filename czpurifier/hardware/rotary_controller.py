@@ -76,7 +76,7 @@ class RotaryControllerTic(RotaryController):
     """
 
     def __init__(self, MotorObj, home_dir='fwd', analog_pin='TX',
-                 thresh_lower=0x2000, thresh_upper=0xE000, seek_vel=2000000):
+                 thresh_lower=0x1700, thresh_upper=0xE700, seek_vel=2000000):
         super().__init__()
         self._home_dir = home_dir
         self._analog_pin = analog_pin
