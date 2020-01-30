@@ -137,13 +137,13 @@ class RotaryControllerTic(RotaryController):
         This is used for returning to a known location near Port0. The position
         of Port0 will still need to be discovered after homing.
         """
-        self._motor.setCurrentLimit(12)
+        self._motor.setCurrentLimit(self._motor_current)
         self._motor.home(self._home_dir)
         while not self._motor.isHomed():
             sleep(.01)
         self._position_known = True
         self.current_port = 0
-        self._motor.setCurrentLimit(2)
+        self._motor.setCurrentLimit(0)
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""
