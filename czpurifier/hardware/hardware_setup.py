@@ -136,9 +136,8 @@ class PurifierHardwareSetup():
 
         motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
         motor.microsteps = 1 / micros
-        motor.setCurrentLimit(motor_current)
 
-        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin)
+        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin, motor_current=motor_current)
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
