@@ -6,13 +6,13 @@ from czpurifier.middleware import ControllerInterface
 class UICommands():
     """Command wrappers for purifier ControllerInterface."""
 
-    def __init__(self):
-        self.ci = ControllerInterface()
+    def __init__(self, timeout: int):
+        self.ci = ControllerInterface(timeout)
         self.alias = ''
 
     def openAllWaste(self):
         """Open pre- and postcolumn waste valves."""
-        self.ci.setWasteStates(255)
+        self.ci.setWasteStates(0)
 
     def openPreColumnWaste(self):
         """Open precolumn waste valves."""
@@ -30,7 +30,7 @@ class UICommands():
 
     def closeAllWaste(self):
         """Close all waste valves."""
-        self.ci.setWasteStates(0)
+        self.ci.setWasteStates(255)
 
     def closePreColumnWaste(self):
         """Close precolumn waste valves."""
@@ -46,11 +46,11 @@ class UICommands():
         target_states = self.ci.waste_states & ~postcol_valves
         self.ci.setWasteStates(target_states)
 
-    def openLoad(self):
+    def selectLoad(self):
         """Open load valves."""
         self.ci.setInputStates(15)
 
-    def closeLoad(self):
+    def selectBuffers(self):
         """Close load valves."""
         self.ci.setInputStates(0)
 
@@ -85,9 +85,10 @@ class UICommands():
 
     def resetMachine(self):
         """Set machine to a known state."""
+        self.ci.getMachineStatus()
         self.ci.stopPumping()
         self.openAllWaste()
-        self.closeLoad()
+        self.selectBuffers()
         self.ci.homeFrac()
         self.ci.moveFracTo('Safe')
         self.ci.homePorts()

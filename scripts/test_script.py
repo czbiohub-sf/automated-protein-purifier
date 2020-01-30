@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+import logging
 from czpurifier.ui import UICommands
 
+logging.basicConfig(level=logging.INFO)
+
 # Setup
-ui = UICommands()
+ui = UICommands(30000)
 ui.connect('1mL', 'pure1')
 ui.resetMachine()
 
@@ -10,7 +13,7 @@ ui.resetMachine()
 ui.openLoad()
 ui.pump(1)
 ui.closeLoad()
-ui.selectPort('BLEACH')
+ui.selectPort('BASE')
 ui.pump(1)
 ui.selectPort('ELUTION')
 ui.pump(1)
