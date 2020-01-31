@@ -6,9 +6,14 @@ from czpurifier.middleware import ControllerInterface
 class UICommands():
     """Command wrappers for purifier ControllerInterface."""
 
-    def __init__(self, timeout: int):
+    def __init__(self, timeout: int = 20000):
         self.ci = ControllerInterface(timeout)
+        self.pumps = 0
         self.alias = ''
+
+    def __del__(self):
+        if self.alias:
+            self.disconnect()
 
     def openAllWaste(self):
         """Open pre- and postcolumn waste valves."""
@@ -54,7 +59,7 @@ class UICommands():
         """Close load valves."""
         self.ci.setInputStates(0)
 
-    def connect(self, config_mode: str, address: str, alias='Purifier1'):
+    def connect(self, config_mode: str, address: str, pumps=4, alias='purifier'):
         """Connect to machine at specified address and load config mode.
 
         Parameters
@@ -74,24 +79,16 @@ class UICommands():
                 self.ci.loadConfig()
                 self.resetMachine()
                 self.getMachineStatus()
+                self.pumps = pumps
             except:
                 self.disconnect()
 
     def disconnect(self):
         """Stop machine and disconnect."""
-        self.resetMachine()
+        self.setStandby()
         self.ci.disconnect(self.alias)
         self.alias = ''
-
-    def resetMachine(self):
-        """Set machine to a known state."""
-        self.ci.getMachineStatus()
-        self.ci.stopPumping()
-        self.openAllWaste()
-        self.selectBuffers()
-        self.ci.homeFrac()
-        self.ci.moveFracTo('Safe')
-        self.ci.homePorts()
+        self.pumps = 0
 
     def getMachineStatus(self):
         """Retreive machine states."""
@@ -103,6 +100,18 @@ class UICommands():
         self.ci.getInputStates()
         self.ci.getWasteStates()
 
+    def resetConnection(self, address: str):
+        """Device network connection if unable to connect."""
+        self.ci.hardConnect(address)
+        self.ci.disconnect()
+
+    def resetMachine(self):
+        """Set machine to a known state."""
+        self.setStandby()
+        self.ci.homeFrac()
+        self.ci.moveFracTo('Safe')
+        self.ci.homePorts()
+
     def selectFraction(self, frac_name: str):
         """Move fraction collector to specified position."""
         self.ci.moveFracTo(frac_name)
@@ -111,8 +120,16 @@ class UICommands():
         """Move rotary valve to specified position."""
         self.ci.selectPort(port_name)
 
-    def pump(self, col_vol: int):
+    def setStandby(self):
+        """Set machine to a standby state."""
+        self.getMachineStatus()
+        self.ci.stopPumping()
+        self.openAllWaste()
+        self.selectBuffers()
+
+    def pump(self, col_vol: float):
         """Run pumps for the specified column volumes."""
-        self.ci.startPumping()
+        for pump in range(self.pumps):
+            self.ci.startPumping(pump)
         sleep(col_vol * 60)
         self.ci.stopPumping()

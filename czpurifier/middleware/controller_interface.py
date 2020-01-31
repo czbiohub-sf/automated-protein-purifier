@@ -304,9 +304,13 @@ class ControllerInterface():
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
-    def startPumping(self):
+    def startPumping(self, pump=-1):
         """Start pumping all pumps."""
-        cmd_to_send = 'startPumping'
+        if pump > -1:
+            cmd_to_send = 'startPumping,' + str(pump)
+        else:
+            cmd_to_send = 'startPumping'
+
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
