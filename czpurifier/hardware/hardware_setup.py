@@ -134,11 +134,10 @@ class PurifierHardwareSetup():
             except Exception:
                 pass
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=30)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
         motor.microsteps = 1 / micros
-        motor.setCurrentLimit(motor_current)
 
-        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin)
+        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin, motor_current=motor_current)
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
@@ -189,9 +188,10 @@ class PurifierHardwareSetup():
     def _initializeFracCol(config, config_mode):
         bus = int(config[config_mode]['BUS'])
         addr = int(config[config_mode]['FRAC_ADDR'], 16)
-        steps_rev = int(config[config_mode]['PUMP_STEPS_REV'])
-        micros = int(config[config_mode]['PUMP_MICROS'])
-        motor_current = int(config[config_mode]['PUMP_MOTOR_CURR'])
+        steps_rev = int(config[config_mode]['FRAC_STEPS_REV'])
+        micros = int(config[config_mode]['FRAC_MICROS'])
+        motor_current = int(config[config_mode]['FRAC_MOTOR_CURR'])
+        rpm = int(config[config_mode]['FRAC_RPM'])
         frac_home_dir = config[config_mode]['FRAC_HOME_DIR']
         pos_frac1 = int(config[config_mode]['POSITION_FRAC1'])
         pos_flwthru1 = int(config[config_mode]['POSITION_FLWTHRU1'])
@@ -203,17 +203,17 @@ class PurifierHardwareSetup():
         vol_frac = int(config[config_mode]['VOLUME_FRAC'])
         vol_flwthru = int(config[config_mode]['VOLUME_FLWTHRU'])
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
+        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=rpm)
         motor.setCurrentLimit(motor_current)
         stage = TicStage(ticStepper=motor, microStepFactor=micros)
         stage.enable()
 
         position_map = {}
         for i in range(0, num_frac):
-            position_map['Frac' + str(i)] = pos_frac1 + offset_frac * i
+            position_map['Frac' + str(i + 1)] = pos_frac1 + offset_frac * i
 
         for i in range(0, num_flwthru):
-            position_map['Flow' + str(i)] = pos_flwthru1 + offset_flwthru * i
+            position_map['Flow' + str(i + 1)] = pos_flwthru1 + offset_flwthru * i
 
         position_map['Safe'] = pos_safe
 

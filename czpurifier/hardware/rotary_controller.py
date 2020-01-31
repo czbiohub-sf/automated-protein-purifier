@@ -76,7 +76,8 @@ class RotaryControllerTic(RotaryController):
     """
 
     def __init__(self, MotorObj, home_dir='fwd', analog_pin='TX',
-                 thresh_lower=0x2000, thresh_upper=0xE000, seek_vel=2000000):
+                 thresh_lower=0x1700, thresh_upper=0xE700, seek_vel=2000000,
+                 motor_current=2):
         super().__init__()
         self._home_dir = home_dir
         self._analog_pin = analog_pin
@@ -84,7 +85,8 @@ class RotaryControllerTic(RotaryController):
         self._thresh = [thresh_lower, thresh_upper]
         self._motor = MotorObj
         self._motor.enable = True
-        self._motor.setCurrentLimit(2)
+        self._motor_current = motor_current
+        self._motor.setCurrentLimit(0)
 
         if analog_pin == 'TX':
             self._analog = [self._motor._command_dict['gVariable'],
@@ -120,14 +122,14 @@ class RotaryControllerTic(RotaryController):
             vel = self._seek_vel
         else:
             vel = -self._seek_vel
-        self._motor.setCurrentLimit(12)
+        self._motor.setCurrentLimit(self._motor_current)
         self._motor.velocityControl(vel)
         while self._readAnalog() < self._thresh[1]:
             sleep(.01)
         while self._readAnalog() > self._thresh[0]:
             sleep(.01)
         self._motor.stop()
-        self._motor.setCurrentLimit(2)
+        self._motor.setCurrentLimit(0)
 
     def home(self):
         """Reset the position index of the selector valve to match the encoder.
@@ -135,13 +137,13 @@ class RotaryControllerTic(RotaryController):
         This is used for returning to a known location near Port0. The position
         of Port0 will still need to be discovered after homing.
         """
-        self._motor.setCurrentLimit(12)
+        self._motor.setCurrentLimit(self._motor_current)
         self._motor.home(self._home_dir)
         while not self._motor.isHomed():
             sleep(.01)
         self._position_known = True
         self.current_port = 0
-        self._motor.setCurrentLimit(2)
+        self._motor.setCurrentLimit(0)
 
     def _readAnalog(self):
         """Read the analog pin connected to the port encoder."""
