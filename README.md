@@ -20,6 +20,13 @@ This repository contains the Python application and custom **czpurifier** packag
 * __ControllerInterface__ - Links user interface to communication interface
 * __DeviceInterface__ - Links communication interface to hardware interface
 
+/ui/
+* __UICommands__ - Command wrappers to simplify controller-device communication
+
+### Scripts
+* __device_setup.py__ - Called by Linux service to activate purifier software
+* __test_script.py__ - Example purification protocol
+
 ## Dependencies
 PurifierHardwareSetup :: pymotors<br>
 PurifierHardwareSetup :: pyconfighandler<br>

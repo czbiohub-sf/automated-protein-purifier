@@ -5,14 +5,13 @@ from czpurifier.ui import UICommands
 logging.basicConfig(level=logging.INFO)
 
 # Setup
-ui = UICommands(30000)
+ui = UICommands()
 ui.connect('1mL', 'pure1')
-ui.resetMachine()
 
 # Purge bubbles
-ui.openLoad()
+ui.selectLoad()
 ui.pump(1)
-ui.closeLoad()
+ui.selectBuffers()
 ui.selectPort('BASE')
 ui.pump(1)
 ui.selectPort('ELUTION')
@@ -25,9 +24,9 @@ ui.closePreColumnWaste()
 
 # Run purification protocol
 ui.pump(20)
-ui.openLoad()
+ui.selectLoad()
 ui.pump(50)
-ui.closeLoad()
+ui.selectBuffers()
 ui.pump(10)
 ui.selectPort('ELUTION')
 ui.openPreColumnWaste()
@@ -65,5 +64,5 @@ ui.openPostColumnWaste()
 ui.selectFraction('Safe')
 
 # Run cleanup
-ui.selectPort('BLEACH')
+ui.selectPort('BASE')
 ui.pump(10)

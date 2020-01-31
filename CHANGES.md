@@ -12,3 +12,6 @@ All notable changes to this project will be documented in this file. This module
 - Add HardwareController class
 - Add DeviceInterface class
 - Add ControllerInterface class
+- Add UICommands class
+- Add device configuration file
+- Add autostart and example program scripts

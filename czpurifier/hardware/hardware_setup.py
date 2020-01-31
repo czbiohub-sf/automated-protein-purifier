@@ -210,10 +210,10 @@ class PurifierHardwareSetup():
 
         position_map = {}
         for i in range(0, num_frac):
-            position_map['Frac' + str(i)] = pos_frac1 + offset_frac * i
+            position_map['Frac' + str(i + 1)] = pos_frac1 + offset_frac * i
 
         for i in range(0, num_flwthru):
-            position_map['Flow' + str(i)] = pos_flwthru1 + offset_flwthru * i
+            position_map['Flow' + str(i + 1)] = pos_flwthru1 + offset_flwthru * i
 
         position_map['Safe'] = pos_safe
 
