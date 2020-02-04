@@ -10,8 +10,9 @@ Examples are provided at the end of the document.
 1. **connect**(config_mode, device_address, *number_of_pumps*) - Connect to and reset the machine.
 2. **disconnect**() - Disconnect from the machine.
 3. **getMachineStatus**() - Retrieve state of machine connected to.
-4. **resetConnection**() - Force the machine to become available.
-5. **resetMachine**() - Put the machine into a known working state.
+4. **resetConnection**(device_address) - Force the machine to become available for connection.
+5. **resetMachine**() - Rehome the machine  and put into a known working state.
+6. **setStandby**() - Put the machine into a known working state.
 
 #### Waste Valve Commands
 1. **openAllWaste**() - Pass all input to waste.
