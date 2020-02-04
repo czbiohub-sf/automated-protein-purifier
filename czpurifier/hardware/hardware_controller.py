@@ -119,11 +119,11 @@ class HardwareController():
 
     def getInputValves(self):
         """Return input valve states."""
-        return self.subunits['VALVES_IN'].valve_states
+        return self.subunits['VALVES_IN'].states
 
     def getWasteValves(self):
         """Return waste valve states."""
-        return self.subunits['VALVES_WASTE'].valve_states
+        return self.subunits['VALVES_WASTE'].states
 
     #########################
     # ROTARY VALVE COMMANDS #
