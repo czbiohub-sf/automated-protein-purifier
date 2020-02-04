@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 ui = UICommands()
 ui.connect('1mL', 'pure1')
 
-# Purge bubbles
+# Purge bubbles from lines
 ui.selectLoad()
 ui.pump(1)
 ui.selectBuffers()

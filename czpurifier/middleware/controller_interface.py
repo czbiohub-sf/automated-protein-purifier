@@ -217,13 +217,13 @@ class ControllerInterface():
             resp = True
         return resp
 
-    #########################
-    # ROTARY VALVE COMMANDS #
-    #########################
+    ###########################
+    # SELECTOR VALVE COMMANDS #
+    ###########################
 
     def getPorts(self):
-        """Request port names of the rotary valve."""
-        logging.info("Updating port names of rotary valve.")
+        """Request port names of the selector valve."""
+        logging.info("Updating port names of selector valve.")
         cmd_to_send = 'reportRotaryPorts'
         send_response_to = self._updatePorts
         self.send(cmd_to_send, send_response_to)
@@ -236,7 +236,7 @@ class ControllerInterface():
         self.send(cmd_to_send, send_response_to)
 
     def selectPort(self, indexed_port: str):
-        """Move rotary valve to the indicated port.
+        """Move selector valve to the indicated port.
 
         Parameters
         ----------
@@ -249,7 +249,8 @@ class ControllerInterface():
         self.send(cmd_to_send, send_response_to)
 
     def homePorts(self):
-        """Home the rotary valve."""
+        """Home the selector valve."""
+        logging.info("Homing selector valve.")
         cmd_to_send = 'homeRotaryValve'
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -264,6 +265,7 @@ class ControllerInterface():
         port_name : str
             Name to give specified port position.
         """
+        logging.info("Port `%s` now named `%s`.", str(port_num), str(port_name))
         cmd_to_send = 'renameRotaryPort,' + str(port_num) + ',' + port_name
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -288,18 +290,21 @@ class ControllerInterface():
 
     def getPumpStatus(self):
         """Request current status of pumps."""
+        logging.info("Updating current pump status..")
         cmd_to_send = 'getPumpStatus'
         send_response_to = self._updatePumpStatus
         self.send(cmd_to_send, send_response_to)
 
     def getFlowRates(self):
         """Request current flow rates of pumps."""
+        logging.info("Updating flow rates.")
         cmd_to_send = 'getFlowRate'
         send_response_to = self._updateFlowRates
         self.send(cmd_to_send, send_response_to)
 
     def setFlowRates(self, flow_rate):
         """Set flow rates of all pumps."""
+        logging.info("Flow rate set to `%s`.", str(flow_rate))
         cmd_to_send = 'setFlowRate,' + str(flow_rate)
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -307,8 +312,10 @@ class ControllerInterface():
     def startPumping(self, pump=-1):
         """Start pumping all pumps."""
         if pump > -1:
+            logging.info("Starting pump `%s`.", str(pump))
             cmd_to_send = 'startPumping,' + str(pump)
         else:
+            logging.info("Starting all pumps.")
             cmd_to_send = 'startPumping'
 
         send_response_to = self._okayResponseChecker
@@ -316,6 +323,7 @@ class ControllerInterface():
 
     def stopPumping(self):
         """Stop all pumps."""
+        logging.info("Stopping flow.")
         cmd_to_send = 'stopPumping'
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -340,24 +348,28 @@ class ControllerInterface():
 
     def getInputStates(self):
         """Request current states of input solenoid valves."""
+        logging.info("Updating input valve states.")
         cmd_to_send = 'getInputValves'
         send_response_to = self._updateInput
         self.send(cmd_to_send, send_response_to)
 
     def getWasteStates(self):
         """Request current states of waste solenoid valves."""
+        logging.info("Updating waste valve states.")
         cmd_to_send = 'getWasteValves'
         send_response_to = self._updateWaste
         self.send(cmd_to_send, send_response_to)
 
     def setInputStates(self, target_states: int):
         """Set states of input solenoid valves."""
+        logging.info("Setting input valves to `%s`.", str(target_states))
         cmd_to_send = 'setInputValves,' + str(target_states)
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
     def setWasteStates(self, target_states: int):
         """Set states of waste solenoid valves."""
+        logging.info("Setting waste valves to `%s`.", str(target_states))
         cmd_to_send = 'setWasteValves,' + str(target_states)
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)

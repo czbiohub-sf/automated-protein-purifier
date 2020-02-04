@@ -15,50 +15,9 @@ class UICommands():
         if self.alias:
             self.disconnect()
 
-    def openAllWaste(self):
-        """Open pre- and postcolumn waste valves."""
-        self.ci.setWasteStates(0)
-
-    def openPreColumnWaste(self):
-        """Open precolumn waste valves."""
-        precol_valves = 15
-        self.ci.getWasteStates()
-        target_states = self.ci.waste_states | precol_valves
-        self.ci.setWasteStates(target_states)
-
-    def openPostColumnWaste(self):
-        """Open postcolumn waste valves."""
-        postcol_valves = 240
-        self.ci.getWasteStates()
-        target_states = self.ci.waste_states | postcol_valves
-        self.ci.setWasteStates(target_states)
-
-    def closeAllWaste(self):
-        """Close all waste valves."""
-        self.ci.setWasteStates(255)
-
-    def closePreColumnWaste(self):
-        """Close precolumn waste valves."""
-        precol_valves = 15
-        self.ci.getWasteStates()
-        target_states = self.ci.waste_states & ~precol_valves
-        self.ci.setWasteStates(target_states)
-
-    def closePostColumnWaste(self):
-        """Close postcolumn waste valves."""
-        postcol_valves = 240
-        self.ci.getWasteStates()
-        target_states = self.ci.waste_states & ~postcol_valves
-        self.ci.setWasteStates(target_states)
-
-    def selectLoad(self):
-        """Open load valves."""
-        self.ci.setInputStates(15)
-
-    def selectBuffers(self):
-        """Close load valves."""
-        self.ci.setInputStates(0)
-
+    ##################
+    #   CONNECTION   #
+    ##################
     def connect(self, config_mode: str, address: str, pumps=4, alias='purifier'):
         """Connect to machine at specified address and load config mode.
 
@@ -112,14 +71,6 @@ class UICommands():
         self.ci.moveFracTo('Safe')
         self.ci.homePorts()
 
-    def selectFraction(self, frac_name: str):
-        """Move fraction collector to specified position."""
-        self.ci.moveFracTo(frac_name)
-
-    def selectPort(self, port_name: str):
-        """Move rotary valve to specified position."""
-        self.ci.selectPort(port_name)
-
     def setStandby(self):
         """Set machine to a standby state."""
         self.getMachineStatus()
@@ -127,6 +78,70 @@ class UICommands():
         self.openAllWaste()
         self.selectBuffers()
 
+    ####################
+    #   WASTE VALVES   #
+    ####################
+    def openAllWaste(self):
+        """Open pre- and postcolumn waste valves."""
+        self.ci.setWasteStates(0)
+
+    def openPreColumnWaste(self):
+        """Open precolumn waste valves."""
+        precol_valves = 15
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states & ~precol_valves
+        self.ci.setWasteStates(target_states)
+
+    def openPostColumnWaste(self):
+        """Open postcolumn waste valves."""
+        postcol_valves = 240
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states & ~postcol_valves
+        self.ci.setWasteStates(target_states)
+
+    def closeAllWaste(self):
+        """Close all waste valves."""
+        self.ci.setWasteStates(255)
+
+    def closePreColumnWaste(self):
+        """Close precolumn waste valves."""
+        precol_valves = 15
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states | precol_valves
+        self.ci.setWasteStates(target_states)
+
+    def closePostColumnWaste(self):
+        """Close postcolumn waste valves."""
+        postcol_valves = 240
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states | postcol_valves
+        self.ci.setWasteStates(target_states)
+
+    ####################
+    #   INPUT VALVES   #
+    ####################
+    def selectBuffers(self):
+        """Close load valves."""
+        self.ci.setInputStates(0)
+
+    def selectLoad(self):
+        """Open load valves."""
+        self.ci.setInputStates(15)
+
+    def selectPort(self, port_name: str):
+        """Move rotary valve to specified position."""
+        self.ci.selectPort(port_name)
+
+    ##########################
+    #   FRACTION COLLECTOR   #
+    ##########################
+    def selectFraction(self, frac_name: str):
+        """Move fraction collector to specified position."""
+        self.ci.moveFracTo(frac_name)
+
+    #############
+    #   PUMPS   #
+    #############
     def pump(self, col_vol: float):
         """Run pumps for the specified column volumes."""
         for pump in range(self.pumps):
