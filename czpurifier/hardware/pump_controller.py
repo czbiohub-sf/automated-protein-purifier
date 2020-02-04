@@ -1,3 +1,4 @@
+"""Pump controller classes."""
 from enum import Enum, auto
 import logging
 from logging import NullHandler

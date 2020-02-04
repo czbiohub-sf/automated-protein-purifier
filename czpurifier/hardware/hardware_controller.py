@@ -103,7 +103,7 @@ class HardwareController():
         states : int
             A decimal representation of the binary valve states.
         """
-        self.subunits['VALVES_IN'].valve_states = states
+        self.subunits['VALVES_IN'].states = states
         log.info('Input valves set to %s.', str(states))
 
     def setWasteValves(self, states: int):
@@ -114,7 +114,7 @@ class HardwareController():
         states : int
             A decimal representation of the binary valve states.
         """
-        self.subunits['VALVES_WASTE'].valve_states = states
+        self.subunits['VALVES_WASTE'].states = states
         log.info('Waste valves set to %s.', str(states))
 
     def getInputValves(self):

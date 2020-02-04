@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="czpurifier",
-    version="0.0.1",
+    version="0.0.2",
     author="Robert R. Puccinelli",
     author_email="robert.puccinelli@outlook.com",
     description="Automated protein purifier project and utilities.",
