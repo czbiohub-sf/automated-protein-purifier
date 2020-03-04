@@ -49,10 +49,11 @@ ui.pump(5)
 ui.selectFraction('Safe')
 
 sleep(60)
-ui.selectFraction('Flow4')
-
 ui.selectBuffers()
+
 ui.selectPort('WASH')
+ui.selectFraction('Flow4')
+ui.pump(5)
 ui.selectFraction("Flow3")
 ui.pump(5)
 ui.selectFraction("Flow2")
