@@ -4,8 +4,7 @@ from time import sleep
 from czpurifier.ui import UICommands
 
 
-logging.basicConfig(level=logging.INFO)
-
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
 # Setup
 ui = UICommands()
 ui.connect('1mL', 'pure1', 1)
