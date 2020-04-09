@@ -5,13 +5,10 @@ from czpurifier.ui import UICommands
 
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
-<<<<<<< HEAD
-=======
 
->>>>>>> Add experiment scripts and logging modifications
 # Setup
 ui = UICommands()
-ui.connect('1mL', 'pure1.local', 1)
+ui.connect('1mL', 'pure1.local', 2)
 
 # Purge bubbles from lines
 ui.selectLoad()
@@ -26,52 +23,25 @@ ui.pump(1)
 ui.selectPort('LOAD_BUFFER')
 ui.pump(1)
 ui.closePreColumnWaste()
-ui.selectFraction("Flow4")
 
 # Run purification protocol
+ui.selectPort('BASE')
 ui.pump(10)
+ui.selectPort('LOAD_BUFFER')
+ui.pump(15)
 ui.closePostColumnWaste()
+
+ui.selectFraction("Flow4")
 ui.selectLoad()
-ui.pump(5)
+ui.pump(40)
 ui.selectFraction("Flow3")
-ui.pump(5)
-ui.selectFraction("Flow2")
-ui.pump(5)
-ui.selectFraction("Flow1")
-ui.pump(5)
-ui.selectFraction("Flow4")
-ui.pump(5)
-ui.selectFraction("Flow3")
-ui.pump(5)
-ui.selectFraction("Flow2")
-ui.pump(5)
-ui.selectFraction("Flow4")
-ui.pump(5)
-ui.selectFraction("Flow3")
-ui.pump(5)
-ui.selectFraction('Safe')
+ui.pump(45)
 
-sleep(60)
 ui.selectBuffers()
-
+ui.openPostColumnWaste()
 ui.selectPort('WASH')
-ui.selectFraction('Flow4')
-ui.pump(5)
-ui.selectFraction("Flow3")
-ui.pump(5)
-ui.selectFraction("Flow2")
-ui.pump(5)
-ui.selectFraction("Flow1")
-ui.pump(5)
-ui.selectFraction("Flow4")
-ui.pump(5)
-ui.selectFraction("Flow3")
-ui.pump(5)
-ui.selectFraction("Flow2")
-ui.pump(5)
-ui.selectFraction("Flow4")
-ui.pump(5)
-
+ui.pump(50)
+ui.closePostColumnWaste()
 ui.selectPort('ELUTION')
 ui.selectFraction('Frac1')
 ui.pump(1)
