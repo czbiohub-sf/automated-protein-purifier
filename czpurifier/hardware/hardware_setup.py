@@ -122,6 +122,8 @@ class PurifierHardwareSetup():
         motor_current = int(config[config_mode]['ROTARY_MOTOR_CURR'])
         home_dir = config[config_mode]['ROTARY_HOME_DIR']
         encoder_pin = config[config_mode]['ROTARY_ENCODE_PIN']
+        th_lower = int(config[config_mode]['ROTARY_THRESH_L'], 16)
+        th_upper = int(config[config_mode]['ROTARY_THRESH_U'], 16)
         num_ports = int(config[config_mode]['ROTARY_NUM_PORTS'])
         bus = int(config[config_mode]['BUS'])
         addr = int(config[config_mode]['ROTARY_ADDR'], 16)
@@ -137,7 +139,7 @@ class PurifierHardwareSetup():
         motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
         motor.microsteps = 1 / micros
 
-        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin, motor_current=motor_current)
+        rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin, motor_current=motor_current, thresh_lower=th_lower, thresh_upper=th_upper)
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
