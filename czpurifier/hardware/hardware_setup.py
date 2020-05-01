@@ -158,12 +158,12 @@ class PurifierHardwareSetup():
         pumps = []
 
         for i in range(0, num_columns):
-            correction = float(config[config_mode]['PUMP_CORRECTION' + str(i+1)])
+#            correction = float(config[config_mode]['PUMP_CORRECTION' + str(i+1)])
             motor = TicStepper(com_type='I2C', port_params=bus, address=addr + i, input_steps_per_rev=steps_rev, input_rpm=500)
             motor.microsteps = 1 / micros
             motor.setCurrentLimit(motor_current)
             motor.enable = True
-            pumps.append(PumpControllerTic(MotorObj=motor, vol_per_rev=vol_rev, unit_of_time=time_unit, initial_flowrate=flowrate * correction))
+            pumps.append(PumpControllerTic(MotorObj=motor, vol_per_rev=vol_rev, unit_of_time=time_unit, initial_flowrate=flowrate))
 
         pumps = {'PUMPS': pumps, 'NUM_COLS': num_columns, }
 
