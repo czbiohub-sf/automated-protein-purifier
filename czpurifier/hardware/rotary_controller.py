@@ -46,6 +46,8 @@ class RotaryController():
             ports_to_move = ports_to_move + decrement
             self.current_port = self.current_port - decrement
 
+        sleep(.5)
+
     def _seekPort(self, move_fwd: bool):
         """Advance to the next port in the specified direction."""
         raise NotImplementedError()
