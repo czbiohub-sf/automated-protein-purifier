@@ -4,3 +4,4 @@ from .pump_controller import PumpController, PumpControllerTic
 from .rotary_controller import RotaryController, RotaryControllerTic
 from .valve_controller import ValveController, ValveControllerMCP23017
 from .hardware_simulator import HardwareControllerSimulator
+from .simulator_controllers import RotaryControllerSimulator

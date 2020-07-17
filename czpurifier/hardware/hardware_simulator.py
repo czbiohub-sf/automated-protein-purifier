@@ -2,6 +2,7 @@
 
 from .hardware_setup import PurifierHardwareSetup
 from .hardware_controller import HardwareController
+from .simulator_controllers import RotaryControllerSimulator
 import logging
 from logging import NullHandler
 from time import sleep
@@ -35,13 +36,8 @@ class HardwareSimulator(PurifierHardwareSetup):
                 port_names[i] = config[config_mode]['ROTARY_PORT_%s' % str(i + 1)]
             except Exception:
                 pass
-        #TODO: initialize motors
-        #motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=60)
-        #motor.microsteps = 1 / micros
-
-        #TODO: Fake a rotary -> now changed from rotary object to string rotary
-        #rotary = RotaryControllerTic(MotorObj=motor, home_dir=home_dir, analog_pin=encoder_pin, motor_current=motor_current)
-        rotary_valves = {'ROTARY': 'rotary', 'PORTS': port_names, 'NUM_PORTS': num_ports, }
+        rotary = RotaryControllerSimulator()
+        rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
     @staticmethod
@@ -139,34 +135,4 @@ class HardwareControllerSimulator(HardwareController):
         Config section to load in addition to 'DEFAULT'
 
     """
-    def __init__(self, hw_config_file_path, config_mode):
-
-        setup = HardwareSimulator()
-        print('Setup now refers to the hardware simulator -------------')
-        self.subunits = {}
-        self.collector_homed = False
-        self.rotary_homed = False
-        error = False
-
-        try:
-            setup.configValidation(hw_config_file_path)
-        except KeyError as e:
-            log.warning('Configuration file `%s` is missing a required field.', hw_config_file_path)
-            log.warning(str(e))
-            error = True
-        except ValueError:
-            log.warning('`%s` is not a valid file.', hw_config_file_path)
-            error = True
-
-        try:
-            subunits = setup.initializeConfig(config_mode)
-            print(subunits)
-        except ValueError as e:
-            print('FAILED TO SETUP SUBUNITSSSS')
-            log.warning(str(e))
-            error = True
-
-        if error:
-            log.warning('Hardware subunit initialization unsuccessful.')
-        else:
-            self.subunits = subunits
+    pass

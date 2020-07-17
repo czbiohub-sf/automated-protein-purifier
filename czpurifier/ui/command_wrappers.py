@@ -36,9 +36,10 @@ class UICommands():
             try:
                 self.ci.config_mode = config_mode
                 self.ci.loadConfig()
-                self.resetMachine()
-                self.getMachineStatus()
-                self.pumps = pumps
+                self.ci.getPorts()
+                #self.resetMachine()
+                #self.getMachineStatus()
+                #self.pumps = pumps
             except:
                 self.disconnect()
 
