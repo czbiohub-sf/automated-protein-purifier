@@ -36,10 +36,9 @@ class UICommands():
             try:
                 self.ci.config_mode = config_mode
                 self.ci.loadConfig()
-                self.ci.getPorts()
-                #self.resetMachine()
-                #self.getMachineStatus()
-                #self.pumps = pumps
+                self.resetMachine()
+                self.getMachineStatus()
+                self.pumps = pumps
             except:
                 self.disconnect()
 
@@ -148,4 +147,5 @@ class UICommands():
         for pump in range(self.pumps):
             self.ci.startPumping(pump)
         sleep(col_vol * 60)
+        #sleep(2) (Used for simulator)
         self.ci.stopPumping()
