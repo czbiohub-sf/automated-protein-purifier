@@ -43,7 +43,7 @@ class SimulatorInterface(DeviceInterface):
         config_mode : str
             Configuration option listed in config file.
         """
-        Hardware = HardwareSimulator(self.hardware_config_file, config_mode)
+        Hardware = HardwareController(self.hardware_config_file, config_mode, True)
         self.cmd_dict.update({'reportFracCollectorPositions': Hardware.reportFracCollectorPositions,
                               'moveFracCollector': Hardware.moveFracCollector,
                               'homeFracCollector': Hardware.homeFracCollector,
@@ -63,44 +63,6 @@ class SimulatorInterface(DeviceInterface):
                               'stopPumping': Hardware.stopPumping,
                               'getFractionDuration': Hardware.getFractionDuration,
                               })
-
-class HardwareSimulator(HardwareController):
-    def reportFracCollectorPositions(self):
-        pass
-    def moveFracCollector(self):
-        pass
-    def homeFracCollector(self):
-        pass
-    def setInputValves(self):
-        pass
-    def setWasteValves(self):
-        pass
-    def getInputValves(self):
-        pass
-    def getWasteValves(self):
-        pass
-    #def reportRotaryPorts(self):
-    #    pass
-    def getCurrentPort(self):
-        pass
-    def renameRotaryPort(self):
-        pass
-    def moveRotaryValve(self):
-        pass
-    def homeRotaryValve(self):
-        pass
-    def getPumpStatus(self):
-        pass
-    def getFlowRate(self):
-        pass
-    def setFlowRate(self):
-        pass
-    def startPumping(self):
-        pass
-    def stopPumping(self):
-        pass
-    def getFractionDuration(self):
-        pass
 
 if __name__ == "__main__":
     #current_address = socket.gethostbyname(socket.getfqdn() + '.local')
