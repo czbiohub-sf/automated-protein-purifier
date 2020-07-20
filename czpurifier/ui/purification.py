@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from set_param import Ui_setParameter
 
 class Ui_Purification(object):
     def setupUi(self, MainWindow):
@@ -290,21 +291,25 @@ class Ui_Purification(object):
         self.colVol1_rdiobtn.setText(_translate("MainWindow", "1 ml"))
         self.colVol5_rdiobtn.setText(_translate("MainWindow", "5 ml"))
         self.equilibrate_btn.setText(_translate("MainWindow", "Equilibrate"))
+        self.equilibrate_btn.clicked.connect(self.onClickEquilibrate)
         self.equilibrate_vol_lbl.setText(_translate("MainWindow", "Volume:"))
         self.equilibriate_flowpath_lbl.setText(_translate("MainWindow", "Flow Path:"))
         self.equilibrate_vol_val.setText(_translate("MainWindow", "100 ml"))
         self.equilibriate_flowpath_val.setText(_translate("MainWindow", "PreColumn Waste"))
         self.load_btn.setText(_translate("MainWindow", "Load"))
+        self.load_btn.clicked.connect(self.onClickLoad)
         self.load_ph_lbl.setText(_translate("MainWindow", "Volume:"))
         self.label_3.setText(_translate("MainWindow", "Flow Path:"))
         self.load_vol_val.setText(_translate("MainWindow", "100 ml"))
         self.load_flowpath_val.setText(_translate("MainWindow", "PostColumn Waste"))
         self.wash_btn.setText(_translate("MainWindow", "Wash"))
+        self.wash_btn.clicked.connect(self.onClickWash)
         self.wash_ph_lbl.setText(_translate("MainWindow", "Volume:"))
         self.label_4.setText(_translate("MainWindow", "Flow Path:"))
         self.wash_vol_val.setText(_translate("MainWindow", "100 ml"))
         self.wash_flowpath_val.setText(_translate("MainWindow", "Fraction Column"))
         self.elute_btn.setText(_translate("MainWindow", "Elute"))
+        self.elute_btn.clicked.connect(self.onClickElute)
         self.elute_ph_lbl.setText(_translate("MainWindow", "Volume:"))
         self.label_5.setText(_translate("MainWindow", "Flow Path:"))
         self.elute_vol_val.setText(_translate("MainWindow", "100 ml"))
@@ -324,12 +329,26 @@ class Ui_Purification(object):
         self.back_to_main_btn.setText(_translate("MainWindow", "Back To Main"))
         self.pushButton.setText(_translate("MainWindow", "Done"))
 
+    def onClickEquilibrate(self):
+        self.eq_wdw = QtWidgets.QMainWindow()
+        self.eq_ui = Ui_setParameter()
+        self.eq_ui.setupUi(self.eq_wdw)
+        self.eq_wdw.show() 
+    
+    def onClickLoad(self):
+        self.ld_wdw = QtWidgets.QMainWindow()
+        self.ld_ui = Ui_setParameter()
+        self.ld_ui.setupUi(self.ld_wdw)
+        self.ld_wdw.show() 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    def onClickWash(self):
+        self.wsh_wdw = QtWidgets.QMainWindow()
+        self.wsh_ui = Ui_setParameter()
+        self.wsh_ui.setupUi(self.wsh_wdw)
+        self.wsh_wdw.show() 
+
+    def onClickElute(self):
+        self.el_wdw = QtWidgets.QMainWindow()
+        self.el_ui = Ui_setParameter()
+        self.el_ui.setupUi(self.el_wdw)
+        self.el_wdw.show() 

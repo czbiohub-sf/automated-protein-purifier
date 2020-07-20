@@ -11,10 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_set_parameter(object):
+class Ui_setParameter(object):
     def setupUi(self, set_parameter):
         set_parameter.setObjectName("set_parameter")
         set_parameter.resize(329, 301)
+        set_parameter.setWindowModality(QtCore.Qt.ApplicationModal)
         self.centralwidget = QtWidgets.QWidget(set_parameter)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
