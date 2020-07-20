@@ -24,7 +24,7 @@ class MockHardwareSetup(PurifierHardwareSetup):
                 port_names[i] = config[config_mode]['ROTARY_PORT_%s' % str(i + 1)]
             except Exception:
                 pass
-        rotary = RotaryController()
+        rotary = RotaryControllerSim()
         rotary_valves = {'ROTARY': rotary, 'PORTS': port_names, 'NUM_PORTS': num_ports, }
         return rotary_valves
 
@@ -87,7 +87,7 @@ class MockHardwareSetup(PurifierHardwareSetup):
 
         return frac_collector
 
-class RotaryController():
+class RotaryControllerSim():
     """
     Updates the current port based on where it is desired to go
     """
