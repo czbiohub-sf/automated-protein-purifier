@@ -6,7 +6,11 @@ from time import sleep
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def __init__(self, MainWindow):
+        """
+        The initialization for the Main Window that is run 
+        upon opening the GUI
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(613, 196)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -98,21 +102,18 @@ class Ui_MainWindow(object):
     
     def onClick_purification_btn(self):
         self.purifier = QtWidgets.QMainWindow()
-        self.purifier_ui = Ui_Purification()
-        self.purifier_ui.setupUi(self.purifier)
+        self.purifier_ui = Ui_Purification(self.purifier)
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
         self.oth_sc_window = QtWidgets.QMainWindow()
-        self.oth_sc_ui = Ui_OtherScripts()
-        self.oth_sc_ui.setupUi(self.oth_sc_window)
+        self.oth_sc_ui = Ui_OtherScripts(self.oth_sc_window)
         self.oth_sc_window.show() 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui = Ui_MainWindow(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
