@@ -2,7 +2,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_OtherScripts(object):
-    def setupUi(self, MainWindow):
+    def __init__(self, MainWindow):
+        """
+        Initialization for the GUI to run all the other scripts
+        Opened when 'Other Scripts' is selected from the main window
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(808, 531)
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
