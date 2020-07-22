@@ -11,9 +11,10 @@ class Ui_Purification(object):
         self.initUI(Purification)
 
     def initUI(self, Purification):
-        Purification.setObjectName("Purification")
-        Purification.setWindowModality(QtCore.Qt.ApplicationModal)
-        Purification.resize(1128, 663)
+        self.Purification = Purification
+        self.Purification.setObjectName("Purification")
+        self.Purification.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.Purification.resize(1128, 663)
         self.centralwidget = QtWidgets.QWidget(Purification)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -98,7 +99,6 @@ class Ui_Purification(object):
         self.horizontalLayout_8.addWidget(self.equil_vol_unit)
         self.verticalLayout_14.addLayout(self.horizontalLayout_8)
         self.equil_flowpath = QtWidgets.QComboBox(self.centralwidget)
-        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
         self.equil_flowpath.setMaximumSize(QtCore.QSize(200, 16777215))
         self.equil_flowpath.setObjectName("equil_flowpath")
         self.equil_flowpath.addItem("")
@@ -163,7 +163,6 @@ class Ui_Purification(object):
         self.horizontalLayout_9.addWidget(self.load_vol_unit)
         self.verticalLayout_15.addLayout(self.horizontalLayout_9)
         self.load_flowpath = QtWidgets.QComboBox(self.centralwidget)
-        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
         self.load_flowpath.setObjectName("load_flowpath")
         self.load_flowpath.addItem("")
         self.load_flowpath.addItem("")
@@ -225,7 +224,6 @@ class Ui_Purification(object):
         self.horizontalLayout_10.addWidget(self.wash_vol_unit)
         self.verticalLayout.addLayout(self.horizontalLayout_10)
         self.wash_flowpath = QtWidgets.QComboBox(self.centralwidget)
-        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
         self.wash_flowpath.setMaximumSize(QtCore.QSize(154, 16777215))
         self.wash_flowpath.setObjectName("wash_flowpath")
         self.wash_flowpath.addItem("")
@@ -287,7 +285,6 @@ class Ui_Purification(object):
         self.horizontalLayout_11.addWidget(self.elute_vol_unit)
         self.verticalLayout_17.addLayout(self.horizontalLayout_11)
         self.elute_flowpath = QtWidgets.QComboBox(self.centralwidget)
-        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
         self.elute_flowpath.setMaximumSize(QtCore.QSize(154, 16777215))
         self.elute_flowpath.setObjectName("elute_flowpath")
         self.elute_flowpath.addItem("")
@@ -344,28 +341,26 @@ class Ui_Purification(object):
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem)
-        self.back_to_main_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.back_to_main_btn.setObjectName("back_to_main_btn")
-        self.horizontalLayout_7.addWidget(self.back_to_main_btn)
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_7.addWidget(self.pushButton)
+        self.close_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.close_btn.setObjectName("close_btn")
+        self.horizontalLayout_7.addWidget(self.close_btn)
         self.gridLayout.addLayout(self.horizontalLayout_7, 1, 0, 1, 1)
-        Purification.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(Purification)
+        self.Purification.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.Purification)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1128, 22))
         self.menubar.setObjectName("menubar")
-        Purification.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(Purification)
+        self.Purification.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.Purification)
         self.statusbar.setObjectName("statusbar")
-        Purification.setStatusBar(self.statusbar)
+        self.Purification.setStatusBar(self.statusbar)
 
-        self.retranslateUi(Purification)
-        QtCore.QMetaObject.connectSlotsByName(Purification)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.Purification)
+        self.initEvents()
 
-    def retranslateUi(self, Purification):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        Purification.setWindowTitle(_translate("Purification", "Purification"))
+        self.Purification.setWindowTitle(_translate("Purification", "Purification"))
         self.num_col_lbl.setText(_translate("Purification", "Number of Columns: "))
         self.num_col_combo_box.setItemText(0, _translate("Purification", "1"))
         self.num_col_combo_box.setItemText(1, _translate("Purification", "2"))
@@ -421,10 +416,19 @@ class Ui_Purification(object):
         self.hold_btn.setText(_translate("Purification", "Hold"))
         self.skip_btn.setText(_translate("Purification", "Skip To Next"))
         self.stop_btn.setText(_translate("Purification", "Stop"))
-        self.back_to_main_btn.setText(_translate("Purification", "Back To Main"))
-        self.pushButton.setText(_translate("Purification", "Done"))
+        self.close_btn.setText(_translate("Purification", "Close"))
 
+    def initEvents(self):
+        """
+        Initializes all on click actions
+        """
+        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
+        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
+        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
+        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
         self.flowPathComboBox = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
+
+        self.close_btn.clicked.connect(self.onClickBackToMain)
 
     def onClickFlowPath(self, step_index):
         curIndex = self.flowPathComboBox[step_index].currentIndex()
@@ -432,3 +436,6 @@ class Ui_Purification(object):
             self.frac_wdw = QtWidgets.QMainWindow()
             self.frac_ui = Ui_FractionColumn(self.frac_wdw)
             self.frac_wdw.show()
+
+    def onClickBackToMain(self):
+        self.Purification.close()

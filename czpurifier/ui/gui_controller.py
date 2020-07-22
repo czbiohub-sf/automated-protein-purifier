@@ -8,6 +8,9 @@ log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
 
 class GUI_Controller:
+    def __init__(self):
+        self.device_process = None
+
     def connect_to_device(self):
         """
         Try to connect to the device if it is available 
@@ -16,8 +19,8 @@ class GUI_Controller:
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         try:
             current_address = socket.gethostbyname(socket.getfqdn() + '.local')
-            device = Process(target=self._connect_device, args=(current_address,))
-            device.start()
+            self.device_process = Process(target=self._connect_device, args=(current_address,))
+            self.device_process.start()
             return True
         except OSError:
             return False
@@ -28,15 +31,20 @@ class GUI_Controller:
         di.autorun()
     
     def connect_to_simulator(self):
-        sim = Process(target=self._connect_simulator)
-        sim.start()
+        self.device_process = Process(target=self._connect_simulator)
+        self.device_process.start()
 
     def _connect_simulator(self):
         si = SimulatorInterface()
         si.autorun()
     
+    def close_connection(self):
+        if self.device_process is not None:
+            # Close the process after the connection is terminated
+            # Temporary -> send cmd from controller interface to disconnect
+            # Throws zmq error now as the connection is not closed properly
+            self.device_process.join()
     
-
 if __name__ == "__main__":
     t = GUI_Controller()
     t.connect_to_device()
