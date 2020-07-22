@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification_gui import Ui_Purification
 from other_scripts_gui import Ui_OtherScripts
+from gui_controller import GUI_Controller
 import sys
 from time import sleep
 
@@ -11,6 +12,10 @@ class Ui_MainWindow(object):
         The initialization for the Main Window that is run 
         upon opening the GUI
         """
+        self.gui_controller = GUI_Controller()
+        self.initUI(MainWindow)
+
+    def initUI(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(613, 196)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -83,22 +88,27 @@ class Ui_MainWindow(object):
         self.otherscripts_btn.setText(_translate("MainWindow", "Other Scripts"))
 
     def onClick_connect_device(self):
-        self.connect_device_btn.setEnabled(False)
-        self.connect_hardware = QtWidgets.QPushButton('Connect To Protein Purifier')
-        self.run_simulator = QtWidgets.QPushButton('Run Simulation Mode')
-        self.connect_hardware.clicked.connect(self.onClickConnect_hardware)
-        self.run_simulator.clicked.connect(self.onClickRunSim)
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Information)
-        msg.addButton(self.connect_hardware, QtWidgets.QMessageBox.NoRole)
-        msg.addButton(self.run_simulator, QtWidgets.QMessageBox.NoRole)
-        msg.exec()
+        if not self.gui_controller.connect_to_device():
+            self.connect_hardware = QtWidgets.QPushButton('Retry Device Connection')
+            self.run_simulator = QtWidgets.QPushButton('Run Simulation Mode')
+            self.connect_hardware.clicked.connect(self.onClickConnect_hardware)
+            self.run_simulator.clicked.connect(self.onClickRunSim)
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Failed To Connect')
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.addButton(self.connect_hardware, QtWidgets.QMessageBox.NoRole)
+            msg.addButton(self.run_simulator, QtWidgets.QMessageBox.NoRole)
+            msg.exec()
 
     def onClickConnect_hardware(self):
-        print('connection made')
+        self.connect_device_btn.click()
     
     def onClickRunSim(self):
-        print('running simulator')
+        self.gui_controller.connect_to_simulator()
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Running Simulator')
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msg.exec()
     
     def onClick_purification_btn(self):
         self.purifier = QtWidgets.QMainWindow()
