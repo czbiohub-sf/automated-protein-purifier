@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from purification import Ui_Purification
-from other_scripts import Ui_OtherScripts
+from purification_gui import Ui_Purification
+from other_scripts_gui import Ui_OtherScripts
 import sys
 from time import sleep
 

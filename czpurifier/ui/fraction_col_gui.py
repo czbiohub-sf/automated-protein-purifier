@@ -4,7 +4,8 @@ class Ui_FractionColumn(object):
     def __init__(self, MainWindow):
         """
         Initialization of the GUI to choose the fractionating column
-        This window is opened when 'Fraction Column' is chosen as the flow path from the Set Parameter window
+        This window is opened when 'Fraction Column' is chosen as the flow
+        path from the Set Parameter window
         """
         self.frac_btn_stylesheet = '{}'.format("QPushButton#frac{0}_btn{{"
                                         "border-radius:17;"
@@ -21,7 +22,7 @@ class Ui_FractionColumn(object):
 
     def initUI(self, MainWindow):
 
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("Fraction Column")
         MainWindow.resize(800, 281)
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
@@ -267,7 +268,7 @@ class Ui_FractionColumn(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Fraction Column"))
         self.label.setText(_translate("MainWindow", "Fraction Position:"))
         self.label_2.setText(_translate("MainWindow", "Fraction Volume:"))
         self.label_3.setText(_translate("MainWindow", "Total Volume /"))

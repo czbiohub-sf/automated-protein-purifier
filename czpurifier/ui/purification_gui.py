@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from fraction_col import Ui_FractionColumn
+from fraction_col_gui import Ui_FractionColumn
 
 
 class Ui_Purification(object):
@@ -432,13 +432,3 @@ class Ui_Purification(object):
             self.frac_wdw = QtWidgets.QMainWindow()
             self.frac_ui = Ui_FractionColumn(self.frac_wdw)
             self.frac_wdw.show()
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Purification = QtWidgets.QMainWindow()
-    ui = Ui_Purification()
-    ui.setupUi(Purification)
-    Purification.show()
-    sys.exit(app.exec_())
