@@ -3,11 +3,12 @@ from fraction_col_gui import Ui_FractionColumn
 
 
 class Ui_Purification(object):
-    def __init__(self, Purification):
+    def __init__(self, Purification, gui_controller):
         """
         Contains the initialization of the purification tab
         """
         self.flowPathComboBox = []
+        self.gui_controller = gui_controller
         self.initUI(Purification)
 
     def initUI(self, Purification):
@@ -427,8 +428,8 @@ class Ui_Purification(object):
         self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
         self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
         self.flowPathComboBox = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
-
-        self.close_btn.clicked.connect(self.onClickBackToMain)
+        self.close_btn.clicked.connect(self.onClickClose)
+        self.setDefaultParam()
 
     def onClickFlowPath(self, step_index):
         curIndex = self.flowPathComboBox[step_index].currentIndex()
@@ -437,5 +438,16 @@ class Ui_Purification(object):
             self.frac_ui = Ui_FractionColumn(self.frac_wdw)
             self.frac_wdw.show()
 
-    def onClickBackToMain(self):
+    def onClickClose(self):
         self.Purification.close()
+    
+    def setDefaultParam(self):
+        self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
+        if self.gui_controller.default_param[1] == 1:
+            self.colVol1_rdiobtn.click()
+        else:
+            self.colVol5_rdiobtn.click()
+        self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
+        self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
+        self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
+        self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))

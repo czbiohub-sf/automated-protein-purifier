@@ -3,6 +3,8 @@ from logging import NullHandler
 import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
+from os import chdir, path
+from json import load
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -10,6 +12,12 @@ log.addHandler(NullHandler())
 class GUI_Controller:
     def __init__(self):
         self.device_process = None
+        chdir(path.dirname(path.realpath(__file__)))
+        with open('purification_parameters.json', 'r') as f:
+            _p = load(f)
+        self.default_param = [_p['NUM_COL']['default'], _p['COL_VOLUME']['default'],
+                            _p['EQUILIBRATE_VOLUME']['default'], _p['LOAD_VOLUME']['default'],
+                            _p['WASH_VOLUME']['default'], _p['ELUTE_VOLUME']['default']]
 
     def connect_to_device(self):
         """
