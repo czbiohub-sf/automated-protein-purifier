@@ -4,7 +4,7 @@ from command_wrappers import UICommands
 
 class RunPurification():
     def __init__(self, input_param, ip):
-        logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+        logging.basicConfig(level=logging.INFO)
         # Setup
         self.input_param = input_param
         self.input_param[1] = '1mL' if self.input_param[1] == 1 else '5mL'
