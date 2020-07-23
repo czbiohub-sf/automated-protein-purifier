@@ -438,11 +438,9 @@ class Ui_Purification(object):
                             self.load_vol_val: True, self.load_flowpath: False,
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
-        self.pause_btn.setEnabled(False)
-        self.hold_btn.setEnabled(False)
-        self.skip_btn.setEnabled(False)
-        self.stop_btn.setEnabled(False)
+        self._set_actionbtn_enable(False, True)
         self.setDefaultParam()
+        self._reset_pbar()
 
         self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
         self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
@@ -489,16 +487,16 @@ class Ui_Purification(object):
         self.areYouSureMsg('start')
         if self.is_sure:
             self.is_sure = None
-            self.pause_btn.setEnabled(True)
-            self.hold_btn.setEnabled(True)
-            self.skip_btn.setEnabled(True)
-            self.stop_btn.setEnabled(True)
+            self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
-            self.start_btn.setEnabled(False)
-            run_param = self._init_run_param()
             self._set_param_enable(False)
+            self.gui_controller.run_purification_script(self._init_run_param())
     
     def _init_run_param(self):
+        """
+        Parse through all the input parameters and store
+        in an array to pass to controller to update json file
+        """
         run_param = []
         for widget in self.input_param:
             if self.input_param[widget]:
@@ -511,9 +509,32 @@ class Ui_Purification(object):
         return run_param
     
     def _set_param_enable(self, state):
+        """
+        Enables/Disables all the widgets that allow initializing input parameters
+        """
         for widget in self.input_param:
             widget.setEnabled(state)
     
+    def _set_actionbtn_enable(self, halt_state, start_state):
+        """
+        Either enables or disables the action buttons
+        """
+        self.pause_btn.setEnabled(halt_state)
+        self.hold_btn.setEnabled(halt_state)
+        self.skip_btn.setEnabled(halt_state)
+        self.stop_btn.setEnabled(halt_state)
+
+        self.start_btn.setEnabled(start_state)
+    
+    def _reset_pbar(self):
+        """
+        Enable/Disable all the progress bars
+        """
+        self.equilibriate_pbar.setValue(0)
+        self.load_pbar.setValue(0)
+        self.wash_pbar.setValue(0)
+        self.elute_pbar.setValue(0)
+
     def onClickPause(self):
         pass
     def onClickHold(self):
