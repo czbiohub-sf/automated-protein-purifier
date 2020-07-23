@@ -1,51 +1,25 @@
 {
     "NUM_COL": {
-        "run": 4,
         "default": 4
     },
 
     "COL_VOLUME" : {
-        "run": 1,
         "default": 1
     },
 
     "EQUILIBRATE_VOLUME": {
-        "run": 4,
         "default": 3
     },
 
     "LOAD_VOLUME": {
-        "run": 5,
         "default": 5
     },
 
     "WASH_VOLUME": {
-        "run": 4,
         "default": 4
     },
 
     "ELUTE_VOLUME": {
-        "run": 4,
         "default": 4
-    },
-
-    "EQUILIBRATE_FLOWPATH": {
-        "run": 0,
-        "description": "0 - PreColWaste, 1 - PostColWaste, 2 - FractionCollector"
-    },
-
-    "LOAD_FLOWPATH": {
-        "run": 0,
-        "description": "0 - PreColWaste, 1 - PostColWaste, 2 - FractionCollector"
-    },
-
-    "WASH_FLOWPATH": {
-        "run": 0,
-        "description": "0 - PreColWaste, 1 - PostColWaste, 2 - FractionCollector"
-    },
-
-    "ELUTE_FLOWPATH": {
-        "run": 0,
-        "description": "0 - PreColWaste, 1 - PostColWaste, 2 - FractionCollector"
     }
 }
