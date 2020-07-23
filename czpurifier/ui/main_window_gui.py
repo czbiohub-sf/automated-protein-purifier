@@ -100,7 +100,14 @@ class Ui_MainWindow(object):
         self.connect_device_btn.clicked.connect(self.onClick_connect_device)
         self.close_btn.clicked.connect(self.onClick_close_btn)
 
+        self.purification_btn.setEnabled(False)
+        self.otherscripts_btn.setEnabled(False)
+
     def onClick_connect_device(self):
+        """
+        Try to connect to device and if failed pop up a message to either
+        retry device connection or connect to the simulator
+        """
         if not self.gui_controller.connect_to_device():
             self.connect_hardware = QtWidgets.QPushButton('Retry Device Connection')
             self.run_simulator = QtWidgets.QPushButton('Run Simulation Mode')
@@ -112,29 +119,57 @@ class Ui_MainWindow(object):
             msg.addButton(self.connect_hardware, QtWidgets.QMessageBox.NoRole)
             msg.addButton(self.run_simulator, QtWidgets.QMessageBox.NoRole)
             msg.exec()
+        else:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Running Devie')
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+            self.connect_device_btn.setEnabled(False)
+            self.purification_btn.setEnabled(True)
+            self.otherscripts_btn.setEnabled(True)
 
     def onClickConnect_hardware(self):
+        """
+        If retry connection is clicked in the connect to device pop up
+        The connect device button is automatically clicked to call its on event action
+        """
         self.connect_device_btn.click()
     
     def onClickRunSim(self):
+        """
+        Call the method to run the simulator if 'run simulator' is clicked
+        on the connect to device pop up
+        """
         self.gui_controller.connect_to_simulator()
         msg = QtWidgets.QMessageBox()
         msg.setText('Running Simulator')
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
+        self.connect_device_btn.setEnabled(False)
+        self.purification_btn.setEnabled(True)
+        self.otherscripts_btn.setEnabled(True)
     
     def onClick_purification_btn(self):
+        """
+        Opens the purification window 
+        """
         self.purifier = QtWidgets.QMainWindow()
         self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller)
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
+        """
+        Opens the other scripts window
+        """
         self.oth_sc_window = QtWidgets.QMainWindow()
         self.oth_sc_ui = Ui_OtherScripts(self.oth_sc_window)
         self.oth_sc_window.show() 
     
     def onClick_close_btn(self):
-        self.gui_controller.close_connection()
+        """
+        Closes any tcp connection and closes the main window
+        """
+        #self.gui_controller.close_connection()
         quit()
 
 if __name__ == "__main__":
