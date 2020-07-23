@@ -9,6 +9,7 @@ class Ui_Purification(object):
         """
         self.flowPathComboBox = []
         self.gui_controller = gui_controller
+        self.is_sure = None
         self.initUI(Purification)
 
     def initUI(self, Purification):
@@ -354,10 +355,10 @@ class Ui_Purification(object):
         self.statusbar = QtWidgets.QStatusBar(self.Purification)
         self.statusbar.setObjectName("statusbar")
         self.Purification.setStatusBar(self.statusbar)
-
+        
+        self.initEvents()
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self.Purification)
-        self.initEvents()
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -423,13 +424,24 @@ class Ui_Purification(object):
         """
         Initializes all on click actions
         """
+        self.pause_btn.setEnabled(False)
+        self.hold_btn.setEnabled(False)
+        self.skip_btn.setEnabled(False)
+        self.stop_btn.setEnabled(False)
+        self.setDefaultParam()
+
         self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
         self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
         self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
         self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
         self.flowPathComboBox = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
         self.close_btn.clicked.connect(self.onClickClose)
-        self.setDefaultParam()
+
+        self.start_btn.clicked.connect(self.onClickStart)
+        self.pause_btn.clicked.connect(self.onClickPause)
+        self.hold_btn.clicked.connect(self.onClickHold)
+        self.skip_btn.clicked.connect(self.onClickSkip)
+        self.stop_btn.clicked.connect(self.onClickStop)
 
     def onClickFlowPath(self, step_index):
         curIndex = self.flowPathComboBox[step_index].currentIndex()
@@ -451,3 +463,40 @@ class Ui_Purification(object):
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
         self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
         self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))
+    
+    def onClickStart(self):
+        """
+        1. Pop up to confirm you want to start
+        2. Enable all other action buttons
+        3. Update the json file with all the run cmds
+        4. Run the process
+        """
+        self.areYouSureMsg('start')
+        if self.is_sure:
+            self.pause_btn.setEnabled(True)
+            self.hold_btn.setEnabled(True)
+            self.skip_btn.setEnabled(True)
+            self.stop_btn.setEnabled(True)
+            self.close_btn.setEnabled(False)
+            self.start_btn.setEnabled(False)
+
+    
+    def onClickPause(self):
+        pass
+    def onClickHold(self):
+        pass
+    def onClickSkip(self):
+        pass
+    def onClickStop(self):
+        pass
+    
+    def areYouSureMsg(self, action):
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Are you sure you want to {}'.format(action))
+        msg.setIcon(QtWidgets.QMessageBox.Question)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.buttonClicked.connect(self.msgbtn)
+        msg.exec()
+    
+    def msgbtn(self, i):
+        self.is_sure = True if i.text() == 'OK' else False

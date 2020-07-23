@@ -14,10 +14,10 @@ class GUI_Controller:
         self.device_process = None
         chdir(path.dirname(path.realpath(__file__)))
         with open('purification_parameters.json', 'r') as f:
-            _p = load(f)
-        self.default_param = [_p['NUM_COL']['default'], _p['COL_VOLUME']['default'],
-                            _p['EQUILIBRATE_VOLUME']['default'], _p['LOAD_VOLUME']['default'],
-                            _p['WASH_VOLUME']['default'], _p['ELUTE_VOLUME']['default']]
+            self._p = load(f)
+        self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
+                            self._p['EQUILIBRATE_VOLUME']['default'], self._p['LOAD_VOLUME']['default'],
+                            self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
 
     def connect_to_device(self):
         """
