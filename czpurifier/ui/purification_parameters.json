@@ -10,7 +10,7 @@
     },
 
     "EQUILIBRATE_VOLUME": {
-        "run": 5,
+        "run": 4,
         "default": 3
     },
 

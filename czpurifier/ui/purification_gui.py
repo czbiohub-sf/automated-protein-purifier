@@ -45,6 +45,7 @@ class Ui_Purification(object):
         self.col_vol_lbl.setObjectName("col_vol_lbl")
         self.horizontalLayout_13.addWidget(self.col_vol_lbl)
         self.verticalLayout_8 = QtWidgets.QVBoxLayout()
+        """
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.colVol1_rdiobtn = QtWidgets.QRadioButton(self.centralwidget)
         self.colVol1_rdiobtn.setObjectName("colVol1_rdiobtn")
@@ -53,6 +54,13 @@ class Ui_Purification(object):
         self.colVol5_rdiobtn.setObjectName("colVol5_rdiobtn")
         self.verticalLayout_8.addWidget(self.colVol5_rdiobtn)
         self.horizontalLayout_13.addLayout(self.verticalLayout_8)
+        """
+        self.col_vol_combo_box = QtWidgets.QComboBox(self.centralwidget)
+        self.col_vol_combo_box.setObjectName("num_col_combo_box")
+        self.col_vol_combo_box.addItem("")
+        self.col_vol_combo_box.addItem("")
+        self.horizontalLayout_13.addWidget(self.col_vol_combo_box)
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_13)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -93,11 +101,12 @@ class Ui_Purification(object):
         self.equil_vol_val.setMaximumSize(QtCore.QSize(60, 16777215))
         self.equil_vol_val.setObjectName("equil_vol_val")
         self.horizontalLayout_8.addWidget(self.equil_vol_val)
-        self.equil_vol_unit = QtWidgets.QComboBox(self.centralwidget)
+        self.equil_vol_unit = QtWidgets.QLabel(self.centralwidget)
         self.equil_vol_unit.setMaximumSize(QtCore.QSize(80, 16777215))
         self.equil_vol_unit.setObjectName("equil_vol_unit")
-        self.equil_vol_unit.addItem("")
-        self.equil_vol_unit.addItem("")
+        #self.equil_vol_unit.addItem("")
+        #self.equil_vol_unit.addItem("")
+        self.equil_vol_unit.setText("ml")
         self.horizontalLayout_8.addWidget(self.equil_vol_unit)
         self.verticalLayout_14.addLayout(self.horizontalLayout_8)
         self.equil_flowpath = QtWidgets.QComboBox(self.centralwidget)
@@ -157,11 +166,12 @@ class Ui_Purification(object):
         self.load_vol_val.setMaximumSize(QtCore.QSize(60, 16777215))
         self.load_vol_val.setObjectName("load_vol_val")
         self.horizontalLayout_9.addWidget(self.load_vol_val)
-        self.load_vol_unit = QtWidgets.QComboBox(self.centralwidget)
+        self.load_vol_unit = QtWidgets.QLabel(self.centralwidget)
         self.load_vol_unit.setMaximumSize(QtCore.QSize(80, 16777215))
         self.load_vol_unit.setObjectName("load_vol_unit")
-        self.load_vol_unit.addItem("")
-        self.load_vol_unit.addItem("")
+        #self.load_vol_unit.addItem("")
+        #self.load_vol_unit.addItem("")
+        self.load_vol_unit.setText("ml")
         self.horizontalLayout_9.addWidget(self.load_vol_unit)
         self.verticalLayout_15.addLayout(self.horizontalLayout_9)
         self.load_flowpath = QtWidgets.QComboBox(self.centralwidget)
@@ -218,11 +228,12 @@ class Ui_Purification(object):
         self.wash_vol_val.setMaximumSize(QtCore.QSize(60, 16777215))
         self.wash_vol_val.setObjectName("wash_vol_val")
         self.horizontalLayout_10.addWidget(self.wash_vol_val)
-        self.wash_vol_unit = QtWidgets.QComboBox(self.centralwidget)
+        self.wash_vol_unit = QtWidgets.QLabel(self.centralwidget)
         self.wash_vol_unit.setMaximumSize(QtCore.QSize(80, 16777215))
         self.wash_vol_unit.setObjectName("wash_vol_unit")
-        self.wash_vol_unit.addItem("")
-        self.wash_vol_unit.addItem("")
+        #self.wash_vol_unit.addItem("")
+        #self.wash_vol_unit.addItem("")
+        self.wash_vol_unit.setText("ml")
         self.horizontalLayout_10.addWidget(self.wash_vol_unit)
         self.verticalLayout.addLayout(self.horizontalLayout_10)
         self.wash_flowpath = QtWidgets.QComboBox(self.centralwidget)
@@ -279,11 +290,12 @@ class Ui_Purification(object):
         self.elute_vol_val.setMaximumSize(QtCore.QSize(60, 16777215))
         self.elute_vol_val.setObjectName("elute_vol_val")
         self.horizontalLayout_11.addWidget(self.elute_vol_val)
-        self.elute_vol_unit = QtWidgets.QComboBox(self.centralwidget)
+        self.elute_vol_unit = QtWidgets.QLabel(self.centralwidget)
         self.elute_vol_unit.setMaximumSize(QtCore.QSize(80, 16777215))
         self.elute_vol_unit.setObjectName("elute_vol_unit")
-        self.elute_vol_unit.addItem("")
-        self.elute_vol_unit.addItem("")
+        self.elute_vol_unit.setText("ml")
+        #self.elute_vol_unit.addItem("")
+        #self.elute_vol_unit.addItem("")
         self.horizontalLayout_11.addWidget(self.elute_vol_unit)
         self.verticalLayout_17.addLayout(self.horizontalLayout_11)
         self.elute_flowpath = QtWidgets.QComboBox(self.centralwidget)
@@ -369,40 +381,36 @@ class Ui_Purification(object):
         self.num_col_combo_box.setItemText(2, _translate("Purification", "3"))
         self.num_col_combo_box.setItemText(3, _translate("Purification", "4"))
         self.col_vol_lbl.setText(_translate("Purification", "Column Volume: "))
-        self.colVol1_rdiobtn.setText(_translate("Purification", "1 ml"))
-        self.colVol5_rdiobtn.setText(_translate("Purification", "5 ml"))
+        self.col_vol_combo_box.setItemText(0, _translate("Purification", "1 ml"))
+        self.col_vol_combo_box.setItemText(1, _translate("Purification", "5 ml"))
         self.equilibrate_btn.setText(_translate("Purification", "  Equilibrate          "))
         self.equilibrate_vol_lbl.setText(_translate("Purification", "Volume:"))
         self.equilibriate_flowpath_lbl.setText(_translate("Purification", "Flow Path:"))
-        self.equil_vol_val.setText(_translate("Purification", "5"))
-        self.equil_vol_unit.setItemText(0, _translate("Purification", "ml"))
-        self.equil_vol_unit.setItemText(1, _translate("Purification", "CV"))
+        #self.equil_vol_unit.setItemText(0, _translate("Purification", "ml"))
+        #self.equil_vol_unit.setItemText(1, _translate("Purification", "CV"))
         self.equil_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.equil_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.load_btn.setText(_translate("Purification", "  Load    "))
         self.load_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_3.setText(_translate("Purification", "Flow Path:"))
-        self.load_vol_val.setText(_translate("Purification", "5"))
-        self.load_vol_unit.setItemText(0, _translate("Purification", "ml"))
-        self.load_vol_unit.setItemText(1, _translate("Purification", "CV"))
+        #self.load_vol_unit.setItemText(0, _translate("Purification", "ml"))
+        #self.load_vol_unit.setItemText(1, _translate("Purification", "CV"))
         self.load_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.load_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.load_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
         self.wash_btn.setText(_translate("Purification", "  Wash"))
         self.wash_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_4.setText(_translate("Purification", "Flow Path:"))
-        self.wash_vol_val.setText(_translate("Purification", "5"))
-        self.wash_vol_unit.setItemText(0, _translate("Purification", "ml"))
-        self.wash_vol_unit.setItemText(1, _translate("Purification", "CV"))
+        #self.wash_vol_unit.setItemText(0, _translate("Purification", "ml"))
+        #self.wash_vol_unit.setItemText(1, _translate("Purification", "CV"))
         self.wash_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.wash_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.wash_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
         self.elute_btn.setText(_translate("Purification", "  Elute"))
         self.elute_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_5.setText(_translate("Purification", "Flow Path:"))
-        self.elute_vol_val.setText(_translate("Purification", "5"))
-        self.elute_vol_unit.setItemText(0, _translate("Purification", "ml"))
-        self.elute_vol_unit.setItemText(1, _translate("Purification", "CV"))
+        #self.elute_vol_unit.setItemText(0, _translate("Purification", "ml"))
+        #self.elute_vol_unit.setItemText(1, _translate("Purification", "CV"))
         self.elute_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.elute_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.elute_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
@@ -424,6 +432,12 @@ class Ui_Purification(object):
         """
         Initializes all on click actions
         """
+        # widget: is_text
+        self.input_param = {self.num_col_combo_box: False, self.col_vol_combo_box: False,
+                            self.equil_vol_val: True, self.equil_flowpath: False, 
+                            self.load_vol_val: True, self.load_flowpath: False,
+                            self.wash_vol_val: True, self.wash_flowpath: False,
+                            self.elute_vol_val: True, self.elute_flowpath: False}
         self.pause_btn.setEnabled(False)
         self.hold_btn.setEnabled(False)
         self.skip_btn.setEnabled(False)
@@ -456,9 +470,9 @@ class Ui_Purification(object):
     def setDefaultParam(self):
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
         if self.gui_controller.default_param[1] == 1:
-            self.colVol1_rdiobtn.click()
+            self.col_vol_combo_box.setCurrentIndex(0)
         else:
-            self.colVol5_rdiobtn.click()
+            self.col_vol_combo_box.setCurrentIndex(1)
         self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
         self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
@@ -468,18 +482,37 @@ class Ui_Purification(object):
         """
         1. Pop up to confirm you want to start
         2. Enable all other action buttons
-        3. Update the json file with all the run cmds
-        4. Run the process
+        3. Disable everything that can be edited
+        4. Update the json file with all the run cmds
+        5. Run the process
         """
         self.areYouSureMsg('start')
         if self.is_sure:
+            self.is_sure = None
             self.pause_btn.setEnabled(True)
             self.hold_btn.setEnabled(True)
             self.skip_btn.setEnabled(True)
             self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)
             self.start_btn.setEnabled(False)
-
+            run_param = self._init_run_param()
+            self._set_param_enable(False)
+    
+    def _init_run_param(self):
+        run_param = []
+        for widget in self.input_param:
+            if self.input_param[widget]:
+                # Handle text inputs
+                run_param.append(int(widget.text()))
+            else:
+                # Handle combo box
+                run_param.append(widget.currentIndex()+1)
+        run_param[1] = 5 if run_param[1] == 2 else run_param[1]
+        return run_param
+    
+    def _set_param_enable(self, state):
+        for widget in self.input_param:
+            widget.setEnabled(state)
     
     def onClickPause(self):
         pass
