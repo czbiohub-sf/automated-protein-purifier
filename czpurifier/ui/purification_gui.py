@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
-
+from os import chdir, path
 
 class Ui_Purification(object):
     def __init__(self, Purification, gui_controller):
@@ -323,7 +323,7 @@ class Ui_Purification(object):
         self.progress_model_placeholder = QtWidgets.QTextBrowser(self.centralwidget)
         self.progress_model_placeholder.setObjectName("progress_model_placeholder")
         self.verticalLayout_7.addWidget(self.progress_model_placeholder)
-        self.current_step_log_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.current_step_log_lbl = QtWidgets.QTextEdit(self.centralwidget)
         self.current_step_log_lbl.setObjectName("current_step_log_lbl")
         self.verticalLayout_7.addWidget(self.current_step_log_lbl)
         self.estimated_time_remaining_lbl = QtWidgets.QLabel(self.centralwidget)
@@ -419,7 +419,7 @@ class Ui_Purification(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">&lt;Progress Model&gt;</p></body></html>"))
-        self.current_step_log_lbl.setText(_translate("Purification", "Current Step: <this is the current step>"))
+        #self.current_step_log_lbl.setText(_translate("Purification", "Current Step: <this is the current step>"))
         self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time Remaining: <..> min(s)"))
         self.start_btn.setText(_translate("Purification", "Start"))
         self.pause_btn.setText(_translate("Purification", "Pause"))
@@ -455,6 +455,8 @@ class Ui_Purification(object):
         self.skip_btn.clicked.connect(self.onClickSkip)
         self.stop_btn.clicked.connect(self.onClickStop)
 
+        self.display_log()
+
     def onClickFlowPath(self, step_index):
         curIndex = self.flowPathComboBox[step_index].currentIndex()
         if curIndex == 2:
@@ -488,9 +490,11 @@ class Ui_Purification(object):
         if self.is_sure:
             self.is_sure = None
             self._set_actionbtn_enable(True, False)
-            self.close_btn.setEnabled(False)
+             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             self.gui_controller.run_purification_script(self._init_run_param())
+        else:
+            self.current_step_log_lbl.verticalScrollBar().setValue(self.current_step_log_lbl.verticalScrollBar().maximum())
     
     def _init_run_param(self):
         """
@@ -523,7 +527,7 @@ class Ui_Purification(object):
         self.hold_btn.setEnabled(halt_state)
         self.skip_btn.setEnabled(halt_state)
         self.stop_btn.setEnabled(halt_state)
-
+       
         self.start_btn.setEnabled(start_state)
     
     def _reset_pbar(self):
@@ -536,13 +540,30 @@ class Ui_Purification(object):
         self.elute_pbar.setValue(0)
 
     def onClickPause(self):
-        pass
+        self._set_actionbtn_enable(False, True)
+        self.stop_btn.setEnabled(True)
+
     def onClickHold(self):
-        pass
+        self.areYouSureMsg('hold')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.stop_btn.setEnabled(True)
+
     def onClickSkip(self):
-        pass
+        self.areYouSureMsg('skip to next step')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.stop_btn.setEnabled(True)
+
     def onClickStop(self):
-        pass
+        self.areYouSureMsg('stop')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.close_btn.setEnabled(True)
+            self._set_param_enable(True)
     
     def areYouSureMsg(self, action):
         msg = QtWidgets.QMessageBox()
@@ -554,3 +575,8 @@ class Ui_Purification(object):
     
     def msgbtn(self, i):
         self.is_sure = True if i.text() == 'OK' else False
+
+    def display_log(self):
+        chdir(path.dirname(path.realpath(__file__)))
+        with open('purifier.log', 'r') as f:
+            self.current_step_log_lbl.setText(f.read())
