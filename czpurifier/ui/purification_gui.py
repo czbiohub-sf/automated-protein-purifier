@@ -636,6 +636,7 @@ class Ui_Purification(object):
         self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
         self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
     
+<<<<<<< HEAD
     def purificationComplete(self, signalNumber, frame):
         """Handler for SIGUSR2. Prepares UI for another purification protocol"""
         self._set_actionbtn_enable(False, True)
@@ -668,6 +669,23 @@ class Ui_Purification(object):
                     self.col_vol_combo_box.setEnabled(False)
             else:
                 flow_path_combo.setCurrentIndex(0)
+=======
+    def onClickStart(self):
+        """
+        1. Pop up to confirm you want to start
+        2. Enable all other action buttons
+        3. Disable everything that can be edited
+        4. Update the json file with all the run cmds
+        5. Run the process
+        """
+        self.areYouSureMsg('start')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(True, False)
+            self.close_btn.setEnabled(False)
+            self._set_param_enable(False)
+            self.gui_controller.run_purification_script(self._init_run_param())
+>>>>>>> Add pause functionality when the pumps are running
         else:
             step_vol.setEnabled(True)
             self.col_vol_combo_box.setEnabled(True)
@@ -728,7 +746,25 @@ class Ui_Purification(object):
         self.wash_pbar.setValue(0)
         self.elute_pbar.setValue(0)
 
+<<<<<<< HEAD
     ## Action Buttons Event Handlers ##
+=======
+    def onClickPause(self):
+        """
+        Enables Start button to resume
+        Calls pause_clicked that sends a pause signal to 
+        the process running the purification
+        """
+        self.areYouSureMsg('pause')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.stop_btn.setEnabled(True)
+            self.gui_controller.pause_clicked()
+            self.start_btn.disconnect()
+            self.start_btn.setText('Resume')
+            self.start_btn.clicked.connect(self.onClickResume)
+>>>>>>> Add pause functionality when the pumps are running
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -801,8 +837,24 @@ class Ui_Purification(object):
             self.start_btn.setText('Start')
             self.start_btn.clicked.connect(self.onClickStart)
     
+    def onClickResume(self):
+        """
+        Handles if resume is clicked after paused
+        Sends a signal to the process running purification
+        to resume the protocol
+        """
+        self._set_actionbtn_enable(True, False)
+        self.gui_controller.resume_pause_clicked()
+        
+    
     def areYouSureMsg(self, action):
+<<<<<<< HEAD
         """Confirms whether or not the user meant to click an action button"""
+=======
+        """
+        Confirms whether or not the user meant to click an action button
+        """
+>>>>>>> Add pause functionality when the pumps are running
         msg = QtWidgets.QMessageBox()
         msg.setText('Are you sure you want to {}'.format(action))
         msg.setIcon(QtWidgets.QMessageBox.Question)
@@ -811,7 +863,11 @@ class Ui_Purification(object):
         msg.exec()
     
     def msgbtn(self, i):
+<<<<<<< HEAD
         """Returns the result from the are you sure pop up"""
+=======
+        """ Returns the result from the are you sure pop up"""
+>>>>>>> Add pause functionality when the pumps are running
         self.is_sure = True if i.text() == 'OK' else False
 
     ## Timer Related Events ##
