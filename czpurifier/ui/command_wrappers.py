@@ -1,5 +1,7 @@
 from time import sleep
 from enum import Enum, auto
+from signal import signal, SIGQUIT, SIGSTOP
+from os import kill, getpid
 from czpurifier.middleware import ControllerInterface
 
 
@@ -10,6 +12,11 @@ class UICommands():
         self.ci = ControllerInterface(timeout)
         self.pumps = 0
         self.alias = ''
+
+        # Assign signals and handlers
+        self._pause_flag = False
+        self._pumps_are_paused = False
+        signal(SIGQUIT, self._raisePauseFlag)
 
     def __del__(self):
         if self.alias:
@@ -143,9 +150,39 @@ class UICommands():
     #   PUMPS   #
     #############
     def pump(self, col_vol: float):
-        """Run pumps for the specified column volumes."""
+        """
+        Run pumps for the specified column volumes.
+        Check for the pause flag before and after pumping is started
+        If the pause flag is up, the script it suspended in the location,
+        the pumps are closed, till resume signal is recieved
+        """
+        if self._pause_flag:
+            self._pausePump()
         for pump in range(self.pumps):
             self.ci.startPumping(pump)
-        sleep(col_vol * 60)
-        #sleep(2) (Used for simulator)
+        for _ in range(col_vol * 60):
+            if self._pause_flag:
+                self.ci.stopPumping()
+                self._pumps_are_paused = True
+                self._pausePump()
+            if self._pumps_are_paused:
+                self._pumps_are_paused = False
+                for pump in range(self.pumps):
+                    self.ci.startPumping(pump)
+            sleep(1)
         self.ci.stopPumping()
+
+    ####################
+    # SIGNAL HANDLERS #
+    ###################
+    def _raisePauseFlag(self, signalNumber, frame):
+        """Raise pause flag if SIGQUIT recieved"""
+        self._pause_flag = True
+        return
+    
+    def _pausePump(self):
+        """Suspend script at location if pause flag is up"""
+        self._pause_flag = False
+        kill(getpid(), SIGSTOP)
+        
+     

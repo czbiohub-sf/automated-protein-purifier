@@ -490,7 +490,7 @@ class Ui_Purification(object):
         if self.is_sure:
             self.is_sure = None
             self._set_actionbtn_enable(True, False)
-             self.close_btn.setEnabled(False)
+            self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             self.gui_controller.run_purification_script(self._init_run_param())
         else:
@@ -540,8 +540,20 @@ class Ui_Purification(object):
         self.elute_pbar.setValue(0)
 
     def onClickPause(self):
-        self._set_actionbtn_enable(False, True)
-        self.stop_btn.setEnabled(True)
+        """
+        Enables Start button to resume
+        Calls pause_clicked that sends a pause signal to 
+        the process running the purification
+        """
+        self.areYouSureMsg('pause')
+        if self.is_sure:
+            self.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.stop_btn.setEnabled(True)
+            self.gui_controller.pause_clicked()
+            self.start_btn.disconnect()
+            self.start_btn.setText('Resume')
+            self.start_btn.clicked.connect(self.onClickResume)
 
     def onClickHold(self):
         self.areYouSureMsg('hold')
@@ -565,7 +577,20 @@ class Ui_Purification(object):
             self.close_btn.setEnabled(True)
             self._set_param_enable(True)
     
+    def onClickResume(self):
+        """
+        Handles if resume is clicked after paused
+        Sends a signal to the process running purification
+        to resume the protocol
+        """
+        self._set_actionbtn_enable(True, False)
+        self.gui_controller.resume_pause_clicked()
+        
+    
     def areYouSureMsg(self, action):
+        """
+        Confirms whether or not the user meant to click an action button
+        """
         msg = QtWidgets.QMessageBox()
         msg.setText('Are you sure you want to {}'.format(action))
         msg.setIcon(QtWidgets.QMessageBox.Question)
@@ -574,6 +599,7 @@ class Ui_Purification(object):
         msg.exec()
     
     def msgbtn(self, i):
+        """ Returns the result from the are you sure pop up"""
         self.is_sure = True if i.text() == 'OK' else False
 
     def display_log(self):

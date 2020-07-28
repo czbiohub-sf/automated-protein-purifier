@@ -4,7 +4,8 @@ from logging import NullHandler
 import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
-from os import chdir, path
+from os import chdir, path, kill
+from signal import signal, SIGQUIT, SIGCONT
 from json import load
 from run_purification import RunPurification
 
@@ -15,6 +16,7 @@ class GUI_Controller:
     def __init__(self):
         self.device_process = None
         self.controller_ip = None
+        self.controller_interface_PID = None
         chdir(path.dirname(path.realpath(__file__)))
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
@@ -61,6 +63,15 @@ class GUI_Controller:
     def run_purification_script(self, parameters):
         ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip,))
         ctrl_proc.start()
+        self.controller_interface_PID = ctrl_proc.pid
+
+    def pause_clicked(self):
+        """Sends SIGQUIT signal to raise pause flag if pause is clicked"""
+        kill(self.controller_interface_PID, SIGQUIT)
+    
+    def resume_pause_clicked(self):
+        """Sends SIGCONT signal to resume from pause if resume is clicked"""
+        kill(self.controller_interface_PID, SIGCONT)
 
 if __name__ == "__main__":
     t = GUI_Controller()
