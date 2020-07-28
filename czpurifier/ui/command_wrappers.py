@@ -1,10 +1,6 @@
 from time import sleep
 from enum import Enum, auto
-<<<<<<< HEAD
 from signal import signal, SIGQUIT, SIGSTOP, SIGUSR1, SIGUSR2, SIGTERM, getsignal
-=======
-from signal import signal, SIGQUIT, SIGSTOP
->>>>>>> Add pause functionality when the pumps are running
 from os import kill, getpid
 from czpurifier.middleware import ControllerInterface
 import logging
@@ -24,7 +20,6 @@ class UICommands():
         # Assign signals and handlers
         self._pause_flag = False
         self._pumps_are_paused = False
-<<<<<<< HEAD
         self._hold_flag = False
         self._skip_flag = False
         self._SIGTERM_default = getsignal(SIGTERM)
@@ -32,9 +27,6 @@ class UICommands():
         signal(SIGUSR1, self._raiseHoldFlag)
         signal(SIGUSR2, self._raiseSkipFlag)
         signal(SIGTERM, self._softStop)
-=======
-        signal(SIGQUIT, self._raisePauseFlag)
->>>>>>> Add pause functionality when the pumps are running
 
     def __del__(self):
         if self.alias:
@@ -172,7 +164,6 @@ class UICommands():
     def pump(self, col_vol: float):
         """
         Run pumps for the specified column volumes.
-<<<<<<< HEAD
         - Check for the pause flag before and after pumping is started
         If the pause flag is up, the script it suspended in the location,
         the pumps are closed, till resume signal is recieved
@@ -202,22 +193,6 @@ class UICommands():
                 return True
             if self._pumps_are_paused:
                 logging.info("Restarting pumps")
-=======
-        Check for the pause flag before and after pumping is started
-        If the pause flag is up, the script it suspended in the location,
-        the pumps are closed, till resume signal is recieved
-        """
-        if self._pause_flag:
-            self._pausePump()
-        for pump in range(self.pumps):
-            self.ci.startPumping(pump)
-        for _ in range(col_vol * 60):
-            if self._pause_flag:
-                self.ci.stopPumping()
-                self._pumps_are_paused = True
-                self._pausePump()
-            if self._pumps_are_paused:
->>>>>>> Add pause functionality when the pumps are running
                 self._pumps_are_paused = False
                 for pump in range(self.pumps):
                     self.ci.startPumping(pump)
@@ -268,9 +243,16 @@ class UICommands():
         self._pause_flag = True
         return
     
-    def _pausePump(self):
-        """Suspend script at location if pause flag is up"""
-        self._pause_flag = False
+    def _raiseHoldFlag(self, signalNumber, frame):
+        """Raise hold flag if SIGUSR1 recieved"""
+        self._hold_flag = True
+
+    def _remainInPlace(self, is_pump):
+        """Suspend script at location if pause/hold flag is up"""
+        if is_pump:
+            self._pause_flag = False
+        else:
+            self._hold_flag = False
         kill(getpid(), SIGSTOP)
         
      

@@ -4,13 +4,8 @@ from logging import NullHandler
 import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
-<<<<<<< HEAD
 from os import chdir, path, kill, getpid
 from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
-=======
-from os import chdir, path, kill
-from signal import signal, SIGQUIT, SIGCONT
->>>>>>> Add pause functionality when the pumps are running
 from json import load
 from run_purification import RunPurification
 
@@ -25,10 +20,7 @@ class GUI_Controller:
         self.connecting_to_sim = False
         self.controller_ip = None
         self.controller_interface_PID = None
-<<<<<<< HEAD
         self.ctrl_proc = None
-=======
->>>>>>> Add pause functionality when the pumps are running
         chdir(path.dirname(path.realpath(__file__)))
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
@@ -89,7 +81,6 @@ class GUI_Controller:
         """Sends SIGUSR1 signal to raise hold flag if hold is clicked"""
         kill(self.controller_interface_PID, SIGUSR1)
     
-<<<<<<< HEAD
     def resume_clicked(self):
         """Sends SIGCONT signal to resume from pause/hold if resume is clicked"""
         kill(self.controller_interface_PID, SIGCONT)
@@ -111,20 +102,6 @@ class GUI_Controller:
         if self.connecting_to_sim:
             kill(self.device_process.pid, SIGTERM)
             self.device_process.join()
-=======
-    def run_purification_script(self, parameters):
-        ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip,))
-        ctrl_proc.start()
-        self.controller_interface_PID = ctrl_proc.pid
-
-    def pause_clicked(self):
-        """Sends SIGQUIT signal to raise pause flag if pause is clicked"""
-        kill(self.controller_interface_PID, SIGQUIT)
-    
-    def resume_pause_clicked(self):
-        """Sends SIGCONT signal to resume from pause if resume is clicked"""
-        kill(self.controller_interface_PID, SIGCONT)
->>>>>>> Add pause functionality when the pumps are running
 
 if __name__ == "__main__":
     t = GUI_Controller()
