@@ -450,8 +450,8 @@ class Ui_Purification(object):
         self.close_btn.clicked.connect(self.onClickClose)
 
         self.start_btn.clicked.connect(self.onClickStart)
-        self.pause_btn.clicked.connect(self.onClickPause)
-        self.hold_btn.clicked.connect(self.onClickHold)
+        self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
+        self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
         self.skip_btn.clicked.connect(self.onClickSkip)
         self.stop_btn.clicked.connect(self.onClickStop)
 
@@ -539,28 +539,25 @@ class Ui_Purification(object):
         self.wash_pbar.setValue(0)
         self.elute_pbar.setValue(0)
 
-    def onClickPause(self):
+    def onClickPauseHold(self, is_pause):
         """
         Enables Start button to resume
-        Calls pause_clicked that sends a pause signal to 
+        Calls pause_clicked/hold that sends a pause/hold signal to 
         the process running the purification
         """
-        self.areYouSureMsg('pause')
+        msg = 'pause' if is_pause else 'hold'
+        self.areYouSureMsg(msg)
         if self.is_sure:
             self.is_sure = None
             self._set_actionbtn_enable(False, True)
             self.stop_btn.setEnabled(True)
-            self.gui_controller.pause_clicked()
+            if is_pause:
+                self.gui_controller.pause_clicked()
+            else:
+                self.gui_controller.hold_clicked()
             self.start_btn.disconnect()
             self.start_btn.setText('Resume')
             self.start_btn.clicked.connect(self.onClickResume)
-
-    def onClickHold(self):
-        self.areYouSureMsg('hold')
-        if self.is_sure:
-            self.is_sure = None
-            self._set_actionbtn_enable(False, True)
-            self.stop_btn.setEnabled(True)
 
     def onClickSkip(self):
         self.areYouSureMsg('skip to next step')

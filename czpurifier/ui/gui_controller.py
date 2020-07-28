@@ -5,7 +5,7 @@ import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
 from os import chdir, path, kill
-from signal import signal, SIGQUIT, SIGCONT
+from signal import signal, SIGQUIT, SIGCONT, SIGUSR1
 from json import load
 from run_purification import RunPurification
 
@@ -69,8 +69,12 @@ class GUI_Controller:
         """Sends SIGQUIT signal to raise pause flag if pause is clicked"""
         kill(self.controller_interface_PID, SIGQUIT)
     
+    def hold_clicked(self):
+        """Sends SIGUSR1 signal to raise hold flag if hold is clicked"""
+        kill(self.controller_interface_PID, SIGUSR1)
+    
     def resume_pause_clicked(self):
-        """Sends SIGCONT signal to resume from pause if resume is clicked"""
+        """Sends SIGCONT signal to resume from pause/hold if resume is clicked"""
         kill(self.controller_interface_PID, SIGCONT)
 
 if __name__ == "__main__":
