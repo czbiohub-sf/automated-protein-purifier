@@ -5,7 +5,7 @@ import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
 from os import chdir, path, kill
-from signal import signal, SIGQUIT, SIGCONT, SIGUSR1
+from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM
 from json import load
 from run_purification import RunPurification
 
@@ -17,6 +17,7 @@ class GUI_Controller:
         self.device_process = None
         self.controller_ip = None
         self.controller_interface_PID = None
+        self.ctrl_proc = None
         chdir(path.dirname(path.realpath(__file__)))
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
@@ -61,9 +62,9 @@ class GUI_Controller:
             self.device_process.join()
     
     def run_purification_script(self, parameters):
-        ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip,))
-        ctrl_proc.start()
-        self.controller_interface_PID = ctrl_proc.pid
+        self.ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip,))
+        self.ctrl_proc.start()
+        self.controller_interface_PID = self.ctrl_proc.pid
 
     def pause_clicked(self):
         """Sends SIGQUIT signal to raise pause flag if pause is clicked"""
@@ -73,9 +74,15 @@ class GUI_Controller:
         """Sends SIGUSR1 signal to raise hold flag if hold is clicked"""
         kill(self.controller_interface_PID, SIGUSR1)
     
-    def resume_pause_clicked(self):
+    def resume_clicked(self):
         """Sends SIGCONT signal to resume from pause/hold if resume is clicked"""
         kill(self.controller_interface_PID, SIGCONT)
+
+    def stop_clicked(self):
+        """Sends SIGTERM signal to disconnect controller interface"""
+        self._needs_connection = False
+        kill(self.controller_interface_PID, SIGTERM)
+        self.ctrl_proc.join()
 
 if __name__ == "__main__":
     t = GUI_Controller()

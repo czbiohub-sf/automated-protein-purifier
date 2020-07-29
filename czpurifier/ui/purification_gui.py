@@ -559,6 +559,15 @@ class Ui_Purification(object):
             self.start_btn.setText('Resume')
             self.start_btn.clicked.connect(self.onClickResume)
 
+    def onClickResume(self):
+        """
+        Handles if resume is clicked after paused
+        Sends a signal to the process running purification
+        to resume the protocol
+        """
+        self._set_actionbtn_enable(True, False)
+        self.gui_controller.resume_clicked()
+
     def onClickSkip(self):
         self.areYouSureMsg('skip to next step')
         if self.is_sure:
@@ -570,19 +579,13 @@ class Ui_Purification(object):
         self.areYouSureMsg('stop')
         if self.is_sure:
             self.is_sure = None
+            self.gui_controller.stop_clicked()
             self._set_actionbtn_enable(False, True)
             self.close_btn.setEnabled(True)
             self._set_param_enable(True)
-    
-    def onClickResume(self):
-        """
-        Handles if resume is clicked after paused
-        Sends a signal to the process running purification
-        to resume the protocol
-        """
-        self._set_actionbtn_enable(True, False)
-        self.gui_controller.resume_pause_clicked()
-        
+            self.start_btn.disconnect()
+            self.start_btn.setText('Start')
+            self.start_btn.clicked.connect(self.onClickStart)
     
     def areYouSureMsg(self, action):
         """

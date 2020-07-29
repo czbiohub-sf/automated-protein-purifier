@@ -1,6 +1,6 @@
 from time import sleep
 from enum import Enum, auto
-from signal import signal, SIGQUIT, SIGSTOP, SIGUSR1
+from signal import signal, SIGQUIT, SIGSTOP, SIGUSR1, SIGTERM, getsignal
 from os import kill, getpid
 from czpurifier.middleware import ControllerInterface
 import logging
@@ -21,8 +21,10 @@ class UICommands():
         self._pause_flag = False
         self._pumps_are_paused = False
         self._hold_flag = False
+        self._SIGTERM_default = getsignal(SIGTERM)
         signal(SIGQUIT, self._raisePauseFlag)
         signal(SIGUSR1, self._raiseHoldFlag)
+        signal(SIGTERM, self._softStop)
 
     def __del__(self):
         if self.alias:
@@ -205,5 +207,11 @@ class UICommands():
         else:
             self._hold_flag = False
         kill(getpid(), SIGSTOP)
+
+    def _softStop(self, signalNumber, frame):
+        """Safely disconnects the interface when stop is called"""
+        self.disconnect()
+        signal(SIGTERM, self._SIGTERM_default)
+        kill(getpid(), SIGTERM)
         
      
