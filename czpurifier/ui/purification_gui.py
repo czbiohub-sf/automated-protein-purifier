@@ -1,18 +1,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from os import chdir, path
+from signal import signal, SIGUSR2
 
 class Ui_Purification(object):
     def __init__(self, Purification, gui_controller):
         """
-        Contains the initialization of the purification tab
+        Contains the initialization and functionality of the purification tab
         """
         self.flowPathComboBox = []
+        signal(SIGUSR2, self.purificationComplete)
         self.gui_controller = gui_controller
         self.is_sure = None
         self.initUI(Purification)
 
     def initUI(self, Purification):
+        """Initializes the purification window"""
         self.Purification = Purification
         self.Purification.setObjectName("Purification")
         self.Purification.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -45,16 +48,6 @@ class Ui_Purification(object):
         self.col_vol_lbl.setObjectName("col_vol_lbl")
         self.horizontalLayout_13.addWidget(self.col_vol_lbl)
         self.verticalLayout_8 = QtWidgets.QVBoxLayout()
-        """
-        self.verticalLayout_8.setObjectName("verticalLayout_8")
-        self.colVol1_rdiobtn = QtWidgets.QRadioButton(self.centralwidget)
-        self.colVol1_rdiobtn.setObjectName("colVol1_rdiobtn")
-        self.verticalLayout_8.addWidget(self.colVol1_rdiobtn)
-        self.colVol5_rdiobtn = QtWidgets.QRadioButton(self.centralwidget)
-        self.colVol5_rdiobtn.setObjectName("colVol5_rdiobtn")
-        self.verticalLayout_8.addWidget(self.colVol5_rdiobtn)
-        self.horizontalLayout_13.addLayout(self.verticalLayout_8)
-        """
         self.col_vol_combo_box = QtWidgets.QComboBox(self.centralwidget)
         self.col_vol_combo_box.setObjectName("num_col_combo_box")
         self.col_vol_combo_box.addItem("")
@@ -373,6 +366,7 @@ class Ui_Purification(object):
         QtCore.QMetaObject.connectSlotsByName(self.Purification)
 
     def retranslateUi(self):
+        """Initializes the text and details for all the widgets"""
         _translate = QtCore.QCoreApplication.translate
         self.Purification.setWindowTitle(_translate("Purification", "Purification"))
         self.num_col_lbl.setText(_translate("Purification", "Number of Columns: "))
@@ -458,6 +452,7 @@ class Ui_Purification(object):
         self.display_log()
 
     def onClickFlowPath(self, step_index):
+        """If the selected flow path is fraction column, the new window is opened"""
         curIndex = self.flowPathComboBox[step_index].currentIndex()
         if curIndex == 2:
             self.frac_wdw = QtWidgets.QMainWindow()
@@ -465,9 +460,11 @@ class Ui_Purification(object):
             self.frac_wdw.show()
 
     def onClickClose(self):
+        """Closes the purification window when close is clicked"""
         self.Purification.close()
     
     def setDefaultParam(self):
+        """Sets the default input parameters that are on the json file"""
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
         if self.gui_controller.default_param[1] == 1:
             self.col_vol_combo_box.setCurrentIndex(0)
@@ -569,6 +566,7 @@ class Ui_Purification(object):
         self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
+        """Not implemented yet"""
         self.areYouSureMsg('skip to next step')
         if self.is_sure:
             self.is_sure = None
@@ -576,6 +574,7 @@ class Ui_Purification(object):
             self.stop_btn.setEnabled(True)
 
     def onClickStop(self):
+        """Signals the script that stop was clicked, to home the device"""
         self.areYouSureMsg('stop')
         if self.is_sure:
             self.is_sure = None
@@ -588,9 +587,7 @@ class Ui_Purification(object):
             self.start_btn.clicked.connect(self.onClickStart)
     
     def areYouSureMsg(self, action):
-        """
-        Confirms whether or not the user meant to click an action button
-        """
+        """Confirms whether or not the user meant to click an action button"""
         msg = QtWidgets.QMessageBox()
         msg.setText('Are you sure you want to {}'.format(action))
         msg.setIcon(QtWidgets.QMessageBox.Question)
@@ -603,6 +600,16 @@ class Ui_Purification(object):
         self.is_sure = True if i.text() == 'OK' else False
 
     def display_log(self):
+        """Temporary"""
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
             self.current_step_log_lbl.setText(f.read())
+
+    def purificationComplete(self, signalNumber, frame):
+        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
+        self._set_actionbtn_enable(False, True)
+        self.close_btn.setEnabled(True)
+        self._set_param_enable(True)
+        self.start_btn.disconnect()
+        self.start_btn.setText('Start')
+        self.start_btn.clicked.connect(self.onClickStart)

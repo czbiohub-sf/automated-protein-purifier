@@ -178,6 +178,10 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    # Timeout the QEvent to allow for signals to be caught
+    timer = QtCore.QTimer()
+    timer.start(1000)
+    timer.timeout.connect(lambda : None)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow(MainWindow)
     MainWindow.show()

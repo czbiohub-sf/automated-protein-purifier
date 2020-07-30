@@ -4,8 +4,8 @@ from logging import NullHandler
 import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
-from os import chdir, path, kill
-from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM
+from os import chdir, path, kill, getpid
+from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
 
@@ -14,6 +14,7 @@ log.addHandler(NullHandler())
 
 class GUI_Controller:
     def __init__(self):
+        print('CONTROLLER PID:',getpid())
         self.device_process = None
         self.controller_ip = None
         self.controller_interface_PID = None
@@ -62,7 +63,7 @@ class GUI_Controller:
             self.device_process.join()
     
     def run_purification_script(self, parameters):
-        self.ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip,))
+        self.ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip, getpid(),))
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
 

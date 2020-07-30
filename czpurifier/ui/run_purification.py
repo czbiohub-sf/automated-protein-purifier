@@ -1,9 +1,11 @@
 import logging
 from time import sleep
+from signal import SIGUSR2
+from os import kill
 from command_wrappers import UICommands
 
 class RunPurification():
-    def __init__(self, input_param, ip):
+    def __init__(self, input_param, ip, gui_pid):
         logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
         self.input_param = input_param
@@ -19,6 +21,8 @@ class RunPurification():
         #self._run_process('LOAD', [self.input_param[4], self.input_param[5]])
         #self._run_process('WASH', [self.input_param[6], self.input_param[7]])
         #self._run_process('ELUTE', [self.input_param[8], self.input_param[9]])
+
+        kill(gui_pid, SIGUSR2)
 
     def _purge_bubbles(self):
         # Purge bubbles from lines
