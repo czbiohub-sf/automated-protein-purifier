@@ -5,6 +5,8 @@ from time import sleep
 from czpurifier.middleware import DeviceInterface
 from czpurifier.hardware import HardwareController 
 from logging import NullHandler
+from signal import signal, SIGUSR1
+from os import kill, getpid
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -12,15 +14,16 @@ log.addHandler(NullHandler())
 class SimulatorInterface(DeviceInterface):
     """Device interface of protein purifier.
     """
-    def autorun(self):
-        """Loop > Wait for data and execute. Signal if device is available."""
-        # Send signal for 5s that the fake device is up
-        # Controller Interface checks to make sure that the device is running
+    def __init__(self, ip_address='127.0.0.1', timeout_recv=1):
+        super().__init__(ip_address, timeout_recv)
+        signal(SIGUSR1, self._fake_socket_availability)
+    
+    def _fake_socket_availability(self, signalNumber, frame):
+        """Fake device is up for the controller interface availability check"""
         for _ in range(5):
             sleep(1)
-            self.socket_availability.send_pyobj('Transmitting')
-        super().autorun()
-    
+            self.socket_availability.send_pyobj('')
+
     def loadConfig(self, config_mode: str):
         """Update command list with settings defined in config file.
 

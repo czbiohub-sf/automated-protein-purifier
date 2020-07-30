@@ -14,8 +14,10 @@ log.addHandler(NullHandler())
 
 class GUI_Controller:
     def __init__(self):
-        print('CONTROLLER PID:',getpid())
+        """Controls the communication between device and controller interface
+        and the GUI"""
         self.device_process = None
+        self.connecting_to_sim = False
         self.controller_ip = None
         self.controller_interface_PID = None
         self.ctrl_proc = None
@@ -47,6 +49,7 @@ class GUI_Controller:
         di.autorun()
     
     def connect_to_simulator(self):
+        self.connecting_to_sim = True
         self.device_process = Process(target=self._connect_simulator)
         self.device_process.start()
         self.controller_ip = '127.0.0.1'
@@ -63,6 +66,8 @@ class GUI_Controller:
             self.device_process.join()
     
     def run_purification_script(self, parameters):
+        if self.connecting_to_sim:
+            kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip, getpid(),))
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid

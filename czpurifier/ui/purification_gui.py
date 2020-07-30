@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from os import chdir, path
 from signal import signal, SIGUSR2
+from time import sleep
 
 class Ui_Purification(object):
     def __init__(self, Purification, gui_controller):
