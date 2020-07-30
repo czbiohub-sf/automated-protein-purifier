@@ -57,13 +57,6 @@ class GUI_Controller:
     def _connect_simulator(self):
         si = SimulatorInterface()
         si.autorun()
-
-    def close_connection(self):
-        if self.device_process is not None:
-            # Close the process after the connection is terminated
-            # Temporary -> send cmd from controller interface to disconnect
-            # Throws zmq error now as the connection is not closed properly
-            self.device_process.join()
     
     def run_purification_script(self, parameters):
         if self.connecting_to_sim:
@@ -89,6 +82,13 @@ class GUI_Controller:
         self._needs_connection = False
         kill(self.controller_interface_PID, SIGTERM)
         self.ctrl_proc.join()
+    
+    def close_device(self):
+        """Sends SIGTERM signal to disconnect simulator interface
+        TODO: what do we do when connected to device??"""
+        if self.connecting_to_sim:
+            kill(self.device_process.pid, SIGTERM)
+            self.device_process.join()
 
 if __name__ == "__main__":
     t = GUI_Controller()
