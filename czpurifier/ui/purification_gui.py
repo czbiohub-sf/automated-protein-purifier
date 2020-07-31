@@ -567,12 +567,11 @@ class Ui_Purification(object):
         self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
-        """Not implemented yet"""
+        """Stops pumping and goes to the next step"""
         self.areYouSureMsg('skip to next step')
         if self.is_sure:
             self.is_sure = None
-            self._set_actionbtn_enable(False, True)
-            self.stop_btn.setEnabled(True)
+            self.gui_controller.skip_clicked()
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""

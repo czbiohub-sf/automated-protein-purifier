@@ -76,6 +76,10 @@ class GUI_Controller:
     def resume_clicked(self):
         """Sends SIGCONT signal to resume from pause/hold if resume is clicked"""
         kill(self.controller_interface_PID, SIGCONT)
+    
+    def skip_clicked(self):
+        """Sends SIGUSR2 signal to raise skip flag if skip is clicked"""
+        kill(self.controller_interface_PID, SIGUSR2)
 
     def stop_clicked(self):
         """Sends SIGTERM signal to disconnect controller interface"""
@@ -85,7 +89,8 @@ class GUI_Controller:
     
     def close_device(self):
         """Sends SIGTERM signal to disconnect simulator interface
-        TODO: what do we do when connected to device??"""
+        TODO: what do we do when connected to device??
+        Signals do not work across different machines"""
         if self.connecting_to_sim:
             kill(self.device_process.pid, SIGTERM)
             self.device_process.join()
