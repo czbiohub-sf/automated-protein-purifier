@@ -241,14 +241,15 @@ class Ui_FractionColumn(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Fraction Column"))
-        self.label.setText(_translate("MainWindow", "Total Volume: {} ml:".format(self.total_vol)))
-        self.set_fraction_col_btn.setText(_translate("MainWindow", "Set"))
+        self.label.setText(_translate("MainWindow", "Total Volume: {} ml".format(self.total_vol)))
+        self.set_fraction_col_btn.setText(_translate("MainWindow", "Okay"))
 
     def _init_frac_col(self):
         """Groups together the flow through and fraction buttons for easy access"""
         self.flow_col = [self.flowth1_btn, self.flowth2_btn, self.flowth3_btn, self.flowth4_btn]
         self.frac_col = [self.frac1_btn, self.frac2_btn, self.frac3_btn, self.frac4_btn, self.frac5_btn,
                         self.frac6_btn, self.frac7_btn, self.frac8_btn, self.frac9_btn, self.frac10_btn]
+        self.set_fraction_col_btn.clicked.connect(self.onClickOkay)
 
     def select_frac_columns(self):
         """Preselects the fraction columns based on the total volume
@@ -268,3 +269,7 @@ class Ui_FractionColumn(object):
             check_state[i-1] = True
             fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
             i += 1
+        
+    def onClickOkay(self):
+        """Closes fraction column window when clicked Okay"""
+        self.MainWindow.close()
