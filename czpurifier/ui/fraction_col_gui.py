@@ -9,6 +9,8 @@ class Ui_FractionColumn(object):
         """
         self.total_vol = total_vol
         self.col_size = col_size
+        self.flow_col = []
+        self.frac_col = []
         self.frac_btn_stylesheet = '{}'.format("QPushButton#frac{0}_btn{{"
                                         "border-radius:17;"
                                         "background-color: {1};"
@@ -21,9 +23,9 @@ class Ui_FractionColumn(object):
                                         "}}")
         self.flow_clicked = [False]*4
         self.MainWindow = MainWindow
-        self.initUI()
+        self.initUI(self.MainWindow)
 
-    def initUI(self):
+    def initUI(self, MainWindow):
 
         MainWindow.setObjectName("Fraction Column")
         MainWindow.resize(800, 281)
@@ -67,7 +69,6 @@ class Ui_FractionColumn(object):
         self.frac1_btn.setStyleSheet(self.frac_btn_stylesheet.format('1', 'white'))
         self.frac1_btn.setText("")
         self.frac1_btn.setObjectName("frac1_btn")
-        self.frac1_btn.clicked.connect(lambda: self.onClickFracCol(True, '1', self.frac1_btn))
         self.horizontalLayout_2.addWidget(self.frac1_btn)
         self.frac2_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -79,7 +80,6 @@ class Ui_FractionColumn(object):
         self.frac2_btn.setStyleSheet(self.frac_btn_stylesheet.format('2', 'white'))
         self.frac2_btn.setText("")
         self.frac2_btn.setObjectName("frac2_btn")
-        self.frac2_btn.clicked.connect(lambda: self.onClickFracCol(True, '2', self.frac2_btn))
         self.horizontalLayout_2.addWidget(self.frac2_btn)
         self.frac3_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -91,7 +91,6 @@ class Ui_FractionColumn(object):
         self.frac3_btn.setStyleSheet(self.frac_btn_stylesheet.format('3','white'))
         self.frac3_btn.setText("")
         self.frac3_btn.setObjectName("frac3_btn")
-        self.frac3_btn.clicked.connect(lambda: self.onClickFracCol(True, '3', self.frac3_btn))
         self.horizontalLayout_2.addWidget(self.frac3_btn)
         self.frac4_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -103,7 +102,6 @@ class Ui_FractionColumn(object):
         self.frac4_btn.setStyleSheet(self.frac_btn_stylesheet.format('4','white'))
         self.frac4_btn.setText("")
         self.frac4_btn.setObjectName("frac4_btn")
-        self.frac4_btn.clicked.connect(lambda: self.onClickFracCol(True, '4', self.frac4_btn))
         self.horizontalLayout_2.addWidget(self.frac4_btn)
         self.frac5_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -115,7 +113,6 @@ class Ui_FractionColumn(object):
         self.frac5_btn.setStyleSheet(self.frac_btn_stylesheet.format('5','white'))
         self.frac5_btn.setText("")
         self.frac5_btn.setObjectName("frac5_btn")
-        self.frac5_btn.clicked.connect(lambda: self.onClickFracCol(True, '5', self.frac5_btn))
         self.horizontalLayout_2.addWidget(self.frac5_btn)
         self.frac6_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -127,7 +124,6 @@ class Ui_FractionColumn(object):
         self.frac6_btn.setStyleSheet(self.frac_btn_stylesheet.format('6','white'))
         self.frac6_btn.setText("")
         self.frac6_btn.setObjectName("frac6_btn")
-        self.frac6_btn.clicked.connect(lambda: self.onClickFracCol(True, '6', self.frac6_btn))
         self.horizontalLayout_2.addWidget(self.frac6_btn)
         self.frac7_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -139,7 +135,6 @@ class Ui_FractionColumn(object):
         self.frac7_btn.setStyleSheet(self.frac_btn_stylesheet.format('7','white'))
         self.frac7_btn.setText("")
         self.frac7_btn.setObjectName("frac7_btn")
-        self.frac7_btn.clicked.connect(lambda: self.onClickFracCol(True, '7', self.frac7_btn))
         self.horizontalLayout_2.addWidget(self.frac7_btn)
         self.frac8_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -151,7 +146,6 @@ class Ui_FractionColumn(object):
         self.frac8_btn.setStyleSheet(self.frac_btn_stylesheet.format('8','white'))
         self.frac8_btn.setText("")
         self.frac8_btn.setObjectName("frac8_btn")
-        self.frac8_btn.clicked.connect(lambda: self.onClickFracCol(True, '8', self.frac8_btn))
         self.horizontalLayout_2.addWidget(self.frac8_btn)
         self.frac9_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -163,7 +157,6 @@ class Ui_FractionColumn(object):
         self.frac9_btn.setStyleSheet(self.frac_btn_stylesheet.format('9','white'))
         self.frac9_btn.setText("")
         self.frac9_btn.setObjectName("frac9_btn")
-        self.frac9_btn.clicked.connect(lambda: self.onClickFracCol(True, '9', self.frac9_btn))
         self.horizontalLayout_2.addWidget(self.frac9_btn)
         self.frac10_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -174,7 +167,6 @@ class Ui_FractionColumn(object):
         self.frac10_btn.setMinimumSize(QtCore.QSize(34, 34))
         self.frac10_btn.setStyleSheet(self.frac_btn_stylesheet.format('10','white'))
         self.frac10_btn.setText("")
-        self.frac10_btn.clicked.connect(lambda: self.onClickFracCol(True, '10', self.frac10_btn))
         self.frac10_btn.setObjectName("frac10_btn")
         self.horizontalLayout_2.addWidget(self.frac10_btn)
         self.flowth1_btn = QtWidgets.QPushButton(self.centralwidget)
@@ -187,7 +179,6 @@ class Ui_FractionColumn(object):
         self.flowth1_btn.setStyleSheet(self.flow_btn_stylesheet.format('1','white'))
         self.flowth1_btn.setText("")
         self.flowth1_btn.setObjectName("flowth1_btn")
-        self.flowth1_btn.clicked.connect(lambda: self.onClickFracCol(False, '1', self.flowth1_btn))
         self.horizontalLayout_2.addWidget(self.flowth1_btn)
         self.flowth2_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -199,7 +190,6 @@ class Ui_FractionColumn(object):
         self.flowth2_btn.setStyleSheet(self.flow_btn_stylesheet.format('2','white'))
         self.flowth2_btn.setText("")
         self.flowth2_btn.setObjectName("flowth2_btn")
-        self.flowth2_btn.clicked.connect(lambda: self.onClickFracCol(False, '2', self.flowth2_btn))
         self.horizontalLayout_2.addWidget(self.flowth2_btn)
         self.flowth3_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -211,7 +201,6 @@ class Ui_FractionColumn(object):
         self.flowth3_btn.setStyleSheet(self.flow_btn_stylesheet.format('3','white'))
         self.flowth3_btn.setText("")
         self.flowth3_btn.setObjectName("flowth3_btn")
-        self.flowth3_btn.clicked.connect(lambda: self.onClickFracCol(False, '3', self.flowth3_btn))
         self.horizontalLayout_2.addWidget(self.flowth3_btn)
         self.flowth4_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -223,7 +212,6 @@ class Ui_FractionColumn(object):
         self.flowth4_btn.setStyleSheet(self.flow_btn_stylesheet.format('4','white'))
         self.flowth4_btn.setText("")
         self.flowth4_btn.setObjectName("flowth4_btn")
-        self.flowth4_btn.clicked.connect(lambda: self.onClickFracCol(False, '4', self.flowth4_btn))
         self.horizontalLayout_2.addWidget(self.flowth4_btn)
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
@@ -280,16 +268,3 @@ class Ui_FractionColumn(object):
             check_state[i-1] = True
             fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
             i += 1
-
-    def onClickFracCol(self, is_frac, num, btn):
-        """Allows user to click the desired columns to fraction into
-         Might be part of future implementation (needs checks to make sure selection is valid)"""
-        check_arr = self.frac_clicked if is_frac else self.flow_clicked
-        btn_stylesheet = self.frac_btn_stylesheet if is_frac else self.flow_btn_stylesheet
-        if check_arr[int(num)-1]:
-                color = 'white'
-                check_arr[int(num)-1] = False
-        else:   
-                color = 'red'
-                check_arr[int(num)-1] = True
-        btn.setStyleSheet(btn_stylesheet.format(num, color))
