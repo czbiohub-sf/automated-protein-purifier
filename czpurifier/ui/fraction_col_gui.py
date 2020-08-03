@@ -236,7 +236,6 @@ class Ui_FractionColumn(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
         self._init_frac_col()
-        self.select_frac_columns()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -253,7 +252,11 @@ class Ui_FractionColumn(object):
 
     def select_frac_columns(self):
         """Preselects the fraction columns based on the total volume
-        If column size is none it means flow through columns should be selected"""
+        If column size is none it means flow through columns should be selected
+        ----------
+        Return: [True, False, True, ...]
+        where each index represents a fraction column
+        """
         if self.col_size is None:
             vol_per = 50
             check_state = self.flow_clicked
@@ -269,7 +272,20 @@ class Ui_FractionColumn(object):
             check_state[i-1] = True
             fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
             i += 1
-        
+        return check_state
+
+    def correct_frac_col_design(self):
+        """Fix the distance between the buttons in the GUI window"""
+        self._cor_design(self.flow_col, self.flow_btn_stylesheet)
+        self._cor_design(self.frac_col, self.frac_btn_stylesheet)
+
+    def _cor_design(self, frac, stlsheet):
+        """Loop through all the buttons to fix the distance"""
+        i = 1 
+        for f in frac:
+            f.setStyleSheet(stlsheet.format(i, 'white'))
+            i += 1
+
     def onClickOkay(self):
         """Closes fraction column window when clicked Okay"""
         self.MainWindow.close()

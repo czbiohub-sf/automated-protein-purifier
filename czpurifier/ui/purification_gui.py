@@ -467,6 +467,8 @@ class Ui_Purification(object):
                 self.frac_wdw = QtWidgets.QMainWindow()
                 self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), col_size)
                 self.frac_wdw.show()
+                self.frac_ui.correct_frac_col_design()
+                frac_col_sel = self.frac_ui.select_frac_columns()
                 if is_elution:
                     self.col_vol_combo_box.setEnabled(False)
             else:
@@ -490,7 +492,6 @@ class Ui_Purification(object):
             msg.exec()
             return False
         return True
-
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
