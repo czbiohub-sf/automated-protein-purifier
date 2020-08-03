@@ -20,9 +20,10 @@ class Ui_FractionColumn(object):
                                         "background-color: {1};"
                                         "}}")
         self.flow_clicked = [False]*4
-        self.initUI(MainWindow)
+        self.MainWindow = MainWindow
+        self.initUI()
 
-    def initUI(self, MainWindow):
+    def initUI(self):
 
         MainWindow.setObjectName("Fraction Column")
         MainWindow.resize(800, 281)
@@ -265,13 +266,24 @@ class Ui_FractionColumn(object):
         """Preselects the fraction columns based on the total volume
         If column size is none it means flow through columns should be selected"""
         if self.col_size is None:
-            i = 1
-            while self.total_vol - (i*50) > -50:
-                self.flow_clicked[i-1] = True
-                self.flow_col[i-1].setStyleSheet(self.flow_btn_stylesheet.format(i, 'red'))
-                i += 1
+            vol_per = 50
+            check_state = self.flow_clicked
+            fractions = self.flow_col
+            btn_stylesheet= self.flow_btn_stylesheet
+        else:
+            vol_per = self.col_size
+            check_state = self.frac_clicked
+            fractions = self.frac_col
+            btn_stylesheet = self.frac_btn_stylesheet
+        i = 1
+        while self.total_vol - (i*vol_per) > -vol_per:
+            check_state[i-1] = True
+            fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
+            i += 1
 
     def onClickFracCol(self, is_frac, num, btn):
+        """Allows user to click the desired columns to fraction into
+         Might be part of future implementation (needs checks to make sure selection is valid)"""
         check_arr = self.frac_clicked if is_frac else self.flow_clicked
         btn_stylesheet = self.frac_btn_stylesheet if is_frac else self.flow_btn_stylesheet
         if check_arr[int(num)-1]:

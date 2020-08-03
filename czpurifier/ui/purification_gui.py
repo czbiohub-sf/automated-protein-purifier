@@ -458,33 +458,37 @@ class Ui_Purification(object):
             2. Display the fraction column window with the fractions selected"""
         curIndex = flow_path_combo.currentIndex()
         if curIndex == 2:
-            if self._okayFracVol(int(step_vol.text())):
-                self.is_sure = None
+            if is_elution:
+                col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+            else:
+                col_size = None
+            if self._okayFracVol(int(step_vol.text()), col_size):
                 step_vol.setEnabled(False)
                 self.frac_wdw = QtWidgets.QMainWindow()
-                if is_elution:
-                    self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), 1)
-                else:
-                    self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()))
+                self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), col_size)
                 self.frac_wdw.show()
+                if is_elution:
+                    self.col_vol_combo_box.setEnabled(False)
             else:
                 flow_path_combo.setCurrentIndex(0)
         else:
             step_vol.setEnabled(True)
+            if is_elution:
+                self.col_vol_combo_box.setEnabled(True)
 
-    def _okayFracVol(self, vol, is_elution = False):
-        """Checks that the frac volume does not exceed the total capacity"""
-        if is_elution:
-            print('Not implemented yet')
+    def _okayFracVol(self, vol, col_size):
+        """Checks that the frac volume input does not exceed the total capacity"""
+        if col_size is None:
+            max_vol = 200
         else:
-            # Each flow through can hold 50ml so max is 200ml
-            if vol > 200:
-                msg = QtWidgets.QMessageBox()
-                msg.setText('Total volume cannot exceed 200ml for fraction collector pathway')
-                msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msg.exec()
-                return False
+            max_vol = col_size*10
+        if vol > max_vol:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+            return False
         return True
 
 
