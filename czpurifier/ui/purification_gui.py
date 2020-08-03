@@ -9,7 +9,6 @@ class Ui_Purification(object):
         """
         Contains the initialization and functionality of the purification tab
         """
-        self.flowPathComboBox = []
         signal(SIGUSR2, self.purificationComplete)
         self.gui_controller = gui_controller
         self.is_sure = None
@@ -427,7 +426,6 @@ class Ui_Purification(object):
         """
         Initializes all on click actions
         """
-        # widget: is_text
         self.input_param = {self.num_col_combo_box: False, self.col_vol_combo_box: False,
                             self.equil_vol_val: True, self.equil_flowpath: False, 
                             self.load_vol_val: True, self.load_flowpath: False,
@@ -436,14 +434,16 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(False, True)
         self.setDefaultParam()
         self._reset_pbar()
-
-        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
-        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
-        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
-        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
-        self.flowPathComboBox = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
+        self.equil_vol_val.setInputMask('999')
+        self.load_vol_val.setInputMask('999')
+        self.wash_vol_val.setInputMask('999')
+        self.elute_vol_val.setInputMask('999')
+        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, self.equil_vol_val))
+        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, self.load_vol_val))
+        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, self.wash_vol_val))
+        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, self.elute_vol_val, True))
+        
         self.close_btn.clicked.connect(self.onClickClose)
-
         self.start_btn.clicked.connect(self.onClickStart)
         self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
         self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
@@ -452,13 +452,41 @@ class Ui_Purification(object):
 
         self.display_log()
 
-    def onClickFlowPath(self, step_index):
-        """If the selected flow path is fraction column, the new window is opened"""
-        curIndex = self.flowPathComboBox[step_index].currentIndex()
+    def onClickFlowPath(self, flow_path_combo, step_vol, is_elution = False):
+        """If the selected flow path is fraction column:
+            1. Confirm that fraction column should be selected for the following total vol
+            2. Display the fraction column window with the fractions selected"""
+        curIndex = flow_path_combo.currentIndex()
         if curIndex == 2:
-            self.frac_wdw = QtWidgets.QMainWindow()
-            self.frac_ui = Ui_FractionColumn(self.frac_wdw)
-            self.frac_wdw.show()
+            if self._okayFracVol(int(step_vol.text())):
+                self.is_sure = None
+                step_vol.setEnabled(False)
+                self.frac_wdw = QtWidgets.QMainWindow()
+                if is_elution:
+                    self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), 1)
+                else:
+                    self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()))
+                self.frac_wdw.show()
+            else:
+                flow_path_combo.setCurrentIndex(0)
+        else:
+            step_vol.setEnabled(True)
+
+    def _okayFracVol(self, vol, is_elution = False):
+        """Checks that the frac volume does not exceed the total capacity"""
+        if is_elution:
+            print('Not implemented yet')
+        else:
+            # Each flow through can hold 50ml so max is 200ml
+            if vol > 200:
+                msg = QtWidgets.QMessageBox()
+                msg.setText('Total volume cannot exceed 200ml for fraction collector pathway')
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.exec()
+                return False
+        return True
+
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""

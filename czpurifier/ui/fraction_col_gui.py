@@ -1,12 +1,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_FractionColumn(object):
-    def __init__(self, MainWindow):
+    def __init__(self, MainWindow, total_vol, col_size = None):
         """
         Initialization of the GUI to choose the fractionating column
         This window is opened when 'Fraction Column' is chosen as the flow
         path from the Set Parameter window
         """
+        self.total_vol = total_vol
+        self.col_size = col_size
         self.frac_btn_stylesheet = '{}'.format("QPushButton#frac{0}_btn{{"
                                         "border-radius:17;"
                                         "background-color: {1};"
@@ -223,28 +225,6 @@ class Ui_FractionColumn(object):
         self.flowth4_btn.clicked.connect(lambda: self.onClickFracCol(False, '4', self.flowth4_btn))
         self.horizontalLayout_2.addWidget(self.flowth4_btn)
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_4.addWidget(self.label_2)
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
-        self.label_3.setSizePolicy(sizePolicy)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_4.addWidget(self.label_3)
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
-        self.lineEdit.setSizePolicy(sizePolicy)
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout_4.addWidget(self.lineEdit)
-        self.gridLayout.addLayout(self.horizontalLayout_4, 4, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
@@ -265,14 +245,31 @@ class Ui_FractionColumn(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        self._init_frac_col()
+        self.select_frac_columns()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Fraction Column"))
-        self.label.setText(_translate("MainWindow", "Fraction Position:"))
-        self.label_2.setText(_translate("MainWindow", "Fraction Volume:"))
-        self.label_3.setText(_translate("MainWindow", "Total Volume /"))
+        self.label.setText(_translate("MainWindow", "Total Volume: {} ml:".format(self.total_vol)))
         self.set_fraction_col_btn.setText(_translate("MainWindow", "Set"))
+
+    def _init_frac_col(self):
+        """Groups together the flow through and fraction buttons for easy access"""
+        self.flow_col = [self.flowth1_btn, self.flowth2_btn, self.flowth3_btn, self.flowth4_btn]
+        self.frac_col = [self.frac1_btn, self.frac2_btn, self.frac3_btn, self.frac4_btn, self.frac5_btn,
+                        self.frac6_btn, self.frac7_btn, self.frac8_btn, self.frac9_btn, self.frac10_btn]
+
+    def select_frac_columns(self):
+        """Preselects the fraction columns based on the total volume
+        If column size is none it means flow through columns should be selected"""
+        if self.col_size is None:
+            i = 1
+            while self.total_vol - (i*50) > -50:
+                self.flow_clicked[i-1] = True
+                self.flow_col[i-1].setStyleSheet(self.flow_btn_stylesheet.format(i, 'red'))
+                i += 1
 
     def onClickFracCol(self, is_frac, num, btn):
         check_arr = self.frac_clicked if is_frac else self.flow_clicked
@@ -284,13 +281,3 @@ class Ui_FractionColumn(object):
                 color = 'red'
                 check_arr[int(num)-1] = True
         btn.setStyleSheet(btn_stylesheet.format(num, color))
-                
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
