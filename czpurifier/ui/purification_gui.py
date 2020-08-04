@@ -431,6 +431,7 @@ class Ui_Purification(object):
                             self.load_vol_val: True, self.load_flowpath: False,
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
+        self.fractions_selected = [None]*4
         self._set_actionbtn_enable(False, True)
         self.setDefaultParam()
         self._reset_pbar()
@@ -438,10 +439,10 @@ class Ui_Purification(object):
         self.load_vol_val.setInputMask('999')
         self.wash_vol_val.setInputMask('999')
         self.elute_vol_val.setInputMask('999')
-        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, self.equil_vol_val))
-        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, self.load_vol_val))
-        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, self.wash_vol_val))
-        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, self.elute_vol_val, True))
+        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, self.equil_vol_val, 0))
+        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, self.load_vol_val, 1))
+        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, self.wash_vol_val, 2))
+        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, self.elute_vol_val, 3))
         
         self.close_btn.clicked.connect(self.onClickClose)
         self.start_btn.clicked.connect(self.onClickStart)
@@ -452,13 +453,13 @@ class Ui_Purification(object):
 
         self.display_log()
 
-    def onClickFlowPath(self, flow_path_combo, step_vol, is_elution = False):
+    def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
         """If the selected flow path is fraction column:
             1. Confirm that fraction column should be selected for the following total vol
             2. Display the fraction column window with the fractions selected"""
         curIndex = flow_path_combo.currentIndex()
         if curIndex == 2:
-            if is_elution:
+            if step_index == 3:
                 col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
             else:
                 col_size = None
@@ -468,15 +469,14 @@ class Ui_Purification(object):
                 self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), col_size)
                 self.frac_wdw.show()
                 self.frac_ui.correct_frac_col_design()
-                frac_col_sel = self.frac_ui.select_frac_columns()
-                if is_elution:
+                self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
+                if step_index == 3:
                     self.col_vol_combo_box.setEnabled(False)
             else:
                 flow_path_combo.setCurrentIndex(0)
         else:
             step_vol.setEnabled(True)
-            if is_elution:
-                self.col_vol_combo_box.setEnabled(True)
+            self.col_vol_combo_box.setEnabled(True)
 
     def _okayFracVol(self, vol, col_size):
         """Checks that the frac volume input does not exceed the total capacity"""
@@ -523,14 +523,14 @@ class Ui_Purification(object):
             self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            self.gui_controller.run_purification_script(self._init_run_param())
+            self.gui_controller.run_purification_script(self._init_run_param(), self.fractions_selected)
         else:
             self.current_step_log_lbl.verticalScrollBar().setValue(self.current_step_log_lbl.verticalScrollBar().maximum())
     
     def _init_run_param(self):
         """
         Parse through all the input parameters and store
-        in an array to pass to controller to update json file
+        in an array to pass to controller to run purification
         """
         run_param = []
         for widget in self.input_param:
@@ -539,8 +539,9 @@ class Ui_Purification(object):
                 run_param.append(int(widget.text()))
             else:
                 # Handle combo box
-                run_param.append(widget.currentIndex()+1)
-        run_param[1] = 5 if run_param[1] == 2 else run_param[1]
+                run_param.append(widget.currentIndex())
+        run_param[0] = run_param[0] + 1
+        run_param[1] = 5 if run_param[1] == 1 else 1
         return run_param
     
     def _set_param_enable(self, state):

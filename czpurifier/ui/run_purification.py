@@ -5,22 +5,21 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunPurification():
-    def __init__(self, input_param, ip, gui_pid):
+    def __init__(self, input_param, fractions, ip, gui_pid):
         logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
-        self.input_param = input_param
-        self.input_param[1] = '1mL' if self.input_param[1] == 1 else '5mL'
+        input_param[1] = '1mL' if input_param[1] == 1 else '5mL'
         self.ui = UICommands()
-        self.ui.connect(self.input_param[1], ip, self.input_param[0])
+        self.ui.connect(input_param[1], ip, input_param[0])
 
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
 
         #self._purge_bubbles()
-        self._run_process('EQUILIBRATE', [self.input_param[2], self.input_param[3]])
-        #self._run_process('LOAD', [self.input_param[4], self.input_param[5]])
-        #self._run_process('WASH', [self.input_param[6], self.input_param[7]])
-        #self._run_process('ELUTE', [self.input_param[8], self.input_param[9]])
+        self._run_process('EQUILIBRATE', [input_param[2], input_param[3]], fractions[0])
+        self._run_process('LOAD', [input_param[4], input_param[5]], fractions[1])
+        #self._run_process('WASH', [input_param[6], input_param[7]], fractions[2])
+        #self._run_process('ELUTE', [input_param[8], input_param[9]], fractions[3])
         logging.info('Purification complete')
         kill(gui_pid, SIGUSR2)
 
@@ -39,7 +38,7 @@ class RunPurification():
         self.ui.pump(1)
         self.ui.closePreColumnWaste()
 
-    def _run_process(self, process_name, parameters, fraction_param = None):
+    def _run_process(self, process_name, parameters, fraction_param):
         """
         Run Equilibrate, Load, Wash and Elute
         1. Select the right port based on the process name (either buffer or load)
@@ -51,13 +50,14 @@ class RunPurification():
         ----------------------------
         process_name = 'EQUILIBRATE'/'LOAD'/'WASH'/'ELUTE'
         parameters = [total_vol, flow_path]
-        fraction_param = []*10 
+        fraction_param = []*10 or []*4 or None. Each index contains the volume to fraction 
         """
         if process_name == 'LOAD':
             self.ui.selectLoad()
         elif process_name == 'WASH' or process_name == 'ELUTE':
             self.ui.selectBuffers()
             self.ui.selectPort(process_name)
+
         if parameters[1] == 2:
             self._run_fraction_col(fraction_param)
         else:
@@ -67,6 +67,20 @@ class RunPurification():
             self.waste_open_cmds[parameters[1]]()
             self.ui.pump(parameters[0])
             self.waste_close_cmds[parameters[1]]()
+        
+    def _run_fraction_col(self, fraction_param):
+        """
+        Runs each pump for the volume specified by the fraction_param index
+        If len(fraction_param) is 4 use the flow through columns, otherwise
+        use the 1ml/5ml fraction collector columns
+        """
+        col_type = 'Frac' if len(fraction_param) > 4 else 'Flow'
+        for i in range(len(fraction_param)):
+            if fraction_param[i] == 0:
+                break
+            self.ui.selectFraction('{0}{1}'.format(col_type, i+1))
+            self.ui.pump(fraction_param[i])
+        self.ui.selectFraction('Safe')
 
 if __name__ == "__main__":
     run = RunPurification([2, 5, 5, 1, 4, 1, 5, 1], '127.0.0.1')

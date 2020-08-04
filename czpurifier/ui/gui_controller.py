@@ -58,10 +58,10 @@ class GUI_Controller:
         si = SimulatorInterface()
         si.autorun()
     
-    def run_purification_script(self, parameters):
+    def run_purification_script(self, parameters, fractions):
         if self.connecting_to_sim:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=RunPurification, args=(parameters, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=RunPurification, args=(parameters, fractions, self.controller_ip, getpid(),))
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
 

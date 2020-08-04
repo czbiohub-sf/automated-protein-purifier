@@ -15,13 +15,13 @@ class Ui_FractionColumn(object):
                                         "border-radius:17;"
                                         "background-color: {1};"
                                         "}}")
-        self.frac_clicked = [False]*10
+        self.frac_clicked = [0]*10
         self.flow_btn_stylesheet = '{}'.format("QPushButton#flowth{0}_btn{{"
                                         "border-radius:30;"
                                         "border-width: 2px;"
                                         "background-color: {1};"
                                         "}}")
-        self.flow_clicked = [False]*4
+        self.flow_clicked = [0]*4
         self.MainWindow = MainWindow
         self.initUI(self.MainWindow)
 
@@ -254,8 +254,8 @@ class Ui_FractionColumn(object):
         """Preselects the fraction columns based on the total volume
         If column size is none it means flow through columns should be selected
         ----------
-        Return: [True, False, True, ...]
-        where each index represents a fraction column
+        Return: [5, 5, 4, 0, ..]
+        where each index represents the volume in each column
         """
         if self.col_size is None:
             vol_per = 50
@@ -268,10 +268,15 @@ class Ui_FractionColumn(object):
             fractions = self.frac_col
             btn_stylesheet = self.frac_btn_stylesheet
         i = 1
-        while self.total_vol - (i*vol_per) > -vol_per:
-            check_state[i-1] = True
+        vol_filled = self.total_vol - (i*vol_per) 
+        while vol_filled > -vol_per:
+            if vol_filled < 0:
+                check_state[i-1] = vol_per + vol_filled
+            else:
+                check_state[i-1] = vol_per
             fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
             i += 1
+            vol_filled = self.total_vol - (i*vol_per) 
         return check_state
 
     def correct_frac_col_design(self):
