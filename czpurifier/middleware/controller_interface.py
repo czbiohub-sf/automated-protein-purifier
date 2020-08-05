@@ -302,10 +302,15 @@ class ControllerInterface():
         send_response_to = self._updateFlowRates
         self.send(cmd_to_send, send_response_to)
 
-    def setFlowRates(self, flow_rate):
-        """Set flow rates of all pumps."""
-        logging.info("Flow rate set to `%s`.", str(flow_rate))
-        cmd_to_send = 'setFlowRate,' + str(flow_rate)
+    def setFlowRates(self, flow_rate, pump=-1):
+        """Set flow rates of pumps."""
+        if pump > -1:
+            logging.info("Flow rate set to `%s` on pump `%s`.", str(flow_rate), str(pump))
+            cmd_to_send = 'setFlowRate,' + str(flow_rate) + ',' + str(pump)
+        else:
+            logging.info("Flow rate set to `%s`.", str(flow_rate))
+            cmd_to_send = 'setFlowRate,' + str(flow_rate)
+
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
