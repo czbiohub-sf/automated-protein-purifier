@@ -153,6 +153,6 @@ class UICommands():
 
     def flowRateCorrection(self, corr_factor: list):
         """Apply correction factor to pump flow rates."""
-        curr_rates = self.ci.getFlowRates()
+        self.ci.getFlowRates()
         for pump in range(self.pumps):
-            self.ci.setFlowRates(curr_rates[pump] * corr_factor[pump], pump)
+            self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)
