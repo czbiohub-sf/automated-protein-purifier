@@ -18,7 +18,7 @@ class UICommands():
     ##################
     #   CONNECTION   #
     ##################
-    def connect(self, config_mode: str, address: str, pumps=4, alias='purifier'):
+    def connect(self, config_mode: str, address: str, pumps=4, correction=[], alias='purifier'):
         """Connect to machine at specified address and load config mode.
 
         Parameters
@@ -39,6 +39,8 @@ class UICommands():
                 self.resetMachine()
                 self.getMachineStatus()
                 self.pumps = pumps
+                if len(correction) == self.pumps:
+                    self.flowRateCorrection(correction)
             except:
                 self.disconnect()
 
@@ -148,3 +150,9 @@ class UICommands():
             self.ci.startPumping(pump)
         sleep(col_vol * 60)
         self.ci.stopPumping()
+
+    def flowRateCorrection(self, corr_factor: list):
+        """Apply correction factor to pump flow rates."""
+        self.ci.getFlowRates()
+        for pump in range(self.pumps):
+            self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)

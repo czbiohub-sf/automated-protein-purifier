@@ -45,6 +45,7 @@ class RotaryController():
             self._seekPort(move_fwd)
             ports_to_move = ports_to_move + decrement
             self.current_port = self.current_port - decrement
+        sleep(.5)
 
     def _seekPort(self, move_fwd: bool):
         """Advance to the next port in the specified direction."""
@@ -118,16 +119,28 @@ class RotaryControllerTic(RotaryController):
             Advance to the port in the forward direction if True.
 
         """
+        denoise_counts = 3
+        counts_low = 0
+        counts_high = 0
+
         if move_fwd:
             vel = self._seek_vel
         else:
             vel = -self._seek_vel
         self._motor.setCurrentLimit(self._motor_current)
         self._motor.velocityControl(vel)
-        while self._readAnalog() < self._thresh[1]:
-            sleep(.01)
-        while self._readAnalog() > self._thresh[0]:
-            sleep(.01)
+        while counts_low < denoise_counts:
+            if self._readAnalog() > self._thresh[1]:
+                counts_low += 1
+            else:
+                counts_low = 0
+            sleep(.002)
+        while counts_high < denoise_counts:
+            if self._readAnalog() < self._thresh[0]:
+                counts_high += 1
+            else:
+                counts_high = 0
+            sleep(.002)
         self._motor.stop()
         self._motor.setCurrentLimit(0)
 
