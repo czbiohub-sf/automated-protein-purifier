@@ -41,8 +41,7 @@ DeviceInterface :: zmq<br>
 2. Download / clone this repository
 3. Navigate to the base of the repository
 4. Install setuptools (__pip install setuptools__)
-5. Test the module for completeness (__python setup.py test__)
-6. Install module (__pip install .__)
+5. Install module (__pip install .__)
 
 NOTE: Developers may want to install the module with __pip install -e .__ so that changes they make to the module are immediately reflected when subsequently imported.
 
@@ -56,8 +55,7 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 1. Pull changes from remote repository
 2. Activate virtual environment with previous install
 3. Navigate to the module directory
-4. Test the module for completeness (__python setup.py test__)
-5. Update module (__pip install . --upgrade__)
+4. Update module (__pip install . --upgrade__)
 
 ### Updating Without Cloning
 1. Update module (__pip install git+https://github.com/czbiohub/ProteinPurifier --upgrade__)
@@ -71,3 +69,8 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 1. Edit files to include `import czpurifier` or a variant such as `from czpurifier import {class_name}`
 2. Activate virtual environment with module installed
 3. Execute python script or application
+
+## Usage
+The user interface was designed to simplify operation and strips away most arguments needed to operate the machine. A list of methods and basic examples of how to use them can be found at: https://github.com/czbiohub/ProteinPurifier/tree/master/czpurifier/ui
+
+Scripts that have been used for set up, clean up or various experiments can be found at: https://github.com/czbiohub/ProteinPurifier/tree/master/scripts
