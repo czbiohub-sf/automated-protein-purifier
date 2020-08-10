@@ -12,7 +12,7 @@
     },
 
     "LOAD_VOLUME": {
-        "default": 5
+        "default": 50
     },
 
     "WASH_VOLUME": {
@@ -20,6 +20,6 @@
     },
 
     "ELUTE_VOLUME": {
-        "default": 4
+        "default": 10
     }
 }

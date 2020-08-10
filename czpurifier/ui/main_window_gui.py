@@ -172,7 +172,7 @@ class Ui_MainWindow(object):
         """
         self.gui_controller.close_device()
         msg = QtWidgets.QMessageBox()
-        msg.setText('Closed Device Connection')
+        msg.setText('Closed Simulator Connection')
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
         quit()        

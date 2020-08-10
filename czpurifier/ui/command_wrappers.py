@@ -187,7 +187,8 @@ class UICommands():
             if self._skip_flag:
                 logging.info("Skipping to next step")
                 self._skip_flag = False
-                break
+                self.ci.stopPumping()
+                return True
             if self._pumps_are_paused:
                 logging.info("Restarting pumps")
                 self._pumps_are_paused = False
