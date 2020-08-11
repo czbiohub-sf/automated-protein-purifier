@@ -131,7 +131,6 @@ class Ui_Purification(object):
         self.equil_vol_slider.setMinimumSize(QtCore.QSize(0, 0))
         self.equil_vol_slider.setMinimum(0)
         self.equil_vol_slider.setMaximum(200)
-        self.equil_vol_slider.setSliderPosition(50)
         self.equil_vol_slider.setOrientation(QtCore.Qt.Horizontal)
         self.equil_vol_slider.setObjectName("equil_vol_slider")
         self.horizontalLayout_8.addWidget(self.equil_vol_slider)
@@ -384,11 +383,11 @@ class Ui_Purification(object):
         self.verticalLayout_17.setObjectName("verticalLayout_17")
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
-        self.horizontalSlider.setMaximum(50)
-        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider.setObjectName("horizontalSlider")
-        self.horizontalLayout_11.addWidget(self.horizontalSlider)
+        self.elute_vol_slider = QtWidgets.QSlider(self.centralwidget)
+        self.elute_vol_slider.setMaximum(50)
+        self.elute_vol_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.elute_vol_slider.setObjectName("elute_vol_slider")
+        self.horizontalLayout_11.addWidget(self.elute_vol_slider)
         self.elute_vol_val = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -603,6 +602,14 @@ class Ui_Purification(object):
         self.skip_btn.clicked.connect(self.onClickSkip)
         self.stop_btn.clicked.connect(self.onClickStop)
 
+        self.equil_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.equil_vol_slider.value(),
+                                                    self.equil_vol_val))
+        self.load_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.load_vol_slider.value(),
+                                                    self.load_vol_val))
+        self.wash_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.wash_vol_slider.value(),
+                                                    self.wash_vol_val))
+        self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
+                                                    self.elute_vol_val))
         self.display_log()
 
     def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
@@ -660,6 +667,10 @@ class Ui_Purification(object):
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
         self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
         self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))
+        self.equil_vol_slider.setSliderPosition(self.gui_controller.default_param[2])
+        self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
+        self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
+        self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
     
     def onClickStart(self):
         """
@@ -799,3 +810,6 @@ class Ui_Purification(object):
         self.start_btn.disconnect()
         self.start_btn.setText('Start')
         self.start_btn.clicked.connect(self.onClickStart)
+    
+    def slider_changed(self, value, lbl):
+        lbl.setText('{}'.format(value))
