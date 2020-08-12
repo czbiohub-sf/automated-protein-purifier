@@ -13,6 +13,7 @@ class Ui_Purification(object):
         self.gui_controller = gui_controller
         self.is_sure = None
         self.frac_size = None
+        self.step_times = None
         self.Purification = Purification
         self.setupUi(self.Purification)
         self.initEvents()
@@ -627,9 +628,11 @@ class Ui_Purification(object):
         if self.gui_controller.default_param[1] == 1:
             self.col_vol_combo_box.setCurrentIndex(0)
             self.elute_vol_slider.setMaximum(10)
+            self.frac_size = 1
         else:
             self.col_vol_combo_box.setCurrentIndex(1)
             self.elute_vol_slider.setMaximum(50)
+            self.frac_size = 5
         self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
         self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
@@ -655,8 +658,10 @@ class Ui_Purification(object):
         curIndex = self.col_vol_combo_box.currentIndex()
         if curIndex == 0:
             self.elute_vol_slider.setMaximum(10)
+            self.frac_size = 1
         else:
             self.elute_vol_slider.setMaximum(50)
+            self.frac_size = 5
 
     def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
         """If the selected flow path is fraction column:
@@ -665,6 +670,7 @@ class Ui_Purification(object):
         curIndex = flow_path_combo.currentIndex()
         if curIndex == 2:
             step_vol.setEnabled(False)
+            col_size = self.frac_size if step_index == 3 else None
             self.frac_wdw = QtWidgets.QMainWindow()
             self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), col_size)
             self.frac_wdw.show()
@@ -737,7 +743,9 @@ class Ui_Purification(object):
             self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            self.gui_controller.run_purification_script(self._init_run_param(), self.fractions_selected)
+            init_params = self._init_run_param()
+            self.step_times = self.gui_controller.calc_step_times(init_params, self.fractions_selected)
+            #self.gui_controller.run_purification_script(init_params, self.fractions_selected)
         #else:
             #self.log_output_txtbox.verticalScrollBar().setValue(self.log_output_txtbox.verticalScrollBar().maximum())
 
@@ -782,7 +790,7 @@ class Ui_Purification(object):
         self.areYouSureMsg('stop')
         if self.is_sure:
             self.is_sure = None
-            self.gui_controller.stop_clicked()
+            #self.gui_controller.stop_clicked()
             self._set_actionbtn_enable(False, True)
             self.close_btn.setEnabled(True)
             self._set_param_enable(True)

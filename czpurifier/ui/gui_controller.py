@@ -103,6 +103,23 @@ class GUI_Controller:
             kill(self.device_process.pid, SIGTERM)
             self.device_process.join()
 
+    def calc_step_times(self, parameters, fractions):
+        """Calculates an estimate time for each step"""
+        stage_moving_time = 10
+        pump_vol_times = 60
+        step_times = []
+        i = 2
+        for f in fractions:
+            pump_total = parameters[i]*pump_vol_times
+            if f is None:
+                stage_total = 0
+            else:
+                stage_total = len(f)*stage_moving_time
+            step_times.append(pump_total+stage_total)
+            i +=2
+        print(step_times)
+        return step_times
+
 if __name__ == "__main__":
     t = GUI_Controller()
     t.connect_to_device()
