@@ -718,6 +718,14 @@ class Ui_Purification(object):
         """Enables/Disables all the widgets that allow initializing input parameters"""
         for widget in self.input_param:
             widget.setEnabled(state)
+        self.equil_vol_slider.setEnabled(state)
+        self.load_vol_slider.setEnabled(state)
+        self.wash_vol_slider.setEnabled(state)
+        self.elute_vol_slider.setEnabled(state)
+        self.label.setEnabled(state)
+        self.label_2.setEnabled(state)
+        self.label_6.setEnabled(state)
+        self.label_7.setEnabled(state)
     
     def _set_actionbtn_enable(self, halt_state, start_state):
         """Either enables or disables the action buttons"""

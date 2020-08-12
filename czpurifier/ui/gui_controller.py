@@ -117,7 +117,6 @@ class GUI_Controller:
                 stage_total = len(f)*stage_moving_time
             step_times.append(pump_total+stage_total)
             i +=2
-        print(step_times)
         return step_times
 
 if __name__ == "__main__":
