@@ -799,17 +799,7 @@ class Ui_Purification(object):
             self._set_param_enable(True)
             self.start_btn.disconnect()
             self.start_btn.setText('Start')
-            self.start_btn.clicked.connect(self.onClickStart)
-    
-    def onClickResume(self):
-        """
-        Handles if resume is clicked after paused
-        Sends a signal to the process running purification
-        to resume the protocol
-        """
-        self._set_actionbtn_enable(True, False)
-        self.gui_controller.resume_pause_clicked()
-        
+            self.start_btn.clicked.connect(self.onClickStart)    
     
     def areYouSureMsg(self, action):
         """Confirms whether or not the user meant to click an action button"""
