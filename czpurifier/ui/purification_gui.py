@@ -13,7 +13,6 @@ class Ui_Purification(object):
         self.gui_controller = gui_controller
         self.is_sure = None
         self.frac_size = None
-        self.step_times = None
         self.Purification = Purification
         self.setupUi(self.Purification)
         self.initEvents()
@@ -598,6 +597,7 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(False, True)
         self.col_vol_combo_box.activated.connect(self.onClickFractionSize)
         self.setDefaultParam()
+        self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
         self._reset_pbar()
     
         self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, self.equil_vol_val, 0))
@@ -621,6 +621,15 @@ class Ui_Purification(object):
         self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
                                                     self.elute_vol_val))
         self.display_log()
+
+        self.estimated_time = None
+        self.timer_index = None
+        # timer event handler called every 1s
+        self._time_per_update = 1000
+        self._timer_on_flag = False
+        self.timer_counter = 0
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.progress_bar_handler)
 
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
@@ -647,6 +656,8 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(False, True)
         self.close_btn.setEnabled(True)
         self._set_param_enable(True)
+        self.timer_index = 0
+        self._reset_pbar()
         self.start_btn.disconnect()
         self.start_btn.setText('START')
         self.start_btn.clicked.connect(self.onClickStart)
@@ -717,11 +728,9 @@ class Ui_Purification(object):
         self.start_btn.setEnabled(start_state)
 
     def _reset_pbar(self):
-        """Enable/Disable all the progress bars"""
-        self.equilibriate_pbar.setValue(0)
-        self.load_pbar.setValue(0)
-        self.wash_pbar.setValue(0)
-        self.elute_pbar.setValue(0)
+        """Reset all the progress bars"""
+        for pbar in self.pbars:
+            pbar.setValue(0)
 
     ## Action Buttons Event Handlers ##
 
@@ -744,7 +753,10 @@ class Ui_Purification(object):
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             init_params = self._init_run_param()
-            self.step_times = self.gui_controller.calc_step_times(init_params, self.fractions_selected)
+            self.estimated_time = self.gui_controller.calc_step_times(init_params, self.fractions_selected)
+            self.timer_index = 0
+            self._timer_on_flag = True
+            self.timer.start(self._time_per_update)
             #self.gui_controller.run_purification_script(init_params, self.fractions_selected)
         #else:
             #self.log_output_txtbox.verticalScrollBar().setValue(self.log_output_txtbox.verticalScrollBar().maximum())
@@ -759,12 +771,16 @@ class Ui_Purification(object):
         self.areYouSureMsg(msg)
         if self.is_sure:
             self.is_sure = None
+            self._timer_on_flag = False
+            self.timer.stop()
             self._set_actionbtn_enable(False, True)
             self.stop_btn.setEnabled(True)
+            """
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
+            """
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
@@ -776,20 +792,29 @@ class Ui_Purification(object):
         to resume the protocol
         """
         self._set_actionbtn_enable(True, False)
-        self.gui_controller.resume_clicked()
+        self._timer_on_flag = True
+        self.timer.start(self._time_per_update)
+        #self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
         """Stops pumping and goes to the next step"""
         self.areYouSureMsg('skip to next step')
         if self.is_sure:
             self.is_sure = None
-            self.gui_controller.skip_clicked()
+            self.timer_index +=1
+            self.timer_counter = 0
+            #self.gui_controller.skip_clicked()
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
         self.areYouSureMsg('stop')
         if self.is_sure:
             self.is_sure = None
+            self._timer_on_flag = False
+            self.timer.stop()
+            self.timer_counter = 0
+            self.timer_index = 0
+            self._reset_pbar()
             #self.gui_controller.stop_clicked()
             self._set_actionbtn_enable(False, True)
             self.close_btn.setEnabled(True)
@@ -812,6 +837,25 @@ class Ui_Purification(object):
         self.is_sure = True if i.text() == 'OK' else False
 
     ## Timer Related Events ##
+
+    def progress_bar_handler(self):
+        """
+        Update the progress bar and estimated time remaining display
+        """
+        if self._timer_on_flag:
+            if self.timer_index < 4:
+                # Update progress bar as needed
+                percen_comp = self.pbars[self.timer_index].value()
+                if percen_comp < 100:
+                    # Calculating time remaining
+                    time_rem = self.estimated_time[self.timer_index] - (self.timer_counter*self._time_per_update/1000)
+                    percen_comp = (1-(time_rem/self.estimated_time[self.timer_index]))*100
+                    self.timer_counter += 1
+                    self.pbars[self.timer_index].setValue(percen_comp)
+                    if percen_comp == 100:
+                        self.timer_index += 1
+                        # reset the counter when completed
+                        self.timer_counter = 0 
 
     def display_log(self):
         """Temporary"""
