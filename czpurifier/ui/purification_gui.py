@@ -572,7 +572,7 @@ class Ui_Purification(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">&lt;Progress Model&gt;</p></body></html>"))
-        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time Remaining: <..> min(s)"))
+        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time: <..> min(s)"))
         self.start_btn.setText(_translate("Purification", "START"))
         self.pause_btn.setText(_translate("Purification", "PAUSE"))
         self.hold_btn.setText(_translate("Purification", "HOLD"))
@@ -660,6 +660,7 @@ class Ui_Purification(object):
         self._reset_pbar()
         self.start_btn.disconnect()
         self.start_btn.setText('START')
+        self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
         self.start_btn.clicked.connect(self.onClickStart)
 
     ## Input Parameter Widget Actions ##
@@ -765,6 +766,7 @@ class Ui_Purification(object):
             self.timer_index = 0
             self._timer_on_flag = True
             self.timer.start(self._time_per_update)
+            self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
             #self.gui_controller.run_purification_script(init_params, self.fractions_selected)
         #else:
             #self.log_output_txtbox.verticalScrollBar().setValue(self.log_output_txtbox.verticalScrollBar().maximum())
@@ -829,7 +831,8 @@ class Ui_Purification(object):
             self._set_param_enable(True)
             self.start_btn.disconnect()
             self.start_btn.setText('START')
-            self.start_btn.clicked.connect(self.onClickStart)    
+            self.start_btn.clicked.connect(self.onClickStart)
+            self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)")  
     
     def areYouSureMsg(self, action):
         """Confirms whether or not the user meant to click an action button"""
