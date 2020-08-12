@@ -16,6 +16,10 @@ class Ui_Purification(object):
         self.setupUi(self.Purification)
         self.initEvents()
 
+    ###########################
+    # Desinger Generated Code #
+    ###########################
+
     def setupUi(self, Purification):
         Purification.setObjectName("Purification")
         Purification.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -576,10 +580,14 @@ class Ui_Purification(object):
         self.stop_btn.setText(_translate("Purification", "STOP"))
         self.close_btn.setText(_translate("Purification", "Close"))
 
+    ###################
+    # Event Handlers #
+    ##################
+
+    ## Initializing Event Handlers ##
+
     def initEvents(self):
-        """
-        Initializes all on click actions
-        """
+        """Initializes all on click actions"""
         self.input_param = {self.num_col_combo_box: False, self.col_vol_combo_box: False,
                             self.equil_vol_val: True, self.equil_flowpath: False, 
                             self.load_vol_val: True, self.load_flowpath: False,
@@ -611,6 +619,33 @@ class Ui_Purification(object):
         self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
                                                     self.elute_vol_val))
         self.display_log()
+
+    def setDefaultParam(self):
+        """Sets the default input parameters that are on the json file"""
+        self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
+        if self.gui_controller.default_param[1] == 1:
+            self.col_vol_combo_box.setCurrentIndex(0)
+        else:
+            self.col_vol_combo_box.setCurrentIndex(1)
+        self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
+        self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
+        self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
+        self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))
+        self.equil_vol_slider.setSliderPosition(self.gui_controller.default_param[2])
+        self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
+        self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
+        self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
+    
+    def purificationComplete(self, signalNumber, frame):
+        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
+        self._set_actionbtn_enable(False, True)
+        self.close_btn.setEnabled(True)
+        self._set_param_enable(True)
+        self.start_btn.disconnect()
+        self.start_btn.setText('Start')
+        self.start_btn.clicked.connect(self.onClickStart)
+
+    ## Input Parameter Widget Actions ##
 
     def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
         """If the selected flow path is fraction column:
@@ -652,25 +687,52 @@ class Ui_Purification(object):
             return False
         return True
 
+    def slider_changed(self, value, lbl):
+        """Updates text label beside the slider when slider is moved"""
+        lbl.setText('{}'.format(value))
+
+    def _init_run_param(self):
+        """Parse through all the input parameters and store
+        in an array to pass to controller to run purification"""
+        run_param = []
+        for widget in self.input_param:
+            if self.input_param[widget]:
+                # Handle text inputs
+                run_param.append(int(widget.text()))
+            else:
+                # Handle combo box
+                run_param.append(widget.currentIndex())
+        run_param[0] = run_param[0] + 1
+        run_param[1] = 5 if run_param[1] == 1 else 1
+        return run_param
+
+    ## Enable/Disable Widgets On GUI ##
+
+    def _set_param_enable(self, state):
+        """Enables/Disables all the widgets that allow initializing input parameters"""
+        for widget in self.input_param:
+            widget.setEnabled(state)
+    
+    def _set_actionbtn_enable(self, halt_state, start_state):
+        """Either enables or disables the action buttons"""
+        self.pause_btn.setEnabled(halt_state)
+        self.hold_btn.setEnabled(halt_state)
+        self.skip_btn.setEnabled(halt_state)
+        self.stop_btn.setEnabled(halt_state)
+        self.start_btn.setEnabled(start_state)
+
+    def _reset_pbar(self):
+        """Enable/Disable all the progress bars"""
+        self.equilibriate_pbar.setValue(0)
+        self.load_pbar.setValue(0)
+        self.wash_pbar.setValue(0)
+        self.elute_pbar.setValue(0)
+
+    ## Action Buttons Event Handlers ##
+
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
         self.Purification.close()
-    
-    def setDefaultParam(self):
-        """Sets the default input parameters that are on the json file"""
-        self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
-        if self.gui_controller.default_param[1] == 1:
-            self.col_vol_combo_box.setCurrentIndex(0)
-        else:
-            self.col_vol_combo_box.setCurrentIndex(1)
-        self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
-        self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
-        self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
-        self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))
-        self.equil_vol_slider.setSliderPosition(self.gui_controller.default_param[2])
-        self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
-        self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
-        self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
     
     def onClickStart(self):
         """
@@ -689,50 +751,6 @@ class Ui_Purification(object):
             self.gui_controller.run_purification_script(self._init_run_param(), self.fractions_selected)
         #else:
             #self.log_output_txtbox.verticalScrollBar().setValue(self.log_output_txtbox.verticalScrollBar().maximum())
-    
-    def _init_run_param(self):
-        """
-        Parse through all the input parameters and store
-        in an array to pass to controller to run purification
-        """
-        run_param = []
-        for widget in self.input_param:
-            if self.input_param[widget]:
-                # Handle text inputs
-                run_param.append(int(widget.text()))
-            else:
-                # Handle combo box
-                run_param.append(widget.currentIndex())
-        run_param[0] = run_param[0] + 1
-        run_param[1] = 5 if run_param[1] == 1 else 1
-        return run_param
-    
-    def _set_param_enable(self, state):
-        """
-        Enables/Disables all the widgets that allow initializing input parameters
-        """
-        for widget in self.input_param:
-            widget.setEnabled(state)
-    
-    def _set_actionbtn_enable(self, halt_state, start_state):
-        """
-        Either enables or disables the action buttons
-        """
-        self.pause_btn.setEnabled(halt_state)
-        self.hold_btn.setEnabled(halt_state)
-        self.skip_btn.setEnabled(halt_state)
-        self.stop_btn.setEnabled(halt_state)
-       
-        self.start_btn.setEnabled(start_state)
-    
-    def _reset_pbar(self):
-        """
-        Enable/Disable all the progress bars
-        """
-        self.equilibriate_pbar.setValue(0)
-        self.load_pbar.setValue(0)
-        self.wash_pbar.setValue(0)
-        self.elute_pbar.setValue(0)
 
     def onClickPauseHold(self, is_pause):
         """
@@ -793,23 +811,13 @@ class Ui_Purification(object):
         msg.exec()
     
     def msgbtn(self, i):
-        """ Returns the result from the are you sure pop up"""
+        """Returns the result from the are you sure pop up"""
         self.is_sure = True if i.text() == 'OK' else False
+
+    ## Timer Related Events ##
 
     def display_log(self):
         """Temporary"""
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
             self.log_output_txtbox.setText(f.read())
-
-    def purificationComplete(self, signalNumber, frame):
-        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
-        self._set_actionbtn_enable(False, True)
-        self.close_btn.setEnabled(True)
-        self._set_param_enable(True)
-        self.start_btn.disconnect()
-        self.start_btn.setText('Start')
-        self.start_btn.clicked.connect(self.onClickStart)
-    
-    def slider_changed(self, value, lbl):
-        lbl.setText('{}'.format(value))

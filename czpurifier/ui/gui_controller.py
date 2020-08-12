@@ -44,21 +44,29 @@ class GUI_Controller:
             return False
     
     def _connect_device(self, current_address):
+        """Method run in the new process generated to connect to the device"""
         current_address = socket.gethostbyname(socket.getfqdn() + '.local')
         di = DeviceInterface(ip_address=current_address)
         di.autorun()
     
     def connect_to_simulator(self):
+        """Connect to the simulator by opening a pub/sub connection at local ip"""
         self.connecting_to_sim = True
         self.device_process = Process(target=self._connect_simulator)
         self.device_process.start()
         self.controller_ip = '127.0.0.1'
 
     def _connect_simulator(self):
+        """Method run in the new process generated to connect to the simulator"""
         si = SimulatorInterface()
         si.autorun()
     
     def run_purification_script(self, parameters, fractions):
+        """
+        Run the purification protocal on a new process
+        If the protocol is run on the simulator a signal is sent to the simulator
+        to be the device and pass the 'device is available check' on the controller
+        """
         if self.connecting_to_sim:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=RunPurification, args=(parameters, fractions, self.controller_ip, getpid(),))
