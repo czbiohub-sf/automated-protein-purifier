@@ -645,7 +645,7 @@ class Ui_Purification(object):
         self.close_btn.setEnabled(True)
         self._set_param_enable(True)
         self.start_btn.disconnect()
-        self.start_btn.setText('Start')
+        self.start_btn.setText('START')
         self.start_btn.clicked.connect(self.onClickStart)
 
     ## Input Parameter Widget Actions ##
@@ -657,7 +657,7 @@ class Ui_Purification(object):
             self.elute_vol_slider.setMaximum(10)
         else:
             self.elute_vol_slider.setMaximum(50)
-            
+
     def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
         """If the selected flow path is fraction column:
             1. Confirm that fraction column should be selected for the following total vol
@@ -758,7 +758,7 @@ class Ui_Purification(object):
             else:
                 self.gui_controller.hold_clicked()
             self.start_btn.disconnect()
-            self.start_btn.setText('Resume')
+            self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
 
     def onClickResume(self):
@@ -787,7 +787,7 @@ class Ui_Purification(object):
             self.close_btn.setEnabled(True)
             self._set_param_enable(True)
             self.start_btn.disconnect()
-            self.start_btn.setText('Start')
+            self.start_btn.setText('START')
             self.start_btn.clicked.connect(self.onClickStart)    
     
     def areYouSureMsg(self, action):
