@@ -1,4 +1,3 @@
-#!/Users/samia.sama/Documents/Protein_Purifier/venv/bin/python
 """Interfaces between communication layer and psuedo hardware (used for testing)"""
 import logging
 from time import sleep

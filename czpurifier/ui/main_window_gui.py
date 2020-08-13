@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification_gui import Ui_Purification
 from other_scripts_gui import Ui_OtherScripts
