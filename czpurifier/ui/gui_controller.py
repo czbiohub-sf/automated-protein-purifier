@@ -38,7 +38,7 @@ class GUI_Controller:
             current_address = socket.gethostbyname(socket.getfqdn() + '.local')
             self.device_process = Process(target=self._connect_device, args=(current_address,))
             self.device_process.start()
-            self.controller_ip = 'pure1'
+            self.controller_ip = 'pure2.local'
             return True
         except OSError:
             return False

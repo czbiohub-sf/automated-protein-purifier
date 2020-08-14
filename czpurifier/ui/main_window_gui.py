@@ -108,8 +108,7 @@ class Ui_MainWindow(object):
         Try to connect to device and if failed pop up a message to either
         retry device connection or connect to the simulator
         """
-        #if not self.gui_controller.connect_to_device():
-        if True:
+        if not self.gui_controller.connect_to_device():
             self.connect_hardware = QtWidgets.QPushButton('Retry Device Connection')
             self.run_simulator = QtWidgets.QPushButton('Run Simulation Mode')
             self.connect_hardware.clicked.connect(self.onClickConnect_hardware)

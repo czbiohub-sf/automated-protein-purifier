@@ -846,7 +846,7 @@ class Ui_Purification(object):
     
     def msgbtn(self, i):
         """Returns the result from the are you sure pop up"""
-        self.is_sure = True if i.text() == 'OK' else False
+        self.is_sure = True if i.text().lower() == 'ok' else False
 
     ## Timer Related Events ##
 
