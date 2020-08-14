@@ -235,24 +235,5 @@ class UICommands():
         self.ci.getFlowRates()
         for pump in range(self.pumps):
             self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)
-    ####################
-    # SIGNAL HANDLERS #
-    ###################
-    def _raisePauseFlag(self, signalNumber, frame):
-        """Raise pause flag if SIGQUIT recieved"""
-        self._pause_flag = True
-        return
-    
-    def _raiseHoldFlag(self, signalNumber, frame):
-        """Raise hold flag if SIGUSR1 recieved"""
-        self._hold_flag = True
-
-    def _remainInPlace(self, is_pump):
-        """Suspend script at location if pause/hold flag is up"""
-        if is_pump:
-            self._pause_flag = False
-        else:
-            self._hold_flag = False
-        kill(getpid(), SIGSTOP)
         
      
