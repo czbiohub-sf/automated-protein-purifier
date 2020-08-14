@@ -620,7 +620,6 @@ class Ui_Purification(object):
                                                     self.wash_vol_val))
         self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
                                                     self.elute_vol_val))
-        self.display_log()
 
         self.estimated_time = None
         self.timer_index = None
@@ -630,6 +629,11 @@ class Ui_Purification(object):
         self.timer_counter = 0
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.progress_bar_handler)
+
+        self.log_update_timer = QtCore.QTimer()
+        self.log_update_timer.timeout.connect(self.log_timer_handler)
+        self.log_update_timer.start(self._time_per_update)
+        self.log_output = None
 
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
@@ -745,6 +749,7 @@ class Ui_Purification(object):
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
+        self.log_update_timer.stop()
         self.Purification.close()
     
     def onClickStart(self):
@@ -767,9 +772,7 @@ class Ui_Purification(object):
             self._timer_on_flag = True
             self.timer.start(self._time_per_update)
             self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
-            #self.gui_controller.run_purification_script(init_params, self.fractions_selected)
-        #else:
-            #self.log_output_txtbox.verticalScrollBar().setValue(self.log_output_txtbox.verticalScrollBar().maximum())
+            self.gui_controller.run_purification_script(init_params, self.fractions_selected)
 
     def onClickPauseHold(self, is_pause):
         """
@@ -785,12 +788,10 @@ class Ui_Purification(object):
             self.timer.stop()
             self._set_actionbtn_enable(False, True)
             self.stop_btn.setEnabled(True)
-            """
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
-            """
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
@@ -804,7 +805,7 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(True, False)
         self._timer_on_flag = True
         self.timer.start(self._time_per_update)
-        #self.gui_controller.resume_clicked()
+        self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
         """Stops pumping and goes to the next step"""
@@ -813,7 +814,7 @@ class Ui_Purification(object):
             self.is_sure = None
             self.timer_index +=1
             self.timer_counter = 0
-            #self.gui_controller.skip_clicked()
+            self.gui_controller.skip_clicked()
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
@@ -825,7 +826,7 @@ class Ui_Purification(object):
             self.timer_counter = 0
             self.timer_index = 0
             self._reset_pbar()
-            #self.gui_controller.stop_clicked()
+            self.gui_controller.stop_clicked()
             self._set_actionbtn_enable(False, True)
             self.close_btn.setEnabled(True)
             self._set_param_enable(True)
@@ -868,8 +869,13 @@ class Ui_Purification(object):
                         # reset the counter when completed
                         self.timer_counter = 0 
 
-    def display_log(self):
+    def log_timer_handler(self):
         """Temporary"""
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
-            self.log_output_txtbox.setText(f.read())
+            output = f.read()
+        if self.log_output is None or self.log_output != output:
+            self.log_output_txtbox.setText(output)
+            log_end = self.log_output_txtbox.verticalScrollBar().maximum()
+            self.log_output_txtbox.verticalScrollBar().setValue(log_end)
+        self.log_output = output

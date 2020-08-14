@@ -16,6 +16,7 @@ class GUI_Controller:
     def __init__(self):
         """Controls the communication between device and controller interface
         and the GUI"""
+        logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         self.device_process = None
         self.connecting_to_sim = False
         self.controller_ip = None
@@ -33,7 +34,6 @@ class GUI_Controller:
         Try to connect to the device if it is available 
         Return True if connection is successful
         """
-        logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         try:
             current_address = socket.gethostbyname(socket.getfqdn() + '.local')
             self.device_process = Process(target=self._connect_device, args=(current_address,))
