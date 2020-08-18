@@ -671,6 +671,15 @@ class Ui_Purification(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
+        self.status_display_color_running = '#3CB371'
+        self.status_display_color_halt = '#FFFF66'
+        self.status_display_stylsheet = '{}'.format("QPushButton#status_display_btn{{"
+                                        "border-radius:10;"
+                                        "border-width: 2px;"
+                                        "background-color: {0};"
+                                        "font-size:14px;}}\n"
+                                        "QPushButton:disabled#status_display_btn{{"
+                                        "background-color:#A9A9A9}}")
         self.estimated_time = None
         self.timer_index = None
         # timer event handler called every 1s
@@ -823,7 +832,7 @@ class Ui_Purification(object):
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.status_display_btn.setEnabled(True)
-            self.status_display_btn.setText('Running')
+            self.status_display_btn.setText('running')
             self.gui_controller.run_purification_script(init_params, self.fractions_selected)
 
     def onClickPauseHold(self, is_pause):
@@ -844,6 +853,8 @@ class Ui_Purification(object):
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
+            self.status_display_btn.setText('on {}'.format(msg))
+            self.status_display_btn.setStyleSheet(self.status_display_stylsheet.format(self.status_display_color_halt))
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
@@ -857,6 +868,8 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(True, False)
         self._timer_on_flag = True
         self.timer.start(self._time_per_update)
+        self.status_display_btn.setStyleSheet(self.status_display_stylsheet.format(self.status_display_color_running))
+        self.status_display_btn.setText('running')
         self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
@@ -890,6 +903,8 @@ class Ui_Purification(object):
         self.start_btn.disconnect()
         self.start_btn.setText('START')
         self.current_step_display_btn.setEnabled(False)
+        self.status_display_btn.setEnabled(False)
+        self.status_display_btn.setText('--')
         self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
         self.start_btn.clicked.connect(self.onClickStart)
     
