@@ -692,6 +692,7 @@ class Ui_Purification(object):
         self.log_update_timer = QtCore.QTimer()
         self.log_update_timer.timeout.connect(self.log_timer_handler)
         self.log_update_timer.start(self._time_per_update)
+        self.log_output_txtbox.setReadOnly(True)
         self.log_output = None
 
     def setDefaultParam(self):
@@ -948,7 +949,7 @@ class Ui_Purification(object):
         self.current_step_display_btn.setText(step[self.timer_index])
 
     def log_timer_handler(self):
-        """Temporary"""
+        """Update the logger"""
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
             output = f.read()

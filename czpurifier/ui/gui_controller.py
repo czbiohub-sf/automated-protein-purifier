@@ -23,6 +23,8 @@ class GUI_Controller:
         self.controller_interface_PID = None
         self.ctrl_proc = None
         chdir(path.dirname(path.realpath(__file__)))
+        with open('purifier.log', 'w') as f:
+            f.close()
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
         self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
