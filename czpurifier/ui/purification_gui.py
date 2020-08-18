@@ -24,7 +24,7 @@ class Ui_Purification(object):
     def setupUi(self, Purification):
         Purification.setObjectName("Purification")
         Purification.setWindowModality(QtCore.Qt.ApplicationModal)
-        Purification.resize(1441, 794)
+        Purification.resize(1440, 775)
         self.centralwidget = QtWidgets.QWidget(Purification)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -174,7 +174,7 @@ class Ui_Purification(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.equilibriate_pbar.sizePolicy().hasHeightForWidth())
         self.equilibriate_pbar.setSizePolicy(sizePolicy)
-        self.equilibriate_pbar.setMinimumSize(QtCore.QSize(150, 0))
+        self.equilibriate_pbar.setMinimumSize(QtCore.QSize(200, 0))
         self.equilibriate_pbar.setProperty("value", 24)
         self.equilibriate_pbar.setObjectName("equilibriate_pbar")
         self.horizontalLayout_2.addWidget(self.equilibriate_pbar)
@@ -258,7 +258,7 @@ class Ui_Purification(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.load_pbar.sizePolicy().hasHeightForWidth())
         self.load_pbar.setSizePolicy(sizePolicy)
-        self.load_pbar.setMinimumSize(QtCore.QSize(150, 0))
+        self.load_pbar.setMinimumSize(QtCore.QSize(200, 0))
         self.load_pbar.setProperty("value", 24)
         self.load_pbar.setObjectName("load_pbar")
         self.horizontalLayout_4.addWidget(self.load_pbar)
@@ -344,7 +344,7 @@ class Ui_Purification(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.wash_pbar.sizePolicy().hasHeightForWidth())
         self.wash_pbar.setSizePolicy(sizePolicy)
-        self.wash_pbar.setMinimumSize(QtCore.QSize(150, 0))
+        self.wash_pbar.setMinimumSize(QtCore.QSize(200, 0))
         self.wash_pbar.setProperty("value", 24)
         self.wash_pbar.setObjectName("wash_pbar")
         self.horizontalLayout_5.addWidget(self.wash_pbar)
@@ -428,7 +428,7 @@ class Ui_Purification(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.elute_pbar.sizePolicy().hasHeightForWidth())
         self.elute_pbar.setSizePolicy(sizePolicy)
-        self.elute_pbar.setMinimumSize(QtCore.QSize(150, 0))
+        self.elute_pbar.setMinimumSize(QtCore.QSize(200, 0))
         self.elute_pbar.setProperty("value", 24)
         self.elute_pbar.setObjectName("elute_pbar")
         self.horizontalLayout_3.addWidget(self.elute_pbar)
@@ -436,10 +436,13 @@ class Ui_Purification(object):
         self.horizontalLayout_6.addLayout(self.verticalLayout_3)
         self.verticalLayout_7 = QtWidgets.QVBoxLayout()
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.progress_model_placeholder = QtWidgets.QTextBrowser(self.centralwidget)
-        self.progress_model_placeholder.setObjectName("progress_model_placeholder")
-        self.verticalLayout_7.addWidget(self.progress_model_placeholder)
         self.log_output_txtbox = QtWidgets.QTextEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.log_output_txtbox.sizePolicy().hasHeightForWidth())
+        self.log_output_txtbox.setSizePolicy(sizePolicy)
+        self.log_output_txtbox.setMinimumSize(QtCore.QSize(500, 0))
         self.log_output_txtbox.setObjectName("log_output_txtbox")
         self.verticalLayout_7.addWidget(self.log_output_txtbox)
         self.estimated_time_remaining_lbl = QtWidgets.QLabel(self.centralwidget)
@@ -515,7 +518,7 @@ class Ui_Purification(object):
         self.gridLayout.addLayout(self.horizontalLayout_7, 1, 0, 1, 1)
         Purification.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Purification)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1441, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 22))
         self.menubar.setObjectName("menubar")
         Purification.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(Purification)
@@ -567,12 +570,7 @@ class Ui_Purification(object):
         self.elute_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.elute_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.elute_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
-        self.progress_model_placeholder.setHtml(_translate("Purification", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">&lt;Progress Model&gt;</p></body></html>"))
-        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time: <..> min(s)"))
+        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time Remaining: <..> min(s)"))
         self.start_btn.setText(_translate("Purification", "START"))
         self.pause_btn.setText(_translate("Purification", "PAUSE"))
         self.hold_btn.setText(_translate("Purification", "HOLD"))
@@ -846,7 +844,7 @@ class Ui_Purification(object):
     
     def msgbtn(self, i):
         """Returns the result from the are you sure pop up"""
-        self.is_sure = True if i.text().lower() == 'ok' else False
+        self.is_sure = True if 'ok' in i.text().lower() else False
 
     ## Timer Related Events ##
 
