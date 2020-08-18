@@ -93,6 +93,7 @@ class GUI_Controller:
         if not self.device_present:
             kill(self.device_process.pid, SIGTERM)
             self.device_process.join()
+        return self.device_present
 
     def calc_step_times(self, parameters, fractions):
         """Calculates an estimate time for each step"""

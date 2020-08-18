@@ -17,16 +17,11 @@ class Ui_MainWindow(object):
 
     def initUI(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(591, 246)
+        MainWindow.resize(300, 246)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.gridLayout.addWidget(self.line, 0, 1, 1, 1)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -46,23 +41,6 @@ class Ui_MainWindow(object):
         self.otherscripts_btn.setObjectName("otherscripts_btn")
         self.verticalLayout.addWidget(self.otherscripts_btn)
         self.gridLayout.addLayout(self.verticalLayout, 0, 2, 1, 1)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumSize(QtCore.QSize(0, 10))
-        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.label.setObjectName("label")
-        self.verticalLayout_2.addWidget(self.label)
-        self.connect_device_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.connect_device_btn.setMinimumSize(QtCore.QSize(0, 100))
-        self.connect_device_btn.setObjectName("connect_device_btn")
-        self.verticalLayout_2.addWidget(self.connect_device_btn)
-        self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -88,22 +66,19 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Protein Purifier"))
-        self.label_2.setText(_translate("MainWindow", "Step 2: Choose Procedure"))
+        self.label_2.setText(_translate("MainWindow", "Choose Procedure"))
         self.purification_btn.setText(_translate("MainWindow", "Basic Purification"))
         self.otherscripts_btn.setText(_translate("MainWindow", "Other Scripts"))
-        self.label.setText(_translate("MainWindow", "Step 1: Establish Connection"))
-        self.connect_device_btn.setText(_translate("MainWindow", "Connect To Device"))
+        #self.label.setText(_translate("MainWindow", "Step 1: Establish Connection"))
+        #self.connect_device_btn.setText(_translate("MainWindow", "Connect To Device"))
         self.close_btn.setText(_translate("MainWindow", "Close"))
 
         self.purification_btn.clicked.connect(self.onClick_purification_btn)
         self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
-        self.connect_device_btn.clicked.connect(self.onClick_connect_device)
         self.close_btn.clicked.connect(self.onClick_close_btn)
+        self.connect_device()
 
-        self.purification_btn.setEnabled(False)
-        self.otherscripts_btn.setEnabled(False)
-
-    def onClick_connect_device(self):
+    def connect_device(self):
         """
         Try to connect to device and if failed pop up a message to either
         retry device connection or connect to the simulator
@@ -119,22 +94,14 @@ class Ui_MainWindow(object):
             msg.addButton(self.connect_hardware, QtWidgets.QMessageBox.NoRole)
             msg.addButton(self.run_simulator, QtWidgets.QMessageBox.NoRole)
             msg.exec()
-        else:
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Running Devie')
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.exec()
-            self.connect_device_btn.setEnabled(False)
-            self.purification_btn.setEnabled(True)
-            self.otherscripts_btn.setEnabled(True)
 
     def onClickConnect_hardware(self):
         """
         If retry connection is clicked in the connect to device pop up
         The connect device button is automatically clicked to call its on event action
         """
-        self.connect_device_btn.click()
-    
+        self.connect_device()
+
     def onClickRunSim(self):
         """
         Call the method to run the simulator if 'run simulator' is clicked
@@ -145,7 +112,6 @@ class Ui_MainWindow(object):
         msg.setText('Running Simulator')
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
-        self.connect_device_btn.setEnabled(False)
         self.purification_btn.setEnabled(True)
         self.otherscripts_btn.setEnabled(True)
     
@@ -169,11 +135,11 @@ class Ui_MainWindow(object):
         """
         Closes any tcp connection and closes the main window
         """
-        self.gui_controller.close_device()
-        msg = QtWidgets.QMessageBox()
-        msg.setText('Closed Simulator Connection')
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        msg.exec()
+        if not self.gui_controller.close_device():
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Closed Simulator Connection')
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
         quit()        
 
 if __name__ == "__main__":
