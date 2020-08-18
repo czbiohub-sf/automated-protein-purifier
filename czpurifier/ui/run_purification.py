@@ -21,7 +21,7 @@ class RunPurification():
         self._run_process('LOAD', [input_param[4], input_param[5]], fractions[1])
         self._run_process('WASH', [input_param[6], input_param[7]], fractions[2])
         self._run_process('ELUTION', [input_param[8], input_param[9]], fractions[3])
-        logging.info('Purification complete')
+        logging.info('Purification Complete')
         kill(gui_pid, SIGUSR2)
 
     def _purge_bubbles(self):

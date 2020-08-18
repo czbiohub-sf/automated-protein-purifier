@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
-from os import chdir, path
+from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
 
@@ -866,6 +866,7 @@ class Ui_Purification(object):
             self.is_sure = None
             self.timer_index +=1
             self.timer_counter = 0
+            self._update_current_step()
             self.gui_controller.skip_clicked()
 
     def onClickStop(self):
@@ -873,14 +874,14 @@ class Ui_Purification(object):
         self.areYouSureMsg('stop')
         if self.is_sure:
             self.is_sure = None
-            self._timer_on_flag = False
-            self.timer.stop()
-            self._finish_protocol(True)
+            self._finish_protocol()
+            self.current_step_display_btn.setText('STOPPED')
             self.gui_controller.stop_clicked()
     
-    def _finish_protocol(self, stopped = False):
-        msg = 'Stopped' if stopped else 'Purification Complete'
+    def _finish_protocol(self):
         self._set_actionbtn_enable(False, True)
+        self._timer_on_flag = False
+        self.timer.stop()
         self.close_btn.setEnabled(True)
         self._set_param_enable(True)
         self.timer_index = 0
@@ -889,7 +890,6 @@ class Ui_Purification(object):
         self.start_btn.disconnect()
         self.start_btn.setText('START')
         self.current_step_display_btn.setEnabled(False)
-        self.current_step_display_btn.setText(msg)
         self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
         self.start_btn.clicked.connect(self.onClickStart)
     
@@ -924,10 +924,13 @@ class Ui_Purification(object):
                     self.pbars[self.timer_index].setValue(percen_comp)
                     if percen_comp == 100:
                         self.timer_index += 1
-                        step = ['Equilibrate', 'Load', 'Wash', 'Elute']
-                        self.current_step_display_btn.setText(step[self.timer_index])
+                        self._update_current_step()
                         # reset the counter when completed
-                        self.timer_counter = 0 
+                        self.timer_counter = 0
+
+    def _update_current_step(self):
+        step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Purification Complete']
+        self.current_step_display_btn.setText(step[self.timer_index])
 
     def log_timer_handler(self):
         """Temporary"""
