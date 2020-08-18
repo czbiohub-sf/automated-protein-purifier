@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from os import chdir, path
-from signal import signal, SIGUSR2
+from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
 
 class Ui_Purification(object):
@@ -10,6 +10,7 @@ class Ui_Purification(object):
         Contains the initialization and functionality of the purification tab
         """
         signal(SIGUSR2, self.purificationComplete)
+        signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = gui_controller
         self.is_sure = None
         self.frac_size = None
@@ -436,6 +437,49 @@ class Ui_Purification(object):
         self.horizontalLayout_6.addLayout(self.verticalLayout_3)
         self.verticalLayout_7 = QtWidgets.QVBoxLayout()
         self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
+        self.label_8.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_15.addWidget(self.label_8)
+        self.current_step_display_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.current_step_display_btn.setMinimumSize(QtCore.QSize(0, 45))
+        self.current_step_display_btn.setStyleSheet("QPushButton#current_step_display_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:18px;}\n"
+"QPushButton:disabled#current_step_display_btn{background-color:#A9A9A9}")
+        self.current_step_display_btn.setObjectName("current_step_display_btn")
+        self.horizontalLayout_15.addWidget(self.current_step_display_btn)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_15)
+        self.horizontalLayout_16 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_16.setObjectName("horizontalLayout_16")
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
+        self.label_9.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
+        self.horizontalLayout_16.addWidget(self.label_9)
+        spacerItem = QtWidgets.QSpacerItem(35, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_16.addItem(spacerItem)
+        self.status_display_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.status_display_btn.setEnabled(True)
+        self.status_display_btn.setMinimumSize(QtCore.QSize(392, 25))
+        self.status_display_btn.setStyleSheet("QPushButton#status_display_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}\n"
+"QPushButton:disabled#status_display_btn{background-color:#A9A9A9}")
+        self.status_display_btn.setObjectName("status_display_btn")
+        self.horizontalLayout_16.addWidget(self.status_display_btn)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_16)
         self.log_output_txtbox = QtWidgets.QTextEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -455,44 +499,45 @@ class Ui_Purification(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_6)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(120, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(120, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.start_btn = QtWidgets.QPushButton(self.centralwidget)
         self.start_btn.setMinimumSize(QtCore.QSize(0, 35))
         self.start_btn.setStyleSheet("QPushButton#start_btn {border-radius:10;border-width: 2px; background-color: white; font-size:16px; border: 1px solid #808080}QPushButton:pressed#start_btn{background-color:#A9A9A9}")
         self.start_btn.setObjectName("start_btn")
         self.horizontalLayout.addWidget(self.start_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+        spacerItem2 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem2)
         self.pause_btn = QtWidgets.QPushButton(self.centralwidget)
         self.pause_btn.setMinimumSize(QtCore.QSize(0, 35))
         self.pause_btn.setStyleSheet("QPushButton#pause_btn {border-radius:10;border-width: 2px; background-color: white; font-size:16px; border: 1px solid #808080}QPushButton:pressed#pause_btn{background-color:#A9A9A9}")
         self.pause_btn.setObjectName("pause_btn")
         self.horizontalLayout.addWidget(self.pause_btn)
-        spacerItem2 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem2)
+        spacerItem3 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem3)
         self.hold_btn = QtWidgets.QPushButton(self.centralwidget)
         self.hold_btn.setMinimumSize(QtCore.QSize(0, 35))
         self.hold_btn.setStyleSheet("QPushButton#hold_btn {border-radius:10;border-width: 2px; background-color: white; font-size:16px; border: 1px solid #808080}\n"
 "QPushButton:pressed#hold_btn{background-color:#A9A9A9}")
         self.hold_btn.setObjectName("hold_btn")
         self.horizontalLayout.addWidget(self.hold_btn)
-        spacerItem3 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem4)
         self.skip_btn = QtWidgets.QPushButton(self.centralwidget)
         self.skip_btn.setMinimumSize(QtCore.QSize(0, 35))
         self.skip_btn.setStyleSheet("QPushButton#skip_btn {border-radius:10;border-width: 2px; background-color: white; font-size:16px; border: 1px solid #808080}\n"
 "QPushButton:pressed#skip_btn{background-color:#A9A9A9}")
         self.skip_btn.setObjectName("skip_btn")
         self.horizontalLayout.addWidget(self.skip_btn)
-        spacerItem4 = QtWidgets.QSpacerItem(120, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem4)
+        spacerItem5 = QtWidgets.QSpacerItem(120, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem5)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem5)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem6)
         self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.stop_btn.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -500,18 +545,19 @@ class Ui_Purification(object):
         self.stop_btn.setSizePolicy(sizePolicy)
         self.stop_btn.setMinimumSize(QtCore.QSize(70, 70))
         self.stop_btn.setStyleSheet("QPushButton#stop_btn {border-radius:35;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\n"
-"QPushButton:pressed#stop_btn{background-color:#A9A9A9}")
+"QPushButton:pressed#stop_btn{background-color:#A9A9A9}\n"
+"QPushButton:disabled#stop_btn{background-color:#696969}")
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout_12.addWidget(self.stop_btn)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem6)
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem7)
         self.verticalLayout_2.addLayout(self.horizontalLayout_12)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         self.gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem7)
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_7.addItem(spacerItem8)
         self.close_btn = QtWidgets.QPushButton(self.centralwidget)
         self.close_btn.setObjectName("close_btn")
         self.horizontalLayout_7.addWidget(self.close_btn)
@@ -570,7 +616,11 @@ class Ui_Purification(object):
         self.elute_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.elute_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.elute_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
-        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time Remaining: <..> min(s)"))
+        self.label_8.setText(_translate("Purification", "Current Step:"))
+        self.current_step_display_btn.setText(_translate("Purification", "--"))
+        self.label_9.setText(_translate("Purification", "Status:"))
+        self.status_display_btn.setText(_translate("Purification", "--"))
+        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Total Estimated Time: <..> min(s)"))
         self.start_btn.setText(_translate("Purification", "START"))
         self.pause_btn.setText(_translate("Purification", "PAUSE"))
         self.hold_btn.setText(_translate("Purification", "HOLD"))
@@ -618,6 +668,8 @@ class Ui_Purification(object):
                                                     self.wash_vol_val))
         self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
                                                     self.elute_vol_val))
+        self.current_step_display_btn.setEnabled(False)
+        self.status_display_btn.setEnabled(False)
 
         self.estimated_time = None
         self.timer_index = None
@@ -655,15 +707,15 @@ class Ui_Purification(object):
     
     def purificationComplete(self, signalNumber, frame):
         """Handler for SIGUSR2. Prepares UI for another purification protocol"""
-        self._set_actionbtn_enable(False, True)
-        self.close_btn.setEnabled(True)
-        self._set_param_enable(True)
+        self._finish_protocol()
+    
+    def startProgressBar(self, signalNumber, frame):
+        """Handler for SIGUSR1. Starts the progress bar sequence"""
         self.timer_index = 0
-        self._reset_pbar()
-        self.start_btn.disconnect()
-        self.start_btn.setText('START')
-        self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
-        self.start_btn.clicked.connect(self.onClickStart)
+        self._set_actionbtn_enable(True, False)
+        self.current_step_display_btn.setText('Equilibrate')
+        self._timer_on_flag = True
+        self.timer.start(self._time_per_update)
 
     ## Input Parameter Widget Actions ##
 
@@ -761,15 +813,17 @@ class Ui_Purification(object):
         self.areYouSureMsg('start')
         if self.is_sure:
             self.is_sure = None
-            self._set_actionbtn_enable(True, False)
+            self.start_btn.setEnabled(False)
+            self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             init_params = self._init_run_param()
             self.estimated_time = self.gui_controller.calc_step_times(init_params, self.fractions_selected)
-            self.timer_index = 0
-            self._timer_on_flag = True
-            self.timer.start(self._time_per_update)
             self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
+            self.current_step_display_btn.setEnabled(True)
+            self.current_step_display_btn.setText('Setup And Purging Bubbles')
+            self.status_display_btn.setEnabled(True)
+            self.status_display_btn.setText('Running')
             self.gui_controller.run_purification_script(init_params, self.fractions_selected)
 
     def onClickPauseHold(self, is_pause):
@@ -821,17 +875,23 @@ class Ui_Purification(object):
             self.is_sure = None
             self._timer_on_flag = False
             self.timer.stop()
-            self.timer_counter = 0
-            self.timer_index = 0
-            self._reset_pbar()
+            self._finish_protocol(True)
             self.gui_controller.stop_clicked()
-            self._set_actionbtn_enable(False, True)
-            self.close_btn.setEnabled(True)
-            self._set_param_enable(True)
-            self.start_btn.disconnect()
-            self.start_btn.setText('START')
-            self.start_btn.clicked.connect(self.onClickStart)
-            self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)")  
+    
+    def _finish_protocol(self, stopped = False):
+        msg = 'Stopped' if stopped else 'Purification Complete'
+        self._set_actionbtn_enable(False, True)
+        self.close_btn.setEnabled(True)
+        self._set_param_enable(True)
+        self.timer_index = 0
+        self.timer_counter = 0
+        self._reset_pbar()
+        self.start_btn.disconnect()
+        self.start_btn.setText('START')
+        self.current_step_display_btn.setEnabled(False)
+        self.current_step_display_btn.setText(msg)
+        self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
+        self.start_btn.clicked.connect(self.onClickStart)
     
     def areYouSureMsg(self, action):
         """Confirms whether or not the user meant to click an action button"""
@@ -864,6 +924,8 @@ class Ui_Purification(object):
                     self.pbars[self.timer_index].setValue(percen_comp)
                     if percen_comp == 100:
                         self.timer_index += 1
+                        step = ['Equilibrate', 'Load', 'Wash', 'Elute']
+                        self.current_step_display_btn.setText(step[self.timer_index])
                         # reset the counter when completed
                         self.timer_counter = 0 
 
