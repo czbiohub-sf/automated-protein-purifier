@@ -48,6 +48,7 @@ class GUI_Controller:
     def connect_to_simulator(self):
         """Connect to the simulator by opening a pub/sub connection at local ip"""
         self.device_process = Process(target=self._connect_simulator)
+        self.device_process.daemon = True
         self.device_process.start()
         self.controller_ip = '127.0.0.1'
 
@@ -65,6 +66,7 @@ class GUI_Controller:
         if not self.device_present:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=RunPurification, args=(parameters, fractions, self.controller_ip, getpid(),))
+        self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
 
@@ -89,13 +91,6 @@ class GUI_Controller:
         self._needs_connection = False
         kill(self.controller_interface_PID, SIGTERM)
         self.ctrl_proc.join()
-    
-    def close_device(self):
-        """Sends SIGTERM signal to disconnect simulator interface"""
-        if not self.device_present:
-            kill(self.device_process.pid, SIGTERM)
-            self.device_process.join()
-        return self.device_present
 
     def calc_step_times(self, parameters, fractions):
         """Calculates an estimate time for each step"""

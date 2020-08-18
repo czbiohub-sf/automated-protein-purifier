@@ -133,13 +133,8 @@ class Ui_MainWindow(object):
     
     def onClick_close_btn(self):
         """
-        Closes any tcp connection and closes the main window
+        Closes the GUI
         """
-        if not self.gui_controller.close_device():
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Closed Simulator Connection')
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.exec()
         quit()        
 
 if __name__ == "__main__":
