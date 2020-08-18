@@ -1,6 +1,6 @@
 import logging
 from time import sleep
-from signal import SIGUSR2
+from signal import SIGUSR1, SIGUSR2
 from os import kill
 from command_wrappers import UICommands
 
@@ -15,7 +15,8 @@ class RunPurification():
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
 
-        #self._purge_bubbles()
+        self._purge_bubbles()
+        kill(gui_pid, SIGUSR1)
         self._run_process('EQUILIBRATE', [input_param[2], input_param[3]], fractions[0])
         self._run_process('LOAD', [input_param[4], input_param[5]], fractions[1])
         self._run_process('WASH', [input_param[6], input_param[7]], fractions[2])

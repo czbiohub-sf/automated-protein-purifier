@@ -60,7 +60,7 @@ class GUI_Controller:
         If the protocol is run on the simulator a signal is sent to the simulator
         to be the device and pass the 'device is available check' on the controller
         """
-        if self.connecting_to_sim:
+        if not self.device_present:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=RunPurification, args=(parameters, fractions, self.controller_ip, getpid(),))
         self.ctrl_proc.start()
