@@ -18,8 +18,8 @@ class GUI_Controller:
         and the GUI"""
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         self.device_process = None
-        self.connecting_to_sim = False
-        self.controller_ip = None
+        self.device_present = False
+        self.controller_ip = 'pure2.local'
         self.controller_interface_PID = None
         self.ctrl_proc = None
         chdir(path.dirname(path.realpath(__file__)))
@@ -30,28 +30,21 @@ class GUI_Controller:
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
 
     def connect_to_device(self):
-        """
-        Try to connect to the device if it is available 
-        Return True if connection is successful
-        """
+        """Try to bind to device ip and check if a connection is already there"""
         try:
-            current_address = socket.gethostbyname(socket.getfqdn() + '.local')
-            self.device_process = Process(target=self._connect_device, args=(current_address,))
-            self.device_process.start()
+            ip_address = '127.0.0.1'
+            context = zmq.Context()
+            socket_availability = context.socket(zmq.PUSH)
+            socket_availability.bind("tcp://" + ip_address + ":5000")
+            socket_availability.disconnect("tcp://" + ip_address + ":5000")
+            self.device_present = False
+        except zmq.error.ZMQError:
             self.controller_ip = 'pure2.local'
-            return True
-        except OSError:
-            return False
-    
-    def _connect_device(self, current_address):
-        """Method run in the new process generated to connect to the device"""
-        current_address = socket.gethostbyname(socket.getfqdn() + '.local')
-        di = DeviceInterface(ip_address=current_address)
-        di.autorun()
+            self.device_present = True
+        return self.device_present
     
     def connect_to_simulator(self):
         """Connect to the simulator by opening a pub/sub connection at local ip"""
-        self.connecting_to_sim = True
         self.device_process = Process(target=self._connect_simulator)
         self.device_process.start()
         self.controller_ip = '127.0.0.1'
@@ -96,10 +89,8 @@ class GUI_Controller:
         self.ctrl_proc.join()
     
     def close_device(self):
-        """Sends SIGTERM signal to disconnect simulator interface
-        TODO: what do we do when connected to device??
-        Signals do not work across different machines"""
-        if self.connecting_to_sim:
+        """Sends SIGTERM signal to disconnect simulator interface"""
+        if not self.device_present:
             kill(self.device_process.pid, SIGTERM)
             self.device_process.join()
 
