@@ -147,12 +147,21 @@ class Ui_CustomProtocol(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_4.addWidget(self.scrollArea)
         self.verticalLayout_3.addLayout(self.verticalLayout_4)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.add_step_btn = QtWidgets.QPushButton(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(16)
         self.add_step_btn.setFont(font)
         self.add_step_btn.setObjectName("add_step_btn")
-        self.verticalLayout_3.addWidget(self.add_step_btn)
+        self.horizontalLayout_3.addWidget(self.add_step_btn)
+        self.remove_step = QtWidgets.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.remove_step.setFont(font)
+        self.remove_step.setObjectName("remove_step")
+        self.horizontalLayout_3.addWidget(self.remove_step)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         self.line_4 = QtWidgets.QFrame(self.centralwidget)
         self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -289,6 +298,7 @@ class Ui_CustomProtocol(object):
         self.label_10.setText(_translate("CustomProtocol", "Repeat: "))
         self.rep_num_lbl.setText(_translate("CustomProtocol", "1"))
         self.add_step_btn.setText(_translate("CustomProtocol", "Add Step"))
+        self.remove_step.setText(_translate("CustomProtocol", "Remove Step"))
         self.label_9.setText(_translate("CustomProtocol", "Status:"))
         self.status_display_btn.setText(_translate("CustomProtocol", "Running"))
         self.estimated_time_remaining_lbl.setText(_translate("CustomProtocol", "Total Estimated Time: <..> min(s)"))
@@ -303,10 +313,12 @@ class Ui_CustomProtocol(object):
     ##################
     def initEvents(self):
         """Initializes all on click actions"""
-        self.step_counter = 0
+        self.step_counter = -1
         self.step_widgets = []
         self.close_btn.clicked.connect(self.onClickClose)
         self.add_step_btn.clicked.connect(self.onClickAddStep)
+        self.remove_step.clicked.connect(self.onClickRemoveStep)
+        self.remove_step.setEnabled(False)
 
     def add_step_widget(self):
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
@@ -416,8 +428,17 @@ class Ui_CustomProtocol(object):
         self.CustomProtocol.close()
 
     def onClickAddStep(self):
-        self.add_step_widget()
+        """Creates a new widget to add the input parameters"""
         self.step_counter += 1
+        self.add_step_widget()
+        self.remove_step.setEnabled(True)
+
+    def onClickRemoveStep(self):
+        self.step_widgets[self.step_counter].setParent(None)
+        self.step_widgets.pop()
+        self.step_counter -= 1
+        if self.step_counter < 0:
+                self.remove_step.setEnabled(False)
 
 if __name__ == "__main__":
     import sys
