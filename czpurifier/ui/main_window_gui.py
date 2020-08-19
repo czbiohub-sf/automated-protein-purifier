@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification_gui import Ui_Purification
-from other_scripts_gui import Ui_OtherScripts
+from custom_protocol import Ui_CustomProtocol
 from gui_controller import GUI_Controller
 import sys
 from time import sleep
@@ -128,7 +128,7 @@ class Ui_MainWindow(object):
         Opens the other scripts window
         """
         self.oth_sc_window = QtWidgets.QMainWindow()
-        self.oth_sc_ui = Ui_OtherScripts(self.oth_sc_window)
+        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window)
         self.oth_sc_window.show() 
     
     def onClick_close_btn(self):
