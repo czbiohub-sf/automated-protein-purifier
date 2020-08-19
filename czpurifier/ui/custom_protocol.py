@@ -329,7 +329,6 @@ class Ui_CustomProtocol(object):
         valve_inp_lbl.setObjectName("valve_inp_lbl")
         gridLayout_3.addWidget(valve_inp_lbl, 0, 0, 1, 1)
         port_lbl = QtWidgets.QLabel(self.step_widgets[self.step_counter])
-        port_lbl.setEnabled(False)
         font = QtGui.QFont()
         font.setPointSize(15)
         port_lbl.setFont(font)
@@ -422,6 +421,8 @@ class Ui_CustomProtocol(object):
 
         volume_slider.valueChanged.connect(lambda: self.slider_changed(volume_slider.value(),
                                                     volume_val_lbl))
+        valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(valve_inp_combo_box.currentIndex(),
+                                                port_combo_box))
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -443,6 +444,13 @@ class Ui_CustomProtocol(object):
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
         lbl.setText('{}'.format(value))
+    
+    def onSelectInput(self, cur_index, port):
+        if cur_index == 1:
+            port.setEnabled(True)
+        else:
+            port.setEnabled(False)
+
 
 if __name__ == "__main__":
     import sys
