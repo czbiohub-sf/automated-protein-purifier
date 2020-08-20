@@ -424,7 +424,7 @@ class Ui_CustomProtocol(object):
                                                     volume_val_lbl))
         valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(valve_inp_combo_box.currentIndex(),
                                                 port_combo_box))
-        flowpath_combo_box.activated.connect(lambda: self.onSelectFlowPath(flowpath_combo_box.currentIndex(),
+        flowpath_combo_box.activated.connect(lambda: self.onSelectFlowPath(flowpath_combo_box,
                                                         volume_slider, volume_val_lbl.text()))
 
     def onClickClose(self):
@@ -456,17 +456,24 @@ class Ui_CustomProtocol(object):
         else:
             port.setEnabled(False)
 
-    def onSelectFlowPath(self, cur_index, slider, vol):
+    def onSelectFlowPath(self, combobox, slider, vol):
         """Display fraction collector window with selected fractions depending on
         the flow path selected"""
+        cur_index = combobox.currentIndex()
         self.col_vol_combo_box.setEnabled(True)
-        if cur_index > 1:
-            col_size = None
-            if cur_index == 2:
+        run = False
+        if cur_index == 2:
                 col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-                self.col_vol_combo_box.setEnabled(False)
+                run = self._okayFracVol(vol, col_size)
+                if run:
+                    self.col_vol_combo_box.setEnabled(False)
+                else:
+                    combobox.setCurrentIndex(0)
+        if cur_index == 3:
+                col_size = None
+                run = True
+        if run:
             slider.setEnabled(False)
-            # disable the fraction coll size 
             self.frac_wdw = QtWidgets.QMainWindow()
             self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(vol), col_size)
             self.frac_wdw.show()
@@ -475,6 +482,18 @@ class Ui_CustomProtocol(object):
             self.frac_ui.select_frac_columns()
         else:
             slider.setEnabled(True)
+
+    def _okayFracVol(self, vol, col_size):
+        """Checks that the frac volume input does not exceed the total capacity"""
+        max_vol = col_size*10
+        if int(vol) > max_vol:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+            return False
+        return True
 
 if __name__ == "__main__":
     import sys
