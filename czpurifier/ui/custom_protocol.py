@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from fraction_col_gui import Ui_FractionColumn
 
 
 class Ui_CustomProtocol(object):
@@ -423,6 +424,8 @@ class Ui_CustomProtocol(object):
                                                     volume_val_lbl))
         valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(valve_inp_combo_box.currentIndex(),
                                                 port_combo_box))
+        flowpath_combo_box.activated.connect(lambda: self.onSelectFlowPath(flowpath_combo_box.currentIndex(),
+                                                        volume_slider, volume_val_lbl.text()))
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -435,6 +438,7 @@ class Ui_CustomProtocol(object):
         self.remove_step.setEnabled(True)
 
     def onClickRemoveStep(self):
+        """Removes the last step that was added"""
         self.step_widgets[self.step_counter].setParent(None)
         self.step_widgets.pop()
         self.step_counter -= 1
@@ -446,11 +450,31 @@ class Ui_CustomProtocol(object):
         lbl.setText('{}'.format(value))
     
     def onSelectInput(self, cur_index, port):
+        """Enable port selection if buffer is selected"""
         if cur_index == 1:
             port.setEnabled(True)
         else:
             port.setEnabled(False)
 
+    def onSelectFlowPath(self, cur_index, slider, vol):
+        """Display fraction collector window with selected fractions depending on
+        the flow path selected"""
+        self.col_vol_combo_box.setEnabled(True)
+        if cur_index > 1:
+            col_size = None
+            if cur_index == 2:
+                col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+                self.col_vol_combo_box.setEnabled(False)
+            slider.setEnabled(False)
+            # disable the fraction coll size 
+            self.frac_wdw = QtWidgets.QMainWindow()
+            self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(vol), col_size)
+            self.frac_wdw.show()
+            self.frac_ui.correct_frac_col_design()
+            #self.fractions_selected[step_index] = 
+            self.frac_ui.select_frac_columns()
+        else:
+            slider.setEnabled(True)
 
 if __name__ == "__main__":
     import sys
