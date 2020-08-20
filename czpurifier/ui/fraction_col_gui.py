@@ -6,6 +6,11 @@ class Ui_FractionColumn(object):
         Initialization of the GUI to choose the fractionating column
         This window is opened when 'Fraction Column' is chosen as the flow
         path from the Set Parameter window
+        
+        Parameters:
+        ----------------------------
+        total_vol = the volume to pump over the fraction collector
+        col_size = None: 50ml (flow through), 1: 1ml, 5: 5ml (collector)
         """
         self.total_vol = total_vol
         self.col_size = col_size
