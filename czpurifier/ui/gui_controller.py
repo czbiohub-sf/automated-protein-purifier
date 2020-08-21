@@ -33,6 +33,7 @@ class GUI_Controller:
 
     def connect_to_device(self):
         """Try to bind to device ip and check if a connection is already there"""
+        """
         try:
             ip_address = '127.0.0.1'
             context = zmq.Context()
@@ -43,6 +44,9 @@ class GUI_Controller:
         except zmq.error.ZMQError:
             self.controller_ip = 'pure2.local'
             self.device_present = True
+        """
+        self.controller_ip = 'pure2.local'
+        self.device_present = True
         return self.device_present
     
     def connect_to_simulator(self):
