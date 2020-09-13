@@ -649,11 +649,13 @@ class Ui_Purification(object):
         self.setDefaultParam()
         self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
         self._reset_pbar()
-    
-        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, self.equil_vol_val, 0))
-        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, self.load_vol_val, 1))
-        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, self.wash_vol_val, 2))
-        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, self.elute_vol_val, 3))
+
+        self.vol_vals = [self.equil_vol_val, self.load_vol_val, self.wash_vol_val, self.elute_vol_val]
+        self.vol_sliders = [self.equil_vol_slider, self.load_vol_slider, self.wash_vol_slider, self.elute_vol_slider]
+        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, 0))
+        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, 1))
+        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, 2))
+        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, 3))
         
         self.close_btn.clicked.connect(self.onClickClose)
         self.start_btn.clicked.connect(self.onClickStart)
@@ -741,24 +743,53 @@ class Ui_Purification(object):
             self.elute_vol_slider.setMaximum(50)
             self.frac_size = 5
 
-    def onClickFlowPath(self, flow_path_combo, step_vol, step_index):
+    def onClickFlowPath(self, flow_path_combo, step_index):
         """If the selected flow path is fraction column:
             1. Confirm that fraction column should be selected for the following total vol
-            2. Display the fraction column window with the fractions selected"""
+            2. Display the fraction column window with the fractions selected
+        Parameters
+        ---------------------------------------
+        flow_path_combo: The combobox object of the current flow path selected
+        step_index: The index of the step, used to determine whether to use fraction/flow column
+        and which text box to use to get the volume to flow
+        """
         curIndex = flow_path_combo.currentIndex()
-        if curIndex == 2:
-            step_vol.setEnabled(False)
-            col_size = self.frac_size if step_index == 3 else None
+        col_size = self.frac_size if step_index == 3 else None
+        if curIndex == 2 and self._okayFracVol(self.vol_vals[step_index].text(), col_size):
+            self.vol_vals[step_index].setEnabled(False)
+            self.vol_sliders[step_index].setEnabled(False)
+            self.load_vol_slider.setEnabled(False)
             self.frac_wdw = QtWidgets.QMainWindow()
-            self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(step_vol.text()), col_size)
+            self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(self.vol_vals[step_index].text()), col_size)
             self.frac_wdw.show()
             self.frac_ui.correct_frac_col_design()
             self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
             if step_index == 3:
                 self.col_vol_combo_box.setEnabled(False)
         else:
-            step_vol.setEnabled(True)
+            self.vol_vals[step_index].setEnabled(True)
+            self.vol_sliders[step_index].setEnabled(True)
             self.col_vol_combo_box.setEnabled(True)
+
+    def _okayFracVol(self, vol, col_size = None):
+        """
+        Checks that the frac volume input does not exceed the total capacity
+
+        Parameters
+        ------------------------------------
+        vol: The volume going into the fraction/flow through column
+        col_size: None = Volume flowing through flow through column (fixed max = 200ml)
+        Else 1 or 5 to indicate the size of the fraction columns
+        """
+        max_vol = 200 if col_size is None else col_size*10
+        if int(vol) > max_vol:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+            return False
+        return True
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
