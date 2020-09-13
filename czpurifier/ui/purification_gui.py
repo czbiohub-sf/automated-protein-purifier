@@ -664,14 +664,10 @@ class Ui_Purification(object):
         self.skip_btn.clicked.connect(self.onClickSkip)
         self.stop_btn.clicked.connect(self.onClickStop)
 
-        self.equil_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.equil_vol_slider.value(),
-                                                    self.equil_vol_val))
-        self.load_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.load_vol_slider.value(),
-                                                    self.load_vol_val))
-        self.wash_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.wash_vol_slider.value(),
-                                                    self.wash_vol_val))
-        self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(self.elute_vol_slider.value(),
-                                                    self.elute_vol_val))
+        self.equil_vol_slider.valueChanged.connect(lambda: self.slider_changed(0))
+        self.load_vol_slider.valueChanged.connect(lambda: self.slider_changed(1))
+        self.wash_vol_slider.valueChanged.connect(lambda: self.slider_changed(2))
+        self.elute_vol_slider.valueChanged.connect(lambda: self.slider_changed(3))
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
@@ -791,9 +787,13 @@ class Ui_Purification(object):
             return False
         return True
 
-    def slider_changed(self, value, lbl):
-        """Updates text label beside the slider when slider is moved"""
-        lbl.setText('{}'.format(value))
+    def slider_changed(self, step_index):
+        """Updates text label beside the slider when slider is moved
+        Parameter
+        -------------------------------
+        step_index: Used to determine the slider and text widget to use
+        """
+        self.vol_vals[step_index].setText('{}'.format(self.vol_sliders[step_index].value()))
 
     def _init_run_param(self):
         """Parse through all the input parameters and store
