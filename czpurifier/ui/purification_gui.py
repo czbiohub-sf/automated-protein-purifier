@@ -10,6 +10,11 @@ class Ui_Purification(object):
     def __init__(self, Purification, simulator_process):
         """
         Contains the initialization and functionality of the purification tab
+        The lists in this class are indexed as such:
+        0 - Equilibrate step
+        1 - Load step
+        3 - Wash step
+        4 - Elute step
 
         Parameters
         ------------------------------------------------
@@ -21,15 +26,16 @@ class Ui_Purification(object):
         self.gui_controller.device_process = simulator_process
         signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
-        self.frac_size = None
-        self.is_flowth_avail = [True]*4
         self.Purification = Purification
         self.setupUi(self.Purification)
         self.initEvents()
 
-    ###########################
+    #################################################################
     # Desinger Generated Code #
-    ###########################
+    # To update just paste the new generated code below
+    # Try to avoid updating the code directly to maintain consistency
+    # with the Qt Designer code
+    ##################################################################
 
     def setupUi(self, Purification):
         Purification.setObjectName("Purification")
@@ -639,6 +645,8 @@ class Ui_Purification(object):
         self.stop_btn.setText(_translate("Purification", "STOP"))
         self.close_btn.setText(_translate("Purification", "Close"))
 
+    #### End of Qt Designer Code ######
+
     ###################
     # Event Handlers #
     ##################
@@ -646,34 +654,43 @@ class Ui_Purification(object):
     ## Initializing Event Handlers ##
 
     def initEvents(self):
-        """Initializes all on click actions"""
+        """Initializes all on click actions
+        Creates additional class attributes"""
+        # Parsed when start is clicked to determine the input parameters for run purification
+        # Key: Name of the widget, Value: True = textbox widget, False = combobox widget
         self.input_param = {self.num_col_combo_box: False, self.col_vol_combo_box: False,
                             self.equil_vol_val: True, self.equil_flowpath: False, 
                             self.load_vol_val: True, self.load_flowpath: False,
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
+        # Used to track if the fraction collector pathway is selected for any of the steps on start
+        # Example: [[None],[0,0,0,...,100,100], [None], [10, 10,....]]
         self.fractions_selected = [None]*4
+        # Used to keep count of the total volume passed through the flow throw columns
+        # Flow throw used in either Wash or Load step
+        self.frac_size = None
+        self.is_flowth_avail = [True]*4
         self.flowth_vol_used = 0
+
+        # Useful groups of widgets for easier access
+        self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
+        self.vol_vals = [self.equil_vol_val, self.load_vol_val, self.wash_vol_val, self.elute_vol_val]
+        self.vol_sliders = [self.equil_vol_slider, self.load_vol_slider, self.wash_vol_slider, self.elute_vol_slider]
+        # Widget setup and activation on start
         self._set_actionbtn_enable(False, True)
         self.col_vol_combo_box.activated.connect(self.onClickFractionSize)
         self.setDefaultParam()
-        self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
         self._reset_pbar()
-
-        self.vol_vals = [self.equil_vol_val, self.load_vol_val, self.wash_vol_val, self.elute_vol_val]
-        self.vol_sliders = [self.equil_vol_slider, self.load_vol_slider, self.wash_vol_slider, self.elute_vol_slider]
         self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, 0))
         self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, 1))
         self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, 2))
         self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, 3))
-        
         self.close_btn.clicked.connect(self.onClickClose)
         self.start_btn.clicked.connect(self.onClickStart)
         self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
         self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
         self.skip_btn.clicked.connect(self.onClickSkip)
         self.stop_btn.clicked.connect(self.onClickStop)
-
         self.equil_vol_slider.valueChanged.connect(lambda: self.slider_changed(0))
         self.load_vol_slider.valueChanged.connect(lambda: self.slider_changed(1))
         self.wash_vol_slider.valueChanged.connect(lambda: self.slider_changed(2))
@@ -690,6 +707,7 @@ class Ui_Purification(object):
                                         "font-size:14px;}}\n"
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
+        # Timers initialized
         self.estimated_time = None
         self.timer_index = None
         # timer event handler called every 1s
@@ -699,6 +717,7 @@ class Ui_Purification(object):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.progress_bar_handler)
 
+        # Logger initialized to display the steps
         self.log_update_timer = QtCore.QTimer()
         self.log_update_timer.timeout.connect(self.log_timer_handler)
         self.log_update_timer.start(self._time_per_update)
@@ -750,8 +769,10 @@ class Ui_Purification(object):
             self.frac_size = 5
 
     def onClickFlowPath(self, flow_path_combo, step_index):
-        """If the selected flow path is fraction column:
-            1. Confirm that fraction column should be selected for the following total vol
+        """
+        Control the enable/disable of widgets based on path selected
+        If the selected flow path is fraction column:
+            1. Check if the volume is within limit
             2. Display the fraction column window with the fractions selected
         Parameters
         ---------------------------------------
@@ -761,6 +782,7 @@ class Ui_Purification(object):
         """
         curIndex = flow_path_combo.currentIndex()
         col_size = self.frac_size if step_index == 3 else None
+        # curIndex == 2 means fraction column is selected
         if curIndex == 2 and self._okayFracVol(self.vol_vals[step_index].text(), col_size):
             self.vol_vals[step_index].setEnabled(False)
             self.vol_sliders[step_index].setEnabled(False)
@@ -770,6 +792,8 @@ class Ui_Purification(object):
             self.frac_wdw.show()
             self.frac_ui.correct_frac_col_design()
             if step_index == 3:
+                # For elution step: Use 1/5 ml fraction columns therefore the combox to change 
+                # the fraction column size is disabled 
                 self.col_vol_combo_box.setEnabled(False)
                 self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
             else:
@@ -791,7 +815,11 @@ class Ui_Purification(object):
         ------------------------------------
         vol: The volume going into the fraction/flow through column
         col_size: None = Volume flowing through flow through column (fixed max = 200ml)
-        Else 1 or 5 to indicate the size of the fraction columns
+        or 1/5 to indicate the size of the fraction columns
+
+        Return
+        ------------------------------------
+        Whether or not the volume is valid
         """
         max_vol = 200-self.flowth_vol_used if col_size is None else col_size*10
         print(self.flowth_vol_used)
@@ -813,8 +841,8 @@ class Ui_Purification(object):
         self.vol_vals[step_index].setText('{}'.format(self.vol_sliders[step_index].value()))
 
     def _init_run_param(self):
-        """Parse through all the input parameters and store
-        in an array to pass to controller to run purification"""
+        """Parse through all the input parameters and return
+         an array to pass to controller to run purification"""
         run_param = []
         for widget in self.input_param:
             if self.input_param[widget]:
@@ -830,7 +858,8 @@ class Ui_Purification(object):
     ## Enable/Disable Widgets On GUI ##
 
     def _set_param_enable(self, state):
-        """Enables/Disables all the widgets that allow initializing input parameters"""
+        """Enables/Disables all the widgets that allow initializing input parameters
+        Used to disable inputting parameters when purifier is running"""
         for widget in self.input_param:
             widget.setEnabled(state)
         self.equil_vol_slider.setEnabled(state)
@@ -867,8 +896,10 @@ class Ui_Purification(object):
         1. Pop up to confirm you want to start
         2. Enable all other action buttons
         3. Disable everything that can be edited
-        4. Update the json file with all the run cmds
-        5. Run the process
+        4. Call _init_run_param() to create the array to pass to controller
+        5. Start the logging and timers for estimated time
+        6. Update the step display
+        7. Run the process
         """
         self.gui_controller.areYouSureMsg('start')
         if self.gui_controller.is_sure:
@@ -888,9 +919,11 @@ class Ui_Purification(object):
 
     def onClickPauseHold(self, is_pause):
         """
-        Enables Start button to resume
-        Calls pause_clicked/hold that sends a pause/hold signal to 
-        the process running the purification
+        1. Enables Start button to resume
+        2. Calls pause_clicked/hold that sends a pause/hold signal to 
+        3. the process running the purification
+        4. Update the step display from running to pause/hold
+        5. Stops the timer and the progress bar updates
         """
         msg = 'pause' if is_pause else 'hold'
         self.gui_controller.areYouSureMsg(msg)
@@ -912,9 +945,11 @@ class Ui_Purification(object):
 
     def onClickResume(self):
         """
-        Handles if resume is clicked after paused
+        1. Handles if resume is clicked after paused
         Sends a signal to the process running purification
         to resume the protocol
+        2. Updates the status display back to running
+        3. Resumes the timer and the progress bar update
         """
         self._set_actionbtn_enable(True, False)
         self._timer_on_flag = True
@@ -924,7 +959,10 @@ class Ui_Purification(object):
         self.gui_controller.resume_clicked()
 
     def onClickSkip(self):
-        """Stops pumping and goes to the next step"""
+        """
+        1. Stops pumping and goes to the next step
+        2. Restarts the progress bar timer for skip to the next bar
+        """
         self.gui_controller.areYouSureMsg('skip to next step')
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
@@ -943,6 +981,8 @@ class Ui_Purification(object):
             self.gui_controller.stop_clicked()
     
     def _finish_protocol(self):
+        """Common protocols between when stop is pressed and once the purification
+        process completes"""
         self._set_actionbtn_enable(False, True)
         self._timer_on_flag = False
         self.timer.stop()
@@ -962,10 +1002,9 @@ class Ui_Purification(object):
     ## Timer Related Events ##
 
     def progress_bar_handler(self):
-        """
-        Update the progress bar and estimated time remaining display
-        """
+        """Update the progress bar and estimated time remaining display"""
         if self._timer_on_flag:
+            # timer_index controls the progress bar to change
             if self.timer_index < 4:
                 # Update progress bar as needed
                 percen_comp = self.pbars[self.timer_index].value()
@@ -982,11 +1021,13 @@ class Ui_Purification(object):
                         self.timer_counter = 0
 
     def _update_current_step(self):
+        """Used to display the step that is currently running"""
         step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Purification Complete']
         self.current_step_display_btn.setText(step[self.timer_index])
 
     def log_timer_handler(self):
-        """Update the logger"""
+        """Update the logger to display the messages
+        TODO: Move the purifer.log reading to controller (all file reads should be in controller)"""
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
             output = f.read()

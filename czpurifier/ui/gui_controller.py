@@ -15,8 +15,11 @@ log.addHandler(NullHandler())
 
 class GUI_Controller:
     def __init__(self):
-        """Controls the communication between device and controller interface
-        and the GUI"""
+        """
+        1. Controls the communication between device and controller interface and the GUI
+        2. Contains all common methods between the different GUI windows
+        3. Controls all access to external file reads i.e. JSON file for default parameters
+        """
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         self.device_process = None
         self.device_present = False
