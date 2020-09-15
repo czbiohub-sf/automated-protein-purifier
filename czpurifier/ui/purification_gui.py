@@ -4,15 +4,23 @@ from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
 from math import ceil
+from gui_controller import GUI_Controller
 
 class Ui_Purification(object):
-    def __init__(self, Purification, gui_controller):
+    def __init__(self, Purification, simulator_process):
         """
         Contains the initialization and functionality of the purification tab
+
+        Parameters
+        ------------------------------------------------
+        Purification: The QtWindow that is created to display the purification window
+        simulator_process: Either a process object, if in simulator mode, or None. Used 
+        to ping the simulator process in the controller class
         """
+        self.gui_controller = GUI_Controller()
+        self.gui_controller.device_process = simulator_process
         signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
-        self.gui_controller = gui_controller
         self.frac_size = None
         self.is_flowth_avail = [True]*4
         self.Purification = Purification

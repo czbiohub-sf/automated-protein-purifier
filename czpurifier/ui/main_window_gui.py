@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         Opens the purification window 
         """
         self.purifier = QtWidgets.QMainWindow()
-        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller)
+        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process)
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
