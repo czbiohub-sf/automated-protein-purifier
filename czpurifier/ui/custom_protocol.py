@@ -380,8 +380,11 @@ class Ui_CustomProtocol(object):
 
         Return
         ----------------------------------
-        [[None, 200, 0],[2, 100, 1],....]"""
+        [[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
         input_params = []
+        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+        rep = int(self.rep_num_lbl.text())
+        input_params.append([self.num_col_combo_box.currentIndex()+1, col_size, rep])
         for c in self.step_widget_objs:
             inp = []
             if c.port_combo_box.isEnabled():
@@ -391,6 +394,7 @@ class Ui_CustomProtocol(object):
             inp.append(int(c.volume_val_lbl.text()))
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
+        print(input_params)
         return input_params
 
 
@@ -398,6 +402,9 @@ class Ui_CustomProtocol(object):
 
     def _set_param_enable(self, is_enabled):
         """Enables/Disables all input parameters"""
+        self.col_vol_combo_box.setEnabled(is_enabled)
+        self.num_col_combo_box.setEnabled(is_enabled)
+        self.rep_num_slider.setEnabled(is_enabled)
         for w in self.step_widgets:
             w.setEnabled(is_enabled)
     
