@@ -8,6 +8,7 @@ from os import chdir, path, kill, getpid
 from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
+from PyQt5.QtWidgets import QMessageBox
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -100,6 +101,19 @@ class GUI_Controller:
             step_times.append(pump_total+stage_total)
             i +=2
         return step_times
+
+    def areYouSureMsg(self, action):
+        """Confirms whether or not the user meant to click an action button"""
+        msg = QMessageBox()
+        msg.setText('Are you sure you want to {}'.format(action))
+        msg.setIcon(QMessageBox.Question)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.buttonClicked.connect(self._msgbtn)
+        msg.exec()
+    
+    def _msgbtn(self, i):
+        """Returns the result from the are you sure pop up"""
+        self.is_sure = True if 'ok' in i.text().lower() else False
 
 if __name__ == "__main__":
     t = GUI_Controller()

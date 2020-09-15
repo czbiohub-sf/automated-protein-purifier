@@ -13,7 +13,6 @@ class Ui_Purification(object):
         signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = gui_controller
-        self.is_sure = None
         self.frac_size = None
         self.is_flowth_avail = [True]*4
         self.Purification = Purification
@@ -863,9 +862,9 @@ class Ui_Purification(object):
         4. Update the json file with all the run cmds
         5. Run the process
         """
-        self.areYouSureMsg('start')
-        if self.is_sure:
-            self.is_sure = None
+        self.gui_controller.areYouSureMsg('start')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)
@@ -886,9 +885,9 @@ class Ui_Purification(object):
         the process running the purification
         """
         msg = 'pause' if is_pause else 'hold'
-        self.areYouSureMsg(msg)
-        if self.is_sure:
-            self.is_sure = None
+        self.gui_controller.areYouSureMsg(msg)
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
             self._timer_on_flag = False
             self.timer.stop()
             self._set_actionbtn_enable(False, True)
@@ -918,9 +917,9 @@ class Ui_Purification(object):
 
     def onClickSkip(self):
         """Stops pumping and goes to the next step"""
-        self.areYouSureMsg('skip to next step')
-        if self.is_sure:
-            self.is_sure = None
+        self.gui_controller.areYouSureMsg('skip to next step')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
             self.timer_index +=1
             self.timer_counter = 0
             self._update_current_step()
@@ -928,9 +927,9 @@ class Ui_Purification(object):
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
-        self.areYouSureMsg('stop')
-        if self.is_sure:
-            self.is_sure = None
+        self.gui_controller.areYouSureMsg('stop')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
             self._finish_protocol()
             self.current_step_display_btn.setText('STOPPED')
             self.gui_controller.stop_clicked()
@@ -951,19 +950,6 @@ class Ui_Purification(object):
         self.status_display_btn.setText('--')
         self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
         self.start_btn.clicked.connect(self.onClickStart)
-    
-    def areYouSureMsg(self, action):
-        """Confirms whether or not the user meant to click an action button"""
-        msg = QtWidgets.QMessageBox()
-        msg.setText('Are you sure you want to {}'.format(action))
-        msg.setIcon(QtWidgets.QMessageBox.Question)
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-        msg.buttonClicked.connect(self.msgbtn)
-        msg.exec()
-    
-    def msgbtn(self, i):
-        """Returns the result from the are you sure pop up"""
-        self.is_sure = True if 'ok' in i.text().lower() else False
 
     ## Timer Related Events ##
 
