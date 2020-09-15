@@ -1,10 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
+from gui_controller import GUI_Controller
 
 
 class Ui_CustomProtocol(object):
     def __init__(self, CustomProtocol):
         self.CustomProtocol = CustomProtocol
+        self.gui_controller = GUI_Controller()
         self.setupUi(self.CustomProtocol)
         self.initEvents()
 
@@ -337,6 +339,10 @@ class Ui_CustomProtocol(object):
         self.remove_step.setEnabled(False)
         self.rep_num_slider.valueChanged.connect(lambda: self.slider_changed(self.rep_num_slider.value(),
                                                     self.rep_num_lbl))
+        self.start_btn.clicked.connect(self.onClickStart)
+        self.pause_btn.clicked.connect(self.onClickPauseHold)
+        self.hold_btn.clicked.connect(self.onClickPauseHold)
+        self.stop_btn.clicked.connect(self.onClickStop)
 
     def add_step_widget(self):
         """Contains implementation for the widgets for each step"""
@@ -546,6 +552,69 @@ class Ui_CustomProtocol(object):
             msg.exec()
             return False
         return True
+
+    ## Action Button Event Handlers ##
+
+    def _set_param_enable(self, is_enabled):
+        """Enables/Disables all input parameters"""
+        for w in self.step_widgets:
+            w.setEnabled(is_enabled)
+    
+    def _set_actionbtn_enable(self, halt_state, start_state):
+        """Either enables or disables the action buttons"""
+        self.pause_btn.setEnabled(halt_state)
+        self.hold_btn.setEnabled(halt_state)
+        self.stop_btn.setEnabled(halt_state)
+        self.start_btn.setEnabled(start_state)
+
+    def onClickStart(self):
+        """"""
+        self.gui_controller.areYouSureMsg('start')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
+            self.start_btn.setEnabled(False)
+            self.stop_btn.setEnabled(True)
+            self.close_btn.setEnabled(False)
+            self._set_param_enable(False)
+
+    def onClickPauseHold(self, is_pause):
+        """
+        Enables Start button to resume
+        Calls pause_clicked/hold that sends a pause/hold signal to 
+        the process running the purification
+        """
+        msg = 'pause' if is_pause else 'hold'
+        self.gui_controller.areYouSureMsg(msg)
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
+            self._set_actionbtn_enable(False, True)
+            self.stop_btn.setEnabled(True)
+            self.start_btn.disconnect()
+            self.start_btn.setText('RESUME')
+            self.start_btn.clicked.connect(self.onClickResume)
+
+    def onClickResume(self):
+        """
+        Handles if resume is clicked after paused
+        Sends a signal to the process running purification
+        to resume the protocol
+        """
+        self._set_actionbtn_enable(True, False)
+
+    def onClickStop(self):
+        """Signals the script that stop was clicked, to home the device"""
+        self.gui_controller.areYouSureMsg('stop')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
+            self._finish_protocol()
+
+    def _finish_protocol(self):
+        self._set_actionbtn_enable(False, True)
+        self.close_btn.setEnabled(True)
+        self._set_param_enable(True)
+        self.start_btn.disconnect()
+        self.start_btn.setText('START')
+        self.start_btn.clicked.connect(self.onClickStart)
 
 if __name__ == "__main__":
     import sys
