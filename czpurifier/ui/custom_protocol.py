@@ -354,7 +354,7 @@ class Ui_CustomProtocol(object):
         """Creates a new widget to add the input parameters"""
         self.step_counter += 1
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter))
+        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter+1))
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
         self.remove_step.setEnabled(True)
 
@@ -453,6 +453,10 @@ class Ui_CustomProtocol(object):
         self.start_btn.disconnect()
         self.start_btn.setText('START')
         self.start_btn.clicked.connect(self.onClickStart)
+        for w in self.step_widgets:
+            w.setParent(None)
+        self.step_widgets = []
+        self.step_widget_objs = []
 
 
 class AddStep():
@@ -597,6 +601,7 @@ class AddStep():
 
     def _init_widget_actions(self):
         """Initialize on click actions for the combo box and slider present in the widget"""
+        self.volume_val_lbl.setText('{}'.format(self.volume_slider.value()))
         self.volume_slider.valueChanged.connect(lambda: self.slider_changed(self.volume_slider.value(),
                                                     self.volume_val_lbl))
         self.valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(self.valve_inp_combo_box.currentIndex(),
