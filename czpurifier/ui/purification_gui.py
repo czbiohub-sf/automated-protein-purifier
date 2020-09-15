@@ -3,6 +3,7 @@ from fraction_col_gui import Ui_FractionColumn
 from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
+from math import ceil
 
 class Ui_Purification(object):
     def __init__(self, Purification, gui_controller):
@@ -14,6 +15,7 @@ class Ui_Purification(object):
         self.gui_controller = gui_controller
         self.is_sure = None
         self.frac_size = None
+        self.is_flowth_avail = [True]*4
         self.Purification = Purification
         self.setupUi(self.Purification)
         self.initEvents()
@@ -644,6 +646,7 @@ class Ui_Purification(object):
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
         self.fractions_selected = [None]*4
+        self.flowth_vol_used = 0
         self._set_actionbtn_enable(False, True)
         self.col_vol_combo_box.activated.connect(self.onClickFractionSize)
         self.setDefaultParam()
@@ -759,13 +762,19 @@ class Ui_Purification(object):
             self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(self.vol_vals[step_index].text()), col_size)
             self.frac_wdw.show()
             self.frac_ui.correct_frac_col_design()
-            self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
             if step_index == 3:
                 self.col_vol_combo_box.setEnabled(False)
+                self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
+            else:
+                self.fractions_selected[step_index] = self.frac_ui.select_frac_columns(int(self.flowth_vol_used/50))
+                self.flowth_vol_used += ceil(int(self.vol_vals[step_index].text())/50)*50
         else:
             self.vol_vals[step_index].setEnabled(True)
             self.vol_sliders[step_index].setEnabled(True)
             self.col_vol_combo_box.setEnabled(True)
+            flow_path_combo.setCurrentIndex(0)
+            if step_index != 3 :
+                self.flowth_vol_used -= ceil(int(self.vol_vals[step_index].text())/50)*50
 
     def _okayFracVol(self, vol, col_size = None):
         """
@@ -777,7 +786,8 @@ class Ui_Purification(object):
         col_size: None = Volume flowing through flow through column (fixed max = 200ml)
         Else 1 or 5 to indicate the size of the fraction columns
         """
-        max_vol = 200 if col_size is None else col_size*10
+        max_vol = 200-self.flowth_vol_used if col_size is None else col_size*10
+        print(self.flowth_vol_used)
         if int(vol) > max_vol:
             msg = QtWidgets.QMessageBox()
             msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))

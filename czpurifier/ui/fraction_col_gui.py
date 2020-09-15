@@ -255,7 +255,7 @@ class Ui_FractionColumn(object):
                         self.frac6_btn, self.frac7_btn, self.frac8_btn, self.frac9_btn, self.frac10_btn]
         self.set_fraction_col_btn.clicked.connect(self.onClickOkay)
 
-    def select_frac_columns(self):
+    def select_frac_columns(self, start_loc):
         """Preselects the fraction columns based on the total volume
         If column size is none it means flow through columns should be selected
         ----------
@@ -265,24 +265,30 @@ class Ui_FractionColumn(object):
         if self.col_size is None:
             vol_per = 50
             check_state = self.flow_clicked
+            is_avail = [True]*4
             fractions = self.flow_col
             btn_stylesheet= self.flow_btn_stylesheet
         else:
             vol_per = self.col_size
             check_state = self.frac_clicked
+            is_avail = [True]*10
             fractions = self.frac_col
             btn_stylesheet = self.frac_btn_stylesheet
+        for i in range(start_loc):
+            check_state[i] = None
+            is_avail[i] = False
         i = 1
         vol_filled = self.total_vol - (i*vol_per) 
         while vol_filled > -vol_per:
             if vol_filled < 0:
-                check_state[i-1] = vol_per + vol_filled
+                check_state[start_loc+i-1] = vol_per + vol_filled
             else:
-                check_state[i-1] = vol_per
-            fractions[i-1].setStyleSheet(btn_stylesheet.format(i, 'red'))
+                check_state[start_loc+i-1] = vol_per
+            fractions[start_loc+i-1].setStyleSheet(btn_stylesheet.format(start_loc+i, 'red'))
+            is_avail[start_loc+i-1] = False
             i += 1
-            vol_filled = self.total_vol - (i*vol_per) 
-        return check_state
+            vol_filled = self.total_vol - (i*vol_per)
+        return check_state, is_avail
 
     def correct_frac_col_design(self):
         """Fix the distance between the buttons in the GUI window"""
