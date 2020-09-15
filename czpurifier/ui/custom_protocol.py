@@ -390,6 +390,7 @@ class Ui_CustomProtocol(object):
         flowpath_combo_box.addItem("")
         gridLayout_3.addWidget(flowpath_combo_box, 4, 1, 1, 1)
         volume_slider = QtWidgets.QSlider(self.step_widgets[self.step_counter])
+        volume_slider.setMaximum(200)
         volume_slider.setOrientation(QtCore.Qt.Horizontal)
         volume_slider.setObjectName("volume_slider")
         gridLayout_3.addWidget(volume_slider, 3, 1, 1, 1)
@@ -467,7 +468,8 @@ class Ui_CustomProtocol(object):
         port_combo_box.setItemText(3, _translate("CustomProtocol", "Base"))
         label_2.setText(_translate("CustomProtocol", "ml"))
         volume_val_lbl.setText(_translate("CustomProtocol", "200"))
-        step_num.setText(_translate("CustomProtocol", "1"))
+        volume_val_lbl.setInputMask(_translate("CustomProtocol", "9999"))
+        step_num.setText(_translate("CustomProtocol", "{}".format(self.step_counter+1)))
         ## Add title for any new widgets above this line and remove 'self.'
 
         volume_slider.valueChanged.connect(lambda: self.slider_changed(volume_slider.value(),
