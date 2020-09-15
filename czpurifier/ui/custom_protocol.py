@@ -346,6 +346,10 @@ class Ui_CustomProtocol(object):
         self.hold_btn.clicked.connect(self.onClickPauseHold)
         self.stop_btn.clicked.connect(self.onClickStop)
 
+        self.pause_btn.setEnabled(False)
+        self.stop_btn.setEnabled(False)
+        self.hold_btn.setEnabled(False)
+
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
         self.CustomProtocol.close()
@@ -410,8 +414,7 @@ class Ui_CustomProtocol(object):
         if self.gui_controller.is_sure:
             self._generate_run_parameters()
             self.gui_controller.is_sure = None
-            self.start_btn.setEnabled(False)
-            self.stop_btn.setEnabled(True)
+            self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
 
@@ -457,6 +460,7 @@ class Ui_CustomProtocol(object):
             w.setParent(None)
         self.step_widgets = []
         self.step_widget_objs = []
+        self.step_counter = -1
 
 
 class AddStep():
