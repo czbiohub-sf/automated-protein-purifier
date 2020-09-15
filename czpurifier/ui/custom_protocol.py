@@ -334,6 +334,7 @@ class Ui_CustomProtocol(object):
         # Contains the parent widget for a step
         # len(step_widgets) = number of steps
         self.step_widgets = []
+        self.step_widget_objs = []
         self.close_btn.clicked.connect(self.onClickClose)
         self.add_step_btn.clicked.connect(self.onClickAddStep)
         self.remove_step.clicked.connect(self.onClickRemoveStep)
@@ -353,7 +354,7 @@ class Ui_CustomProtocol(object):
         """Creates a new widget to add the input parameters"""
         self.step_counter += 1
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-        step_creater = AddStep(self.step_widgets[self.step_counter], self.step_counter)
+        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter))
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
         self.remove_step.setEnabled(True)
 
@@ -361,6 +362,7 @@ class Ui_CustomProtocol(object):
         """Removes the last step that was added"""
         self.step_widgets[self.step_counter].setParent(None)
         self.step_widgets.pop()
+        self.step_widget_objs.pop()
         self.step_counter -= 1
         if self.step_counter < 0:
                 self.remove_step.setEnabled(False)
@@ -368,18 +370,25 @@ class Ui_CustomProtocol(object):
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
         lbl.setText('{}'.format(value))
+    
+    def _generate_run_parameters(self):
+        """Generates an array of the run parameters
 
-    def _okayFracVol(self, vol, col_size):
-        """Checks that the frac volume input does not exceed the total capacity"""
-        max_vol = col_size*10
-        if int(vol) > max_vol:
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.exec()
-            return False
-        return True
+        Return
+        ----------------------------------
+        [[None, 200, 0],[2, 100, 1],....]"""
+        input_params = []
+        for c in self.step_widget_objs:
+            inp = []
+            if c.port_combo_box.isEnabled():
+                inp.append(c.port_combo_box.currentIndex())
+            else:
+                inp.append(None)
+            inp.append(int(c.volume_val_lbl.text()))
+            inp.append(c.flowpath_combo_box.currentIndex())
+            input_params.append(inp)
+        return input_params
+
 
     ## Action Button Event Handlers ##
 
@@ -399,6 +408,7 @@ class Ui_CustomProtocol(object):
         """"""
         self.gui_controller.areYouSureMsg('start')
         if self.gui_controller.is_sure:
+            self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
@@ -609,15 +619,18 @@ class AddStep():
         """Display fraction collector window with selected fractions depending on
         the flow path selected"""
         cur_index = combobox.currentIndex()
-        self.col_vol_combo_box.setEnabled(True)
+        #self.col_vol_combo_box.setEnabled(True)
         run = False
         if cur_index == 2:
-                col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+                col_size = 1
+                #col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
                 run = self._okayFracVol(vol, col_size)
+                """
                 if run:
                     self.col_vol_combo_box.setEnabled(False)
                 else:
                     combobox.setCurrentIndex(0)
+                """
         if cur_index == 3:
                 col_size = None
                 run = True
@@ -628,9 +641,21 @@ class AddStep():
             self.frac_wdw.show()
             self.frac_ui.correct_frac_col_design()
             #self.fractions_selected[step_index] = 
-            self.frac_ui.select_frac_columns()
+            #self.frac_ui.select_frac_columns()
         else:
             slider.setEnabled(True)
+
+    def _okayFracVol(self, vol, col_size):
+        """Checks that the frac volume input does not exceed the total capacity"""
+        max_vol = col_size*10
+        if int(vol) > max_vol:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+            return False
+        return True
 
 
 if __name__ == "__main__":
