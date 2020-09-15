@@ -326,7 +326,10 @@ class Ui_CustomProtocol(object):
     ##################
     def initEvents(self):
         """Initializes all on click actions"""
+        # counts the current step: Needed for adding and removing steps
         self.step_counter = -1
+        # Contains the parent widget for a step
+        # len(step_widgets) = number of steps
         self.step_widgets = []
         self.close_btn.clicked.connect(self.onClickClose)
         self.add_step_btn.clicked.connect(self.onClickAddStep)
@@ -336,8 +339,18 @@ class Ui_CustomProtocol(object):
                                                     self.rep_num_lbl))
 
     def add_step_widget(self):
+        """Contains implementation for the widgets for each step"""
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
         self.step_widgets[self.step_counter].setObjectName("add_step_widget")
+
+        ####################################################################################
+        # Designer Generated Code 
+        # To update find the first line below in the new code and paste till indicated below
+        # Remove all 'self.' from all the widgets except self.add_step_widget
+        # Replace self.add_step_widget with self.step_widgets[self.step_counter]
+        # Be sure to undo the change in onClickAddStep() if used find all and replace
+        ####################################################################################
+
         gridLayout_4 = QtWidgets.QGridLayout(self.step_widgets[self.step_counter])
         gridLayout_4.setObjectName("gridLayout_4")
         gridLayout_3 = QtWidgets.QGridLayout()
@@ -347,25 +360,25 @@ class Ui_CustomProtocol(object):
         font.setPointSize(15)
         valve_inp_lbl.setFont(font)
         valve_inp_lbl.setObjectName("valve_inp_lbl")
-        gridLayout_3.addWidget(valve_inp_lbl, 0, 0, 1, 1)
+        gridLayout_3.addWidget(valve_inp_lbl, 1, 0, 1, 1)
         port_lbl = QtWidgets.QLabel(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
         port_lbl.setFont(font)
         port_lbl.setObjectName("port_lbl")
-        gridLayout_3.addWidget(port_lbl, 1, 0, 1, 1)
+        gridLayout_3.addWidget(port_lbl, 2, 0, 1, 1)
         vol_lbl = QtWidgets.QLabel(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
         vol_lbl.setFont(font)
         vol_lbl.setObjectName("vol_lbl")
-        gridLayout_3.addWidget(vol_lbl, 2, 0, 1, 1)
+        gridLayout_3.addWidget(vol_lbl, 3, 0, 1, 1)
         flowpath_lbl = QtWidgets.QLabel(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
         flowpath_lbl.setFont(font)
         flowpath_lbl.setObjectName("flowpath_lbl")
-        gridLayout_3.addWidget(flowpath_lbl, 3, 0, 1, 1)
+        gridLayout_3.addWidget(flowpath_lbl, 4, 0, 1, 1)
         flowpath_combo_box = QtWidgets.QComboBox(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -375,25 +388,11 @@ class Ui_CustomProtocol(object):
         flowpath_combo_box.addItem("")
         flowpath_combo_box.addItem("")
         flowpath_combo_box.addItem("")
-        gridLayout_3.addWidget(flowpath_combo_box, 3, 1, 1, 1)
-        volume_val_lbl = QtWidgets.QLabel(self.step_widgets[self.step_counter])
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(volume_val_lbl.sizePolicy().hasHeightForWidth())
-        volume_val_lbl.setSizePolicy(sizePolicy)
-        volume_val_lbl.setMinimumSize(QtCore.QSize(25, 0))
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        volume_val_lbl.setFont(font)
-        volume_val_lbl.setObjectName("volume_val_lbl")
-        gridLayout_3.addWidget(volume_val_lbl, 2, 2, 1, 1)
+        gridLayout_3.addWidget(flowpath_combo_box, 4, 1, 1, 1)
         volume_slider = QtWidgets.QSlider(self.step_widgets[self.step_counter])
         volume_slider.setOrientation(QtCore.Qt.Horizontal)
         volume_slider.setObjectName("volume_slider")
-        volume_slider.setMinimum(1)
-        volume_slider.setMaximum(200)
-        gridLayout_3.addWidget(volume_slider, 2, 1, 1, 1)
+        gridLayout_3.addWidget(volume_slider, 3, 1, 1, 1)
         valve_inp_combo_box = QtWidgets.QComboBox(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -401,7 +400,7 @@ class Ui_CustomProtocol(object):
         valve_inp_combo_box.setObjectName("valve_inp_combo_box")
         valve_inp_combo_box.addItem("")
         valve_inp_combo_box.addItem("")
-        gridLayout_3.addWidget(valve_inp_combo_box, 0, 1, 1, 1)
+        gridLayout_3.addWidget(valve_inp_combo_box, 1, 1, 1, 1)
         port_combo_box = QtWidgets.QComboBox(self.step_widgets[self.step_counter])
         port_combo_box.setEnabled(False)
         font = QtGui.QFont()
@@ -412,15 +411,44 @@ class Ui_CustomProtocol(object):
         port_combo_box.addItem("")
         port_combo_box.addItem("")
         port_combo_box.addItem("")
-        gridLayout_3.addWidget(port_combo_box, 1, 1, 1, 1)
+        gridLayout_3.addWidget(port_combo_box, 2, 1, 1, 1)
         label_2 = QtWidgets.QLabel(self.step_widgets[self.step_counter])
         font = QtGui.QFont()
         font.setPointSize(15)
         label_2.setFont(font)
         label_2.setObjectName("label_2")
-        gridLayout_3.addWidget(label_2, 2, 3, 1, 1)
+        gridLayout_3.addWidget(label_2, 3, 3, 1, 1)
+        line_3 = QtWidgets.QFrame(self.step_widgets[self.step_counter])
+        line_3.setFrameShape(QtWidgets.QFrame.HLine)
+        line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_3.setObjectName("line_3")
+        gridLayout_3.addWidget(line_3, 0, 1, 1, 3)
+        volume_val_lbl = QtWidgets.QLineEdit(self.step_widgets[self.step_counter])
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(volume_val_lbl.sizePolicy().hasHeightForWidth())
+        volume_val_lbl.setSizePolicy(sizePolicy)
+        volume_val_lbl.setMaximumSize(QtCore.QSize(60, 16777215))
+        volume_val_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        volume_val_lbl.setObjectName("volume_val_lbl")
+        gridLayout_3.addWidget(volume_val_lbl, 3, 2, 1, 1)
+        line_5 = QtWidgets.QFrame(self.step_widgets[self.step_counter])
+        line_5.setFrameShape(QtWidgets.QFrame.HLine)
+        line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_5.setObjectName("line_5")
+        gridLayout_3.addWidget(line_5, 5, 1, 1, 3)
+        step_num = QtWidgets.QLabel(self.step_widgets[self.step_counter])
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        step_num.setFont(font)
+        step_num.setAlignment(QtCore.Qt.AlignCenter)
+        step_num.setObjectName("step_num")
+        gridLayout_3.addWidget(step_num, 0, 0, 1, 1)
         gridLayout_4.addLayout(gridLayout_3, 0, 0, 1, 1)
+        ###### Paste till above this line #######
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
+
         _translate = QtCore.QCoreApplication.translate
         valve_inp_lbl.setText(_translate("CustomProtocol", "Valve Input:"))
         port_lbl.setText(_translate("CustomProtocol", "Port:"))
@@ -438,6 +466,9 @@ class Ui_CustomProtocol(object):
         port_combo_box.setItemText(2, _translate("CustomProtocol", "Elution"))
         port_combo_box.setItemText(3, _translate("CustomProtocol", "Base"))
         label_2.setText(_translate("CustomProtocol", "ml"))
+        volume_val_lbl.setText(_translate("CustomProtocol", "200"))
+        step_num.setText(_translate("CustomProtocol", "1"))
+        ## Add title for any new widgets above this line and remove 'self.'
 
         volume_slider.valueChanged.connect(lambda: self.slider_changed(volume_slider.value(),
                                                     volume_val_lbl))
