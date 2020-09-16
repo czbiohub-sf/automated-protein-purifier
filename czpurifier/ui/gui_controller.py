@@ -8,6 +8,7 @@ from os import chdir, path, kill, getpid
 from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
+from run_custom_protocol import RunCustomProtol
 from PyQt5.QtWidgets import QMessageBox
 
 log = logging.getLogger(__name__)
@@ -54,15 +55,16 @@ class GUI_Controller:
         si = SimulatorInterface()
         si.autorun()
     
-    def run_purification_script(self, parameters, fractions):
+    def run_purification_script(self, is_basic_purification, parameters, fractions):
         """
         Run the purification protocal on a new process
         If the protocol is run on the simulator a signal is sent to the simulator
         to be the device and pass the 'device is available check' on the controller
         """
+        targ = RunPurification if is_basic_purification else RunCustomProtol
         if not self.device_present:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=RunPurification, args=(parameters, fractions, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=targ, args=(parameters, fractions, self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid

@@ -915,7 +915,7 @@ class Ui_Purification(object):
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
-            self.gui_controller.run_purification_script(init_params, self.fractions_selected)
+            self.gui_controller.run_purification_script(True, init_params, self.fractions_selected)
 
     def onClickPauseHold(self, is_pause):
         """

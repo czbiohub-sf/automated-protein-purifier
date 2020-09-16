@@ -5,7 +5,7 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunCustomProtol():
-    def __init__(self, input_param, fractions, ip):
+    def __init__(self, input_param, fractions, ip, gui_pid):
         """[[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
 
         logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
