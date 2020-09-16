@@ -434,6 +434,8 @@ class Ui_CustomProtocol(object):
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             self.gui_controller.run_purification_script(False, init_params, 'self.fractions_selected')
+            self.status_display_btn.setEnabled(True)
+            self.status_display_btn.setText('running')
 
     def onClickPauseHold(self, is_pause):
         """
@@ -454,6 +456,10 @@ class Ui_CustomProtocol(object):
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
+            self.status_display_btn.setText('on {}'.format(msg))
+            self.status_display_btn.setStyleSheet(
+                self.gui_controller.status_display_stylsheet.format(
+                self.gui_controller.status_display_color_halt))
 
     def onClickResume(self):
         """
@@ -463,6 +469,10 @@ class Ui_CustomProtocol(object):
         """
         self._set_actionbtn_enable(True, False)
         self.gui_controller.resume_clicked()
+        self.status_display_btn.setStyleSheet(
+            self.gui_controller.status_display_stylsheet.format(
+            self.gui_controller.status_display_color_running))
+        self.status_display_btn.setText('running')
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
@@ -484,6 +494,8 @@ class Ui_CustomProtocol(object):
         self.step_widgets = []
         self.step_widget_objs = []
         self.step_counter = -1
+        self.status_display_btn.setEnabled(False)
+        self.status_display_btn.setText('--')
 
     def log_timer_handler(self):
         """Update the logger to display the messages

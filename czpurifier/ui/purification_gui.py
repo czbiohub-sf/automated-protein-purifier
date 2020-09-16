@@ -698,15 +698,6 @@ class Ui_Purification(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
-        self.status_display_color_running = '#3CB371'
-        self.status_display_color_halt = '#FFFF66'
-        self.status_display_stylsheet = '{}'.format("QPushButton#status_display_btn{{"
-                                        "border-radius:10;"
-                                        "border-width: 2px;"
-                                        "background-color: {0};"
-                                        "font-size:14px;}}\n"
-                                        "QPushButton:disabled#status_display_btn{{"
-                                        "background-color:#A9A9A9}}")
         # Timers initialized
         self.estimated_time = None
         self.timer_index = None
@@ -938,7 +929,9 @@ class Ui_Purification(object):
             else:
                 self.gui_controller.hold_clicked()
             self.status_display_btn.setText('on {}'.format(msg))
-            self.status_display_btn.setStyleSheet(self.status_display_stylsheet.format(self.status_display_color_halt))
+            self.status_display_btn.setStyleSheet(
+                self.gui_controller.status_display_stylsheet.format(
+                self.gui_controller.status_display_color_halt))
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
@@ -954,7 +947,9 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(True, False)
         self._timer_on_flag = True
         self.timer.start(self._time_per_update)
-        self.status_display_btn.setStyleSheet(self.status_display_stylsheet.format(self.status_display_color_running))
+        self.status_display_btn.setStyleSheet(
+            self.gui_controller.status_display_stylsheet.format(
+            self.gui_controller.status_display_color_running))
         self.status_display_btn.setText('running')
         self.gui_controller.resume_clicked()
 

@@ -36,6 +36,17 @@ class GUI_Controller:
         self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
                             self._p['EQUILIBRATE_VOLUME']['default'], self._p['LOAD_VOLUME']['default'],
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
+        
+        #Stylesheets used for displaying the status
+        self.status_display_color_running = '#3CB371'
+        self.status_display_color_halt = '#FFFF66'
+        self.status_display_stylsheet = '{}'.format("QPushButton#status_display_btn{{"
+                                        "border-radius:10;"
+                                        "border-width: 2px;"
+                                        "background-color: {0};"
+                                        "font-size:14px;}}\n"
+                                        "QPushButton:disabled#status_display_btn{{"
+                                        "background-color:#A9A9A9}}")
 
     def connect_to_device(self):
         """Try to bind to device ip and check if a connection is already there"""
