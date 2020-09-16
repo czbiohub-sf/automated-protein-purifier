@@ -362,20 +362,25 @@ class Ui_CustomProtocol(object):
         self.log_output = None
 
         #Step display
-        self.current_step = 0
+        self.current_step = 1
+        self.rep_num = 1
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
     def currentStepRunning(self, signalNumber, frame):
         """Handler for SIGUSR2. Updates the current step that is running"""
-        self.current_step += 1
-        output = '{}'.format(self.current_step)
-        if self.current_step == len(self.step_widgets)+1:
-            output = 'Running Device Cleanup'
-        elif self.current_step == len(self.step_widgets)+2:
-            output = 'Complete'
+        output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
+        if self.rep_num > int(self.rep_num_lbl.text()):
+            if self.current_step == 1:
+                output = 'Running Device Cleanup'
+            elif self.current_step == 2:
+                output = 'Complete'
+                self.current_step = 0
+                self._finish_protocol()
+        elif self.current_step == len(self.step_widgets):
             self.current_step = 0
-            self._finish_protocol()
+            self.rep_num += 1
+        self.current_step += 1
         self.current_step_display_btn.setText(output)
 
     def onClickClose(self):
