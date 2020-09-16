@@ -894,7 +894,7 @@ class Ui_Purification(object):
     def onClickStart(self):
         """
         1. Pop up to confirm you want to start
-        2. Enable all other action buttons
+        2. Enable stop and close (other action btns enabled after purging)
         3. Disable everything that can be edited
         4. Call _init_run_param() to create the array to pass to controller
         5. Start the logging and timers for estimated time
