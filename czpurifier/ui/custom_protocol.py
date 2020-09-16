@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from gui_controller import GUI_Controller
+from os import chdir, path
 
 
 class Ui_CustomProtocol(object):
@@ -351,6 +352,13 @@ class Ui_CustomProtocol(object):
         self.stop_btn.setEnabled(False)
         self.hold_btn.setEnabled(False)
 
+        # Logger initialized to display the steps
+        self.log_update_timer = QtCore.QTimer()
+        self.log_update_timer.timeout.connect(self.log_timer_handler)
+        self.log_update_timer.start(1000)
+        self.log_output_txtbox.setReadOnly(True)
+        self.log_output = None
+
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
         self.CustomProtocol.close()
@@ -476,6 +484,18 @@ class Ui_CustomProtocol(object):
         self.step_widgets = []
         self.step_widget_objs = []
         self.step_counter = -1
+
+    def log_timer_handler(self):
+        """Update the logger to display the messages
+        TODO: Move the purifer.log reading to controller (all file reads should be in controller)"""
+        chdir(path.dirname(path.realpath(__file__)))
+        with open('purifier.log', 'r') as f:
+            output = f.read()
+        if self.log_output is None or self.log_output != output:
+            self.log_output_txtbox.setText(output)
+            log_end = self.log_output_txtbox.verticalScrollBar().maximum()
+            self.log_output_txtbox.verticalScrollBar().setValue(log_end)
+        self.log_output = output
 
 
 class AddStep():
@@ -627,7 +647,7 @@ class AddStep():
                                                 self.port_combo_box))
         self.flowpath_combo_box.activated.connect(lambda: self.onSelectFlowPath(self.flowpath_combo_box,
                                                         self.volume_slider, self.volume_val_lbl.text()))
-        
+
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
         lbl.setText('{}'.format(value))
