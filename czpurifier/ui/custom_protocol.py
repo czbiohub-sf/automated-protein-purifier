@@ -4,9 +4,10 @@ from gui_controller import GUI_Controller
 
 
 class Ui_CustomProtocol(object):
-    def __init__(self, CustomProtocol):
+    def __init__(self, CustomProtocol, simulator_process):
         self.CustomProtocol = CustomProtocol
         self.gui_controller = GUI_Controller()
+        self.gui_controller.device_process = simulator_process
         self.setupUi(self.CustomProtocol)
         self.initEvents()
 
@@ -419,11 +420,12 @@ class Ui_CustomProtocol(object):
         """"""
         self.gui_controller.areYouSureMsg('start')
         if self.gui_controller.is_sure:
-            self._generate_run_parameters()
+            init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
+            self.gui_controller.run_purification_script(False, init_params, 'self.fractions_selected')
 
     def onClickPauseHold(self, is_pause):
         """
@@ -455,6 +457,7 @@ class Ui_CustomProtocol(object):
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
             self._finish_protocol()
+            self.gui_controller.stop_clicked()
 
     def _finish_protocol(self):
         self._set_actionbtn_enable(False, True)

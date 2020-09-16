@@ -24,7 +24,8 @@ class GUI_Controller:
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         self.device_process = None
         self.device_present = False
-        self.controller_ip = 'pure2.local'
+        #self.controller_ip = 'pure2.local'
+        self.controller_ip = '127.0.0.1'
         self.controller_interface_PID = None
         self.ctrl_proc = None
         chdir(path.dirname(path.realpath(__file__)))
