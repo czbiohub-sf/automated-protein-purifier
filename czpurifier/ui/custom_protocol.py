@@ -440,6 +440,8 @@ class Ui_CustomProtocol(object):
         self.rep_num_slider.setEnabled(is_enabled)
         for w in self.step_widgets:
             w.setEnabled(is_enabled)
+        self.add_step_btn.setEnabled(is_enabled)
+        self.remove_step.setEnabled(is_enabled)
     
     def _set_actionbtn_enable(self, halt_state, start_state):
         """Either enables or disables the action buttons"""
