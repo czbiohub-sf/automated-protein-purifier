@@ -343,8 +343,8 @@ class Ui_CustomProtocol(object):
         self.rep_num_slider.valueChanged.connect(lambda: self.slider_changed(self.rep_num_slider.value(),
                                                     self.rep_num_lbl))
         self.start_btn.clicked.connect(self.onClickStart)
-        self.pause_btn.clicked.connect(self.onClickPauseHold)
-        self.hold_btn.clicked.connect(self.onClickPauseHold)
+        self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
+        self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
         self.stop_btn.clicked.connect(self.onClickStop)
 
         self.pause_btn.setEnabled(False)
@@ -442,6 +442,10 @@ class Ui_CustomProtocol(object):
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
+            if is_pause:
+                self.gui_controller.pause_clicked()
+            else:
+                self.gui_controller.hold_clicked()
 
     def onClickResume(self):
         """
@@ -450,6 +454,7 @@ class Ui_CustomProtocol(object):
         to resume the protocol
         """
         self._set_actionbtn_enable(True, False)
+        self.gui_controller.resume_clicked()
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
