@@ -2,11 +2,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from gui_controller import GUI_Controller
 from os import chdir, path
+from signal import signal, SIGUSR2
 
 
 class Ui_CustomProtocol(object):
     def __init__(self, CustomProtocol, simulator_process):
         self.CustomProtocol = CustomProtocol
+        signal(SIGUSR2, self.currentStepRunning)
         self.gui_controller = GUI_Controller()
         self.gui_controller.device_process = simulator_process
         self.setupUi(self.CustomProtocol)
@@ -185,17 +187,17 @@ class Ui_CustomProtocol(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
-        self.cur_step_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.current_step_display_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cur_step_btn.sizePolicy().hasHeightForWidth())
-        self.cur_step_btn.setSizePolicy(sizePolicy)
-        self.cur_step_btn.setMinimumSize(QtCore.QSize(300, 25))
-        self.cur_step_btn.setStyleSheet("QPushButton#cur_step_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}\n"
-"QPushButton:disabled#cur_step_btn{background-color:#A9A9A9}")
-        self.cur_step_btn.setObjectName("cur_step_btn")
-        self.horizontalLayout_2.addWidget(self.cur_step_btn)
+        sizePolicy.setHeightForWidth(self.current_step_display_btn.sizePolicy().hasHeightForWidth())
+        self.current_step_display_btn.setSizePolicy(sizePolicy)
+        self.current_step_display_btn.setMinimumSize(QtCore.QSize(300, 25))
+        self.current_step_display_btn.setStyleSheet("QPushButton#current_step_display_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}\n"
+"QPushButton:disabled#current_step_display_btn{background-color:#A9A9A9}")
+        self.current_step_display_btn.setObjectName("current_step_display_btn")
+        self.horizontalLayout_2.addWidget(self.current_step_display_btn)
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_16 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_16.setObjectName("horizontalLayout_16")
@@ -318,7 +320,7 @@ class Ui_CustomProtocol(object):
         self.label_9.setText(_translate("CustomProtocol", "Status:"))
         self.status_display_btn.setText(_translate("CustomProtocol", "Running"))
         self.label.setText(_translate("CustomProtocol", "Current Step:"))
-        self.cur_step_btn.setText(_translate("CustomProtocol", "1"))
+        self.current_step_display_btn.setText(_translate("CustomProtocol", "1"))
         self.start_btn.setText(_translate("CustomProtocol", "START"))
         self.pause_btn.setText(_translate("CustomProtocol", "PAUSE"))
         self.hold_btn.setText(_translate("CustomProtocol", "HOLD"))
@@ -358,6 +360,21 @@ class Ui_CustomProtocol(object):
         self.log_update_timer.start(1000)
         self.log_output_txtbox.setReadOnly(True)
         self.log_output = None
+
+        #Step display
+        self.current_step = 0
+
+    def currentStepRunning(self, signalNumber, frame):
+        """Handler for SIGUSR2. Updates the current step that is running"""
+        self.current_step += 1
+        output = '{}'.format(self.current_step)
+        if self.current_step == len(self.step_widgets)+1:
+            output = 'Running Device Cleanup'
+        elif self.current_step == len(self.step_widgets)+2:
+            output = 'Complete'
+            self.current_step = 0
+            self._finish_protocol()
+        self.current_step_display_btn.setText(output)
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -436,6 +453,8 @@ class Ui_CustomProtocol(object):
             self.gui_controller.run_purification_script(False, init_params, 'self.fractions_selected')
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
+            self.current_step_display_btn.setEnabled(True)
+            self.current_step_display_btn.setText('Setup And Purging Bubbles')
 
     def onClickPauseHold(self, is_pause):
         """
@@ -481,6 +500,7 @@ class Ui_CustomProtocol(object):
             self.gui_controller.is_sure = None
             self._finish_protocol()
             self.gui_controller.stop_clicked()
+            self.current_step_display_btn.setText('STOPPED')
 
     def _finish_protocol(self):
         self._set_actionbtn_enable(False, True)
@@ -496,6 +516,7 @@ class Ui_CustomProtocol(object):
         self.step_counter = -1
         self.status_display_btn.setEnabled(False)
         self.status_display_btn.setText('--')
+        self.current_step_display_btn.setEnabled(False)
 
     def log_timer_handler(self):
         """Update the logger to display the messages
