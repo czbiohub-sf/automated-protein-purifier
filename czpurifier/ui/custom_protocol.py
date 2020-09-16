@@ -318,9 +318,9 @@ class Ui_CustomProtocol(object):
         self.add_step_btn.setText(_translate("CustomProtocol", "ADD"))
         self.remove_step.setText(_translate("CustomProtocol", "REMOVE"))
         self.label_9.setText(_translate("CustomProtocol", "Status:"))
-        self.status_display_btn.setText(_translate("CustomProtocol", "Running"))
+        self.status_display_btn.setText(_translate("CustomProtocol", "--"))
         self.label.setText(_translate("CustomProtocol", "Current Step:"))
-        self.current_step_display_btn.setText(_translate("CustomProtocol", "1"))
+        self.current_step_display_btn.setText(_translate("CustomProtocol", "--"))
         self.start_btn.setText(_translate("CustomProtocol", "START"))
         self.pause_btn.setText(_translate("CustomProtocol", "PAUSE"))
         self.hold_btn.setText(_translate("CustomProtocol", "HOLD"))
@@ -363,6 +363,8 @@ class Ui_CustomProtocol(object):
 
         #Step display
         self.current_step = 0
+        self.current_step_display_btn.setEnabled(False)
+        self.status_display_btn.setEnabled(False)
 
     def currentStepRunning(self, signalNumber, frame):
         """Handler for SIGUSR2. Updates the current step that is running"""
