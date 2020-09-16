@@ -22,6 +22,7 @@ class RunPurification():
         self._run_process('WASH', [input_param[6], input_param[7]], fractions[2])
         self._run_process('ELUTION', [input_param[8], input_param[9]], fractions[3])
         logging.info('Purification Complete')
+        self._run_cleanup():
         kill(gui_pid, SIGUSR2)
 
     def _purge_bubbles(self):
@@ -84,6 +85,13 @@ class RunPurification():
             if skip_pressed:
                 break
         self.ui.selectFraction('Safe')
+
+    def _run_cleanup(self):
+        # Run cleanup
+        self.ui.selectPort('BASE')
+        self.ui.pump(10)
+        self.ui.selectPort('LOAD_BUFFER')
+        self.ui.pump(10)
 
 if __name__ == "__main__":
     run = RunPurification([2, 5, 5, 1, 4, 1, 5, 1], '127.0.0.1')
