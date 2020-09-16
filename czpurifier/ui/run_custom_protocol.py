@@ -23,6 +23,7 @@ class RunCustomProtol():
         self._run_process(input_param[1:], input_param[0][2])
         logging.info('Purification Complete')
         #kill(gui_pid, SIGUSR2)
+        self._run_cleanup()
 
     def _purge_bubbles(self):
         # Purge bubbles from lines
@@ -46,12 +47,31 @@ class RunCustomProtol():
                 _run_step(step)
         
     def _run_step(self, step_param):
+        """Runs the process for each step"""
+        # 1. Select either buffer or load
+        #  If buffer select the port
         if step_param[0] is None:
             self.ui.selectLoad()
         else:
             self.ui.selectBuffers()
             self.ui.selectPort(self.buffers[step_param[0]])
         
-        # activate the flow path
-        # run the pump
-        # close the flow path
+        # 2. If fraction/flow, run the stage
+        # If waste: open waste, run pump, close waste
+        if step[2] > 1:
+            self._run_frac_collector()
+        else:
+            self.waste_open_cmds[step[2]]
+            self.ui.pump(step[1])
+            self.waste_close_cmds[step[2]]
+    
+    def _run_frac_collector(self):
+        """TODO: Implement run fraction collector"""
+        pass
+
+    def _run_cleanup(self):
+        # Run cleanup
+        ui.selectPort('BASE')
+        ui.pump(10)
+        ui.selectPort('LOAD_BUFFER')
+        ui.pump(10)
