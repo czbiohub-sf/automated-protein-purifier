@@ -771,6 +771,22 @@ class Ui_Purification(object):
         step_index: The index of the step, used to determine whether to use fraction/flow column
         and which text box to use to get the volume to flow
         """
+        col_size = self.frac_size if step_index == 3 else 50
+        self.gui_controller.flowpathwayClicked(step_index, col_size)
+        curIndex = flow_path_combo.currentIndex()
+        if curIndex == 2:
+            vol = int(self.vol_vals[step_index].text())
+            max_vol = self.gui_controller.okay_vol_checker(vol, col_size)
+            if max_vol == -1:
+                # volume is okay
+                disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
+                print('what to display: {}'.format(disp))
+            else:
+                print('Exceeded {}'.format(max_vol))
+        else:
+            self.gui_controller.fractionCollectorUnsel(step_index, col_size)
+
+        """
         curIndex = flow_path_combo.currentIndex()
         col_size = self.frac_size if step_index == 3 else None
         # curIndex == 2 means fraction column is selected
@@ -797,6 +813,7 @@ class Ui_Purification(object):
             flow_path_combo.setCurrentIndex(0)
             if step_index != 3 :
                 self.flowth_vol_used -= ceil(int(self.vol_vals[step_index].text())/50)*50
+        """
 
     def _okayFracVol(self, vol, col_size = None):
         """
