@@ -150,7 +150,6 @@ class GUI_Controller:
         num_needed = ceil(vol/col_size)
         last_volume = vol - (col_size*(num_needed-1))
         pathway_array = self.fracflow_objs[id].add_path(pathway_array, col_size, num_needed, last_volume)
-        print('vol_array {}'.format(pathway_array))
         return self.fracflow_objs[id].selectedList
 
     def okay_vol_checker(self, vol, col_size):

@@ -1,32 +1,23 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_FractionColumn(object):
-    def __init__(self, MainWindow, total_vol, col_size = None):
+    def __init__(self, MainWindow):
         """
         Initialization of the GUI to choose the fractionating column
         This window is opened when 'Fraction Column' is chosen as the flow
         path from the Set Parameter window
-        
-        Parameters:
-        ----------------------------
-        total_vol = the volume to pump over the fraction collector
-        col_size = None: 50ml (flow through), 1: 1ml, 5: 5ml (collector)
         """
-        self.total_vol = total_vol
-        self.col_size = col_size
         self.flow_col = []
         self.frac_col = []
         self.frac_btn_stylesheet = '{}'.format("QPushButton#frac{0}_btn{{"
                                         "border-radius:17;"
                                         "background-color: {1};"
                                         "}}")
-        self.frac_clicked = [0]*10
         self.flow_btn_stylesheet = '{}'.format("QPushButton#flowth{0}_btn{{"
                                         "border-radius:30;"
                                         "border-width: 2px;"
                                         "background-color: {1};"
                                         "}}")
-        self.flow_clicked = [0]*4
         self.MainWindow = MainWindow
         self.initUI(self.MainWindow)
 
@@ -254,41 +245,17 @@ class Ui_FractionColumn(object):
         self.frac_col = [self.frac1_btn, self.frac2_btn, self.frac3_btn, self.frac4_btn, self.frac5_btn,
                         self.frac6_btn, self.frac7_btn, self.frac8_btn, self.frac9_btn, self.frac10_btn]
         self.set_fraction_col_btn.clicked.connect(self.onClickOkay)
-
-    def select_frac_columns(self, start_loc):
-        """Preselects the fraction columns based on the total volume
-        If column size is none it means flow through columns should be selected
-        ----------
-        Return: [5, 5, 4, 0, ..]
-        where each index represents the volume in each column
-        """
-        if self.col_size is None:
-            vol_per = 50
-            check_state = self.flow_clicked
-            is_avail = [True]*4
-            fractions = self.flow_col
-            btn_stylesheet= self.flow_btn_stylesheet
-        else:
-            vol_per = self.col_size
-            check_state = self.frac_clicked
-            is_avail = [True]*10
-            fractions = self.frac_col
-            btn_stylesheet = self.frac_btn_stylesheet
-        for i in range(start_loc):
-            check_state[i] = None
-            is_avail[i] = False
+    
+    def display_selected(self, disp_array):
+        """Turn all the non zero columns in disp_array red. Determine the column type from array length"""
+        frac_type = len(disp_array)
+        btns_to_use = self.flow_col if frac_type == 4 else self.frac_col
+        btn_stylesheet = self.flow_btn_stylesheet if frac_type == 4 else self.frac_btn_stylesheet
         i = 1
-        vol_filled = self.total_vol - (i*vol_per) 
-        while vol_filled > -vol_per:
-            if vol_filled < 0:
-                check_state[start_loc+i-1] = vol_per + vol_filled
-            else:
-                check_state[start_loc+i-1] = vol_per
-            fractions[start_loc+i-1].setStyleSheet(btn_stylesheet.format(start_loc+i, 'red'))
-            is_avail[start_loc+i-1] = False
-            i += 1
-            vol_filled = self.total_vol - (i*vol_per)
-        return check_state, is_avail
+        for btn in btns_to_use:
+            if disp_array[i-1] > 0:
+                btn.setStyleSheet(btn_stylesheet.format(i, 'red'))
+            i+=1
 
     def correct_frac_col_design(self):
         """Fix the distance between the buttons in the GUI window"""

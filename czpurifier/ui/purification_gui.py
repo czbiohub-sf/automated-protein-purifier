@@ -762,9 +762,7 @@ class Ui_Purification(object):
     def onClickFlowPath(self, flow_path_combo, step_index):
         """
         Control the enable/disable of widgets based on path selected
-        If the selected flow path is fraction column:
-            1. Check if the volume is within limit
-            2. Display the fraction column window with the fractions selected
+        Call the fraction collector methods to display the selected fractions if pathway is 3
         Parameters
         ---------------------------------------
         flow_path_combo: The combobox object of the current flow path selected
@@ -780,7 +778,11 @@ class Ui_Purification(object):
             if max_vol == -1:
                 # volume is okay
                 disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
-                print('what to display: {}'.format(disp))
+                self.frac_wdw = QtWidgets.QMainWindow()
+                self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+                self.frac_wdw.show()
+                self.frac_ui.correct_frac_col_design()
+                self.frac_ui.display_selected(disp)
                 self.fraction_widgets_enabler(step_index, False)
             else:
                 # volume not available
@@ -791,63 +793,11 @@ class Ui_Purification(object):
             self.gui_controller.fractionCollectorUnsel(step_index, col_size)
     
     def fraction_widgets_enabler(self, step_index, is_enabled):
+        """Enable/Disable widgets related to the fraction collector pathway"""
         self.vol_vals[step_index].setEnabled(is_enabled)
         self.vol_sliders[step_index].setEnabled(is_enabled)
         if step_index == 3:
             self.col_vol_combo_box.setEnabled(is_enabled)
-        """
-        curIndex = flow_path_combo.currentIndex()
-        col_size = self.frac_size if step_index == 3 else None
-        # curIndex == 2 means fraction column is selected
-        if curIndex == 2 and self._okayFracVol(self.vol_vals[step_index].text(), col_size):
-            self.vol_vals[step_index].setEnabled(False)
-            self.vol_sliders[step_index].setEnabled(False)
-            self.load_vol_slider.setEnabled(False)
-            self.frac_wdw = QtWidgets.QMainWindow()
-            self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(self.vol_vals[step_index].text()), col_size)
-            self.frac_wdw.show()
-            self.frac_ui.correct_frac_col_design()
-            if step_index == 3:
-                # For elution step: Use 1/5 ml fraction columns therefore the combox to change 
-                # the fraction column size is disabled 
-                self.col_vol_combo_box.setEnabled(False)
-                self.fractions_selected[step_index] = self.frac_ui.select_frac_columns()
-            else:
-                self.fractions_selected[step_index] = self.frac_ui.select_frac_columns(int(self.flowth_vol_used/50))
-                self.flowth_vol_used += ceil(int(self.vol_vals[step_index].text())/50)*50
-        else:
-            self.vol_vals[step_index].setEnabled(True)
-            self.vol_sliders[step_index].setEnabled(True)
-            self.col_vol_combo_box.setEnabled(True)
-            flow_path_combo.setCurrentIndex(0)
-            if step_index != 3 :
-                self.flowth_vol_used -= ceil(int(self.vol_vals[step_index].text())/50)*50
-        """
-
-    def _okayFracVol(self, vol, col_size = None):
-        """
-        Checks that the frac volume input does not exceed the total capacity
-
-        Parameters
-        ------------------------------------
-        vol: The volume going into the fraction/flow through column
-        col_size: None = Volume flowing through flow through column (fixed max = 200ml)
-        or 1/5 to indicate the size of the fraction columns
-
-        Return
-        ------------------------------------
-        Whether or not the volume is valid
-        """
-        max_vol = 200-self.flowth_vol_used if col_size is None else col_size*10
-        print(self.flowth_vol_used)
-        if int(vol) > max_vol:
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.exec()
-            return False
-        return True
 
     def slider_changed(self, step_index):
         """Updates text label beside the slider when slider is moved
