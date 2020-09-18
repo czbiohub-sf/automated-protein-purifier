@@ -78,12 +78,11 @@ class RunPurification():
         """
         col_type = 'Frac' if len(fraction_param) > 4 else 'Flow'
         for i in range(len(fraction_param)):
-            if fraction_param[i] == 0:
-                break
-            self.ui.selectFraction('{0}{1}'.format(col_type, i+1))
-            skip_pressed = self.ui.pump(fraction_param[i])
-            if skip_pressed:
-                break
+            if fraction_param[i] != 0:
+                self.ui.selectFraction('{0}{1}'.format(col_type, i+1))
+                skip_pressed = self.ui.pump(fraction_param[i])
+                if skip_pressed:
+                    break
         self.ui.selectFraction('Safe')
 
     def _run_cleanup(self):

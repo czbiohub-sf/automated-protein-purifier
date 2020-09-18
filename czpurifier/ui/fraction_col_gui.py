@@ -236,7 +236,6 @@ class Ui_FractionColumn(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Fraction Column"))
-        self.label.setText(_translate("MainWindow", "Total Volume: {} ml".format(self.total_vol)))
         self.set_fraction_col_btn.setText(_translate("MainWindow", "Okay"))
 
     def _init_frac_col(self):

@@ -72,7 +72,7 @@ class GUI_Controller:
         si = SimulatorInterface()
         si.autorun()
     
-    def run_purification_script(self, is_basic_purification, parameters, fractions):
+    def run_purification_script(self, is_basic_purification, parameters):
         """
         Run the purification protocal on a new process
         If the protocol is run on the simulator a signal is sent to the simulator
@@ -81,7 +81,7 @@ class GUI_Controller:
         targ = RunPurification if is_basic_purification else RunCustomProtol
         if not self.device_present:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=targ, args=(parameters, fractions, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
@@ -172,6 +172,13 @@ class GUI_Controller:
     def fractionCollectorUnsel(self, id, col_size):
         pathway_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
         pathway_array = self.fracflow_objs[id].remove_path(pathway_array)
+
+    def getFractionParameters(self):
+        """Returns all the fraction parameters to run the protocol in the order of the id number"""
+        param = []
+        for i in range(len(self.fracflow_objs)):
+            param.append(self.fracflow_objs[i].selectedList)
+        return param
 
 class FractionsSelected():
     def __init__(self, id, col_size):

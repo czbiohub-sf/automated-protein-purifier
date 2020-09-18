@@ -676,15 +676,16 @@ class Ui_Purification(object):
         self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
         self.vol_vals = [self.equil_vol_val, self.load_vol_val, self.wash_vol_val, self.elute_vol_val]
         self.vol_sliders = [self.equil_vol_slider, self.load_vol_slider, self.wash_vol_slider, self.elute_vol_slider]
+        self.flowpath_combo = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
         # Widget setup and activation on start
         self._set_actionbtn_enable(False, True)
         self.col_vol_combo_box.activated.connect(self.onClickFractionSize)
         self.setDefaultParam()
         self._reset_pbar()
-        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(self.equil_flowpath, 0))
-        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(self.load_flowpath, 1))
-        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(self.wash_flowpath, 2))
-        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(self.elute_flowpath, 3))
+        self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
+        self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
+        self.wash_flowpath.activated.connect(lambda: self.onClickFlowPath(2))
+        self.elute_flowpath.activated.connect(lambda: self.onClickFlowPath(3))
         self.close_btn.clicked.connect(self.onClickClose)
         self.start_btn.clicked.connect(self.onClickStart)
         self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
@@ -734,6 +735,10 @@ class Ui_Purification(object):
         self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
         self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
         self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
+
+        # Auto click the combo boxes on start to initialize all the fraction objs
+        for i in range(4):
+            self.onClickFlowPath(i)
     
     def purificationComplete(self, signalNumber, frame):
         """Handler for SIGUSR2. Prepares UI for another purification protocol"""
@@ -759,16 +764,16 @@ class Ui_Purification(object):
             self.elute_vol_slider.setMaximum(50)
             self.frac_size = 5
 
-    def onClickFlowPath(self, flow_path_combo, step_index):
+    def onClickFlowPath(self, step_index):
         """
         Control the enable/disable of widgets based on path selected
         Call the fraction collector methods to display the selected fractions if pathway is 3
         Parameters
         ---------------------------------------
-        flow_path_combo: The combobox object of the current flow path selected
         step_index: The index of the step, used to determine whether to use fraction/flow column
         and which text box to use to get the volume to flow
         """
+        flow_path_combo = self.flowpath_combo[step_index]
         col_size = self.frac_size if step_index == 3 else 50
         self.gui_controller.flowpathwayClicked(step_index, col_size)
         curIndex = flow_path_combo.currentIndex()
@@ -882,7 +887,7 @@ class Ui_Purification(object):
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
-            self.gui_controller.run_purification_script(True, init_params, self.fractions_selected)
+            self.gui_controller.run_purification_script(True, init_params)
 
     def onClickPauseHold(self, is_pause):
         """
