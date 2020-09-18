@@ -161,6 +161,15 @@ class GUI_Controller:
             return -1
         return col_size*(vol_array.count(0))
     
+    def vol_exceeds_msg(self, limit):
+        """Throws error if the capacity of the pathway is reached"""
+        msg = QMessageBox()
+        msg.setText("Error! Exceeds Capacity!")
+        msg.setInformativeText('Volume available in selected pathway is {}ml'.format(limit))
+        msg.setIcon(QMessageBox.Information)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
+    
     def fractionCollectorUnsel(self, id, col_size):
         pathway_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
         pathway_array = self.fracflow_objs[id].remove_path(pathway_array)

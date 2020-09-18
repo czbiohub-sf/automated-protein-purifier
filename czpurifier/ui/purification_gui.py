@@ -781,11 +781,20 @@ class Ui_Purification(object):
                 # volume is okay
                 disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
                 print('what to display: {}'.format(disp))
+                self.fraction_widgets_enabler(step_index, False)
             else:
-                print('Exceeded {}'.format(max_vol))
+                # volume not available
+                self.gui_controller.vol_exceeds_msg(max_vol)
+                flow_path_combo.setCurrentIndex(0)
         else:
+            self.fraction_widgets_enabler(step_index, True)
             self.gui_controller.fractionCollectorUnsel(step_index, col_size)
-
+    
+    def fraction_widgets_enabler(self, step_index, is_enabled):
+        self.vol_vals[step_index].setEnabled(is_enabled)
+        self.vol_sliders[step_index].setEnabled(is_enabled)
+        if step_index == 3:
+            self.col_vol_combo_box.setEnabled(is_enabled)
         """
         curIndex = flow_path_combo.currentIndex()
         col_size = self.frac_size if step_index == 3 else None
