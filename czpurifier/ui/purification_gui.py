@@ -974,6 +974,8 @@ class Ui_Purification(object):
         self.status_display_btn.setText('--')
         self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
         self.start_btn.clicked.connect(self.onClickStart)
+        for combo in self.flowpath_combo:
+            combo.setCurrentIndex(0)
 
     ## Timer Related Events ##
 
