@@ -337,8 +337,8 @@ class Ui_CustomProtocol(object):
         self.step_counter = -1
         # Contains the parent widget for a step
         # len(step_widgets) = number of steps
-        self.step_widgets = []
-        self.step_widget_objs = []
+        self.step_widgets = [] #Qt widget object
+        self.step_widget_objs = [] # AddStep class object (used to extract input params)
         self.close_btn.clicked.connect(self.onClickClose)
         self.add_step_btn.clicked.connect(self.onClickAddStep)
         self.remove_step.clicked.connect(self.onClickRemoveStep)
@@ -391,7 +391,8 @@ class Ui_CustomProtocol(object):
         """Creates a new widget to add the input parameters"""
         self.step_counter += 1
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter+1))
+        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter, self.gui_controller, col_size))
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
         self.remove_step.setEnabled(True)
 
@@ -400,6 +401,8 @@ class Ui_CustomProtocol(object):
         self.step_widgets[self.step_counter].setParent(None)
         self.step_widgets.pop()
         self.step_widget_objs.pop()
+        self.gui_controller.fractionCollectorUnsel(self.step_counter)
+        self.gui_controller.fracflow_objs.pop(self.step_counter)
         self.step_counter -= 1
         if self.step_counter < 0:
                 self.remove_step.setEnabled(False)
@@ -427,9 +430,7 @@ class Ui_CustomProtocol(object):
             inp.append(int(c.volume_val_lbl.text()))
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
-        print(input_params)
         return input_params
-
 
     ## Action Button Event Handlers ##
 
@@ -541,7 +542,7 @@ class Ui_CustomProtocol(object):
 
 
 class AddStep():
-    def __init__(self, step_widget, step_no):
+    def __init__(self, step_widget, step_no, gui_controller, col_size):
         """Implements the initialization and control of a single step widget
         A step widget is defined as the parent widget containing all the input 
         parameters needed to define a single step
@@ -549,8 +550,13 @@ class AddStep():
         ---------------------------
         step_widget: Parent QtWidget object for the step
         step_no: The step that we are currently on
+        gui_controller: GUI_Controller obj for flowpath selection
+        col_size: The size of the fraction column
         """
         self.add_step_widget = step_widget
+        self.gui_controller = gui_controller
+        self.col_size = col_size
+        self.step_no = step_no
         self._create_widget(step_no)
         self._init_widget_actions()
     
@@ -682,13 +688,13 @@ class AddStep():
 
     def _init_widget_actions(self):
         """Initialize on click actions for the combo box and slider present in the widget"""
-        self.volume_val_lbl.setText('{}'.format(self.volume_slider.value()))
+        self.volume_val_lbl.setText('{}'.format(1))
         self.volume_slider.valueChanged.connect(lambda: self.slider_changed(self.volume_slider.value(),
                                                     self.volume_val_lbl))
         self.valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(self.valve_inp_combo_box.currentIndex(),
                                                 self.port_combo_box))
-        self.flowpath_combo_box.activated.connect(lambda: self.onSelectFlowPath(self.flowpath_combo_box,
-                                                        self.volume_slider, self.volume_val_lbl.text()))
+        self.flowpath_combo_box.activated.connect(self.onSelectFlowPath)
+        self.onSelectFlowPath(0)
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
@@ -701,48 +707,33 @@ class AddStep():
         else:
             port.setEnabled(False)
 
-    def onSelectFlowPath(self, combobox, slider, vol):
-        """Display fraction collector window with selected fractions depending on
-        the flow path selected"""
-        cur_index = combobox.currentIndex()
-        #self.col_vol_combo_box.setEnabled(True)
-        run = False
-        if cur_index == 2:
-                col_size = 1
-                #col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-                run = self._okayFracVol(vol, col_size)
-                """
-                if run:
-                    self.col_vol_combo_box.setEnabled(False)
-                else:
-                    combobox.setCurrentIndex(0)
-                """
-        if cur_index == 3:
-                col_size = None
-                run = True
-        if run:
-            slider.setEnabled(False)
-            self.frac_wdw = QtWidgets.QMainWindow()
-            self.frac_ui = Ui_FractionColumn(self.frac_wdw, int(vol), col_size)
-            self.frac_wdw.show()
-            self.frac_ui.correct_frac_col_design()
-            #self.fractions_selected[step_index] = 
-            #self.frac_ui.select_frac_columns()
+    def onSelectFlowPath(self, current_index):
+        c_size = 50 if current_index == 3 else self.col_size
+        print(c_size)
+        self.gui_controller.flowpathwayClicked(self.step_no, c_size)
+        self.gui_controller.fractionCollectorUnsel(self.step_no)
+        if current_index > 1:
+            vol = int(self.volume_val_lbl.text())
+            max_vol = self.gui_controller.okay_vol_checker(vol, c_size)
+            if max_vol == -1:
+                # volume is okay
+                disp = self.gui_controller.fractionCollectorSel(self.step_no, vol, c_size)
+                self.frac_wdw = QtWidgets.QMainWindow()
+                self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+                self.frac_wdw.show()
+                self.frac_ui.correct_frac_col_design()
+                self.frac_ui.display_selected(disp)
+                self.fraction_widgets_enabler(False)
+            else:
+                # volume not available
+                self.gui_controller.vol_exceeds_msg(max_vol)
+                self.flowpath_combo_box.setCurrentIndex(0)
         else:
-            slider.setEnabled(True)
-
-    def _okayFracVol(self, vol, col_size):
-        """Checks that the frac volume input does not exceed the total capacity"""
-        max_vol = col_size*10
-        if int(vol) > max_vol:
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Total volume cannot exceed {} ml for fraction collector pathway'.format(max_vol))
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.exec()
-            return False
-        return True
-
+            self.fraction_widgets_enabler(True)
+        
+    def fraction_widgets_enabler(self, is_enabled):
+        self.volume_val_lbl.setEnabled(is_enabled)
+        self.volume_slider.setEnabled(is_enabled)
 
 if __name__ == "__main__":
     import sys
