@@ -3,6 +3,7 @@ from fraction_col_gui import Ui_FractionColumn
 from gui_controller import GUI_Controller
 from os import chdir, path
 from signal import signal, SIGUSR2
+from time import sleep
 
 
 class Ui_CustomProtocol(object):
@@ -361,6 +362,10 @@ class Ui_CustomProtocol(object):
         self.log_output_txtbox.setReadOnly(True)
         self.log_output = None
 
+        # Timer for widget scroll down once a new widget is added
+        self.widgetscroller_timer = QtCore.QTimer()
+        self.widgetscroller_timer.timeout.connect(self.update_scoller)
+
         #Step display
         self.current_step = 0
         self.rep_num = 1
@@ -400,6 +405,7 @@ class Ui_CustomProtocol(object):
                                     self.step_counter, self.gui_controller, col_size))
             self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
             self.remove_step.setEnabled(True)
+            self.widgetscroller_timer.start(50)
 
     def onClickRemoveStep(self):
         """Removes the last step that was added"""
@@ -412,6 +418,12 @@ class Ui_CustomProtocol(object):
         if self.step_counter < 0:
             self.remove_step.setEnabled(False)
             self.col_vol_combo_box.setEnabled(True)
+    
+    def update_scoller(self):
+        end = self.scrollArea.verticalScrollBar().maximum()
+        self.scrollArea.verticalScrollBar().setValue(end)
+        self.widgetscroller_timer.stop()
+
 
     def confirmColVol(self):
         """Confirms whether or not the user meant to click an action button"""
@@ -474,6 +486,7 @@ class Ui_CustomProtocol(object):
     def onClickStart(self):
         """"""
         self.gui_controller.areYouSureMsg('start')
+        """
         if self.gui_controller.is_sure:
             init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
@@ -485,6 +498,7 @@ class Ui_CustomProtocol(object):
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
+        """
 
     def onClickPauseHold(self, is_pause):
         """
