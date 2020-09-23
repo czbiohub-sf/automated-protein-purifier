@@ -169,8 +169,8 @@ class GUI_Controller:
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec()
     
-    def fractionCollectorUnsel(self, id, col_size):
-        pathway_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
+    def fractionCollectorUnsel(self, id):
+        pathway_array = self.flow_col_sel if self.fracflow_objs[id].is_flow else self.frac_col_sel
         pathway_array = self.fracflow_objs[id].remove_path(pathway_array)
 
     def getFractionParameters(self):
@@ -184,16 +184,24 @@ class FractionsSelected():
     def __init__(self, id, col_size):
         """id: Unique identifier of the step
         selectedList: [0,50,0,0] The list of fractions selected
-        and the volume to fraction for the step"""
+        and the volume to fraction for the step
+        is_frac: Stores if the last flowpath was the fraction or the flow through"""
         self.id = id
+        self._created_emptySelList(col_size)
+        self.is_frac = None
+    
+    def _created_emptySelList(self, col_size):
+        """Create the empty selectedList. The length can change based on the dropdown selection"""
         array_len = 4 if col_size == 50 else 10
         self.selectedList = [0]*array_len
+        self.is_flow = True if array_len == 4 else False
 
     def add_path(self, current_path, col_size, num_needed, last_volume):
         """current_path: [50,0,0,0] The fractions that are already occupied
         col_size: Either 1 or 5 or 50 (the max volume)
         num_needed: The number of fractions needed to be added
         last_volume: The volume in the last fraction (might be less than col_size)"""
+        self._created_emptySelList(col_size)
         num_filled = 0
         for i in range(len(current_path)):
             if current_path[i] == 0:

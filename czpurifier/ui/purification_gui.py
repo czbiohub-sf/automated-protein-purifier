@@ -665,6 +665,7 @@ class Ui_Purification(object):
                             self.elute_vol_val: True, self.elute_flowpath: False}
         # Used to track if the fraction collector pathway is selected for any of the steps on start
         # Example: [[None],[0,0,0,...,100,100], [None], [10, 10,....]]
+        # TODO: Remove fractions_selected dep in estimated time
         self.fractions_selected = [None]*4
         # Used to keep count of the total volume passed through the flow throw columns
         # Flow throw used in either Wash or Load step
@@ -795,7 +796,7 @@ class Ui_Purification(object):
                 flow_path_combo.setCurrentIndex(0)
         else:
             self.fraction_widgets_enabler(step_index, True)
-            self.gui_controller.fractionCollectorUnsel(step_index, col_size)
+            self.gui_controller.fractionCollectorUnsel(step_index)
     
     def fraction_widgets_enabler(self, step_index, is_enabled):
         """Enable/Disable widgets related to the fraction collector pathway"""
