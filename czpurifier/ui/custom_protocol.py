@@ -389,12 +389,17 @@ class Ui_CustomProtocol(object):
 
     def onClickAddStep(self):
         """Creates a new widget to add the input parameters"""
-        self.step_counter += 1
-        self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], self.step_counter, self.gui_controller, col_size))
-        self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
-        self.remove_step.setEnabled(True)
+        if self.step_counter < 0:
+            self.confirmColVol()
+        if self.step_counter > -1 or self.is_sure:
+            self.col_vol_combo_box.setEnabled(False)
+            self.step_counter += 1
+            self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
+            col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+            self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
+                                    self.step_counter, self.gui_controller, col_size))
+            self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
+            self.remove_step.setEnabled(True)
 
     def onClickRemoveStep(self):
         """Removes the last step that was added"""
@@ -405,7 +410,22 @@ class Ui_CustomProtocol(object):
         self.gui_controller.fracflow_objs.pop(self.step_counter)
         self.step_counter -= 1
         if self.step_counter < 0:
-                self.remove_step.setEnabled(False)
+            self.remove_step.setEnabled(False)
+            self.col_vol_combo_box.setEnabled(True)
+
+    def confirmColVol(self):
+        """Confirms whether or not the user meant to click an action button"""
+        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Is the column volume size of {}ml correct?'.format(col_size))
+        msg.setIcon(QtWidgets.QMessageBox.Question)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.buttonClicked.connect(self._msgbtn)
+        msg.exec()
+    
+    def _msgbtn(self, i):
+        """Returns the result from the are you sure pop up"""
+        self.is_sure = True if 'ok' in i.text().lower() else False
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
