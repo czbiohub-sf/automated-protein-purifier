@@ -21,7 +21,7 @@ class RunCustomProtol():
 
         #self._purge_bubbles()
         #kill(gui_pid, SIGUSR1)
-        self._run_process(input_param[1:], input_param[0][2])
+        self._run_process(input_param[1:], fractions, input_param[0][2])
         logging.info('Purification Complete')
         kill(self.gui_pid, SIGUSR2)
         self._run_cleanup()
@@ -42,14 +42,14 @@ class RunCustomProtol():
         self.ui.pump(1)
         self.ui.closePreColumnWaste()
 
-    def _run_process(self, input_params, rep):
+    def _run_process(self, input_params, fractions, rep):
         """Runs the process rep times"""
         for i in range(rep):
-            for step in input_params:
+            for step, f in zip(input_params, fractions):
                 kill(self.gui_pid, SIGUSR2)
-                self._run_step(step)
+                self._run_step(step, f)
         
-    def _run_step(self, step_param):
+    def _run_step(self, step_param, frac):
         """Runs the process for each step"""
         # 1. Select either buffer or load
         #  If buffer select the port
@@ -62,15 +62,18 @@ class RunCustomProtol():
         # 2. If fraction/flow, run the stage
         # If waste: open waste, run pump, close waste
         if step_param[2] > 1:
-            self._run_frac_collector()
+            self._run_frac_collector(frac)
         else:
             self.waste_open_cmds[step_param[2]]
             self.ui.pump(step_param[1])
             self.waste_close_cmds[step_param[2]]
     
-    def _run_frac_collector(self):
-        """TODO: Implement run fraction collector"""
-        pass
+    def _run_frac_collector(self, fraction_param):
+        col_type = 'Frac' if len(fraction_param) > 4 else 'Flow'
+        for i in range(len(fraction_param)):
+            if fraction_param[i] != 0:
+                self.ui.selectFraction('{0}{1}'.format(col_type, i+1))
+        self.ui.selectFraction('Safe')
 
     def _run_cleanup(self):
         # Run cleanup
