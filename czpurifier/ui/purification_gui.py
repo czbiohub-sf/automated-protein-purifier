@@ -977,6 +977,7 @@ class Ui_Purification(object):
         self.start_btn.clicked.connect(self.onClickStart)
         for combo in self.flowpath_combo:
             combo.setCurrentIndex(0)
+        self.gui_controller.init_fraction_collector_params()
 
     ## Timer Related Events ##
 

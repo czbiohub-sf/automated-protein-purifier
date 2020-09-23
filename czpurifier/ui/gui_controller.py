@@ -49,6 +49,9 @@ class GUI_Controller:
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
         
+        self.init_fraction_collector_params()
+
+    def init_fraction_collector_params(self):
         self.frac_col_sel = [0]*10
         self.flow_col_sel = [0]*4
         self.fracflow_objs = {}

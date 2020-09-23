@@ -362,7 +362,7 @@ class Ui_CustomProtocol(object):
         self.log_output = None
 
         #Step display
-        self.current_step = 1
+        self.current_step = 0
         self.rep_num = 1
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
@@ -460,7 +460,7 @@ class Ui_CustomProtocol(object):
             self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            self.gui_controller.run_purification_script(False, init_params, 'self.fractions_selected')
+            self.gui_controller.run_purification_script(False, init_params)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
@@ -527,6 +527,7 @@ class Ui_CustomProtocol(object):
         self.status_display_btn.setEnabled(False)
         self.status_display_btn.setText('--')
         self.current_step_display_btn.setEnabled(False)
+        self.gui_controller.init_fraction_collector_params()
 
     def log_timer_handler(self):
         """Update the logger to display the messages
@@ -709,7 +710,6 @@ class AddStep():
 
     def onSelectFlowPath(self, current_index):
         c_size = 50 if current_index == 3 else self.col_size
-        print(c_size)
         self.gui_controller.flowpathwayClicked(self.step_no, c_size)
         self.gui_controller.fractionCollectorUnsel(self.step_no)
         if current_index > 1:
