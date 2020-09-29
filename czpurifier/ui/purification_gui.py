@@ -828,6 +828,12 @@ class Ui_Purification(object):
         run_param[1] = 5 if run_param[1] == 1 else 1
         return run_param
 
+    def protocol_buffers(self):
+        """Returns the volume of buffers used"""
+        return  {'BASE': int(self.equil_vol_val.text()),
+                'WASH': int(self.wash_vol_val.text()),
+                'ELUTION': int(self.elute_vol_val.text())}
+
     ## Enable/Disable Widgets On GUI ##
 
     def _set_param_enable(self, state):
@@ -874,7 +880,7 @@ class Ui_Purification(object):
         6. Update the step display
         7. Run the process
         """
-        self.gui_controller.areYouSureMsg('start')
+        self.gui_controller.buffer_needed_msg(self.protocol_buffers())
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
             self.start_btn.setEnabled(False)

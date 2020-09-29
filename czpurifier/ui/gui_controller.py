@@ -173,13 +173,12 @@ class GUI_Controller:
     def buffer_needed_msg(self, protocol_buffers):
         """Displays the message showing amount of buffer needed for each"""
         total_buffers = self._buffer_needed(protocol_buffers)
-        #buffer_disp = ''
-        #for key in tot
         msg = QMessageBox()
         msg.setText("Are you sure you want to start?")
         msg.setInformativeText('Buffers Needed: \n\n{}'.format(total_buffers))
-        msg.setIcon(QMessageBox.Information)
-        msg.setStandardButtons(QMessageBox.Ok)
+        msg.setIcon(QMessageBox.Question)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.buttonClicked.connect(self._msgbtn)
         msg.exec()
 
 
