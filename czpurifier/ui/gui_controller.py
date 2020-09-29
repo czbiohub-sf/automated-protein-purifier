@@ -147,6 +147,42 @@ class GUI_Controller:
         """Returns the result from the are you sure pop up"""
         self.is_sure = True if 'ok' in i.text().lower() else False
 
+    def _buffer_needed(self, protocol_buffers):
+        """Adds the buffers needed for the protocol with purging and cleanup
+        and creates a string display of the total buffer needed
+        
+        Parameters
+        -----------------------------
+        protocol_buffers = {'BASE': 20, 'ELUTION': 1, ...}
+        """
+        total_buffers = ''
+        purging_buffers = {'BASE': 1, 'ELUTION': 1, 'WASH': 1, 'LOAD_BUFFER': 1}
+        cleanup_buffers = {'BASE': 10, 'LOAD_BUFFER': 10}
+
+        for key in purging_buffers:
+            total = purging_buffers[key]
+            if key in cleanup_buffers:
+                total += cleanup_buffers[key]
+            if key in protocol_buffers:
+                total += protocol_buffers[key]
+            # total = total * sth (if needed)
+            total_buffers += '{}: {}ml \n'.format(key, total)
+        
+        return total_buffers
+    
+    def buffer_needed_msg(self, protocol_buffers):
+        """Displays the message showing amount of buffer needed for each"""
+        total_buffers = self._buffer_needed(protocol_buffers)
+        #buffer_disp = ''
+        #for key in tot
+        msg = QMessageBox()
+        msg.setText("Are you sure you want to start?")
+        msg.setInformativeText('Buffers Needed: \n\n{}'.format(total_buffers))
+        msg.setIcon(QMessageBox.Information)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
+
+
     ################################
     ## Fraction Collector Methods ##
     ################################
