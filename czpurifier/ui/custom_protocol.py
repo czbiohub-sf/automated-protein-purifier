@@ -463,6 +463,14 @@ class Ui_CustomProtocol(object):
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
         return input_params
+    
+    def protocol_buffers(self):
+        """Create a dic of all the buffers used and the volume of each"""
+        total_buffers = {}
+        for c in self.step_widget_objs:
+            if c.port_combo_box.isEnabled():
+                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())})
+        return total_buffers
 
     ## Action Button Event Handlers ##
 
@@ -485,7 +493,7 @@ class Ui_CustomProtocol(object):
 
     def onClickStart(self):
         """"""
-        self.gui_controller.areYouSureMsg('start')
+        self.gui_controller.buffer_needed_msg(self.protocol_buffers())
         """
         if self.gui_controller.is_sure:
             init_params = self._generate_run_parameters()
@@ -712,10 +720,10 @@ class AddStep():
         self.flowpath_combo_box.setItemText(3, _translate("CustomProtocol", "Flow Through Column"))
         self.valve_inp_combo_box.setItemText(0, _translate("CustomProtocol", "Load"))
         self.valve_inp_combo_box.setItemText(1, _translate("CustomProtocol", "Buffer"))
-        self.port_combo_box.setItemText(0, _translate("CustomProtocol", "Wash"))
-        self.port_combo_box.setItemText(1, _translate("CustomProtocol", "Load Buffer"))
-        self.port_combo_box.setItemText(2, _translate("CustomProtocol", "Elution"))
-        self.port_combo_box.setItemText(3, _translate("CustomProtocol", "Base"))
+        self.port_combo_box.setItemText(0, _translate("CustomProtocol", "WASH"))
+        self.port_combo_box.setItemText(1, _translate("CustomProtocol", "LOAD_BUFFER"))
+        self.port_combo_box.setItemText(2, _translate("CustomProtocol", "ELUTION"))
+        self.port_combo_box.setItemText(3, _translate("CustomProtocol", "BASE"))
         self.label_2.setText(_translate("CustomProtocol", "ml"))
         self.volume_val_lbl.setInputMask(_translate("CustomProtocol", "9999"))
         self.step_num.setText(_translate("CustomProtocol", "{}".format(step_no)))
