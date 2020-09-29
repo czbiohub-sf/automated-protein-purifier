@@ -51,10 +51,9 @@ class GUI_Controller:
         
         self.init_fraction_collector_params()
 
-    def init_fraction_collector_params(self):
-        self.frac_col_sel = [0]*10
-        self.flow_col_sel = [0]*4
-        self.fracflow_objs = {}
+    ###################
+    # TCP Connections #
+    ###################
 
     def connect_to_device(self):
         """Try to bind to device ip and check if a connection is already there"""
@@ -89,6 +88,10 @@ class GUI_Controller:
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
 
+    #####################
+    ## Process Signals ##
+    #####################
+
     def pause_clicked(self):
         """Sends SIGQUIT signal to raise pause flag if pause is clicked"""
         kill(self.controller_interface_PID, SIGQUIT)
@@ -110,6 +113,10 @@ class GUI_Controller:
         self._needs_connection = False
         kill(self.controller_interface_PID, SIGTERM)
         self.ctrl_proc.join()
+
+    ######################################
+    # Common methods between GUI windows #
+    ######################################
 
     def calc_step_times(self, parameters, fractions):
         """Calculates an estimate time for each step"""
@@ -139,6 +146,15 @@ class GUI_Controller:
     def _msgbtn(self, i):
         """Returns the result from the are you sure pop up"""
         self.is_sure = True if 'ok' in i.text().lower() else False
+
+    ################################
+    ## Fraction Collector Methods ##
+    ################################
+
+    def init_fraction_collector_params(self):
+        self.frac_col_sel = [0]*10
+        self.flow_col_sel = [0]*4
+        self.fracflow_objs = {}
 
     def flowpathwayClicked(self, id, col_size):
         """id: unique identifier for the step selecting the flowpathway"""
