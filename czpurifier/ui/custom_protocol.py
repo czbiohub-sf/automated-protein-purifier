@@ -366,6 +366,10 @@ class Ui_CustomProtocol(object):
         self.widgetscroller_timer = QtCore.QTimer()
         self.widgetscroller_timer.timeout.connect(self.update_scoller)
 
+        # Timer for updating the current status
+        self.status_timer = QtCore.QTimer()
+        self.status_timer.timeout.connect(self.status_timer_handler)
+
         #Step display
         self.current_step = 0
         self.rep_num = 1
@@ -375,6 +379,7 @@ class Ui_CustomProtocol(object):
     def currentStepRunning(self, signalNumber, frame):
         """Handler for SIGUSR2. Updates the current step that is running"""
         output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
+        self.current_step_display_btn.setText(output)
         if self.rep_num > int(self.rep_num_lbl.text()):
             if self.current_step == 1:
                 output = 'Running Device Cleanup'
@@ -386,7 +391,7 @@ class Ui_CustomProtocol(object):
             self.current_step = 0
             self.rep_num += 1
         self.current_step += 1
-        self.current_step_display_btn.setText(output)
+        
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -471,6 +476,13 @@ class Ui_CustomProtocol(object):
             if c.port_combo_box.isEnabled():
                 total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())})
         return total_buffers
+    
+    def pump_times(self):
+        """Get all the pump times for each step"""
+        pump_times = []
+        for c in self.step_widget_objs:
+            pump_times.append(int(c.volume_val_lbl.text())*60)
+        return pump_times
 
     ## Action Button Event Handlers ##
 
@@ -494,19 +506,18 @@ class Ui_CustomProtocol(object):
     def onClickStart(self):
         """"""
         self.gui_controller.buffer_needed_msg(self.protocol_buffers())
-        """
         if self.gui_controller.is_sure:
+            self.status_timer.start(2000)
             init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self._set_actionbtn_enable(True, False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            self.gui_controller.run_purification_script(False, init_params)
+            #self.gui_controller.run_purification_script(False, init_params)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
-        """
 
     def onClickPauseHold(self, is_pause):
         """
@@ -523,14 +534,19 @@ class Ui_CustomProtocol(object):
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
+            """
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
+            """
             self.status_display_btn.setText('on {}'.format(msg))
             self.status_display_btn.setStyleSheet(
                 self.gui_controller.status_display_stylsheet.format(
                 self.gui_controller.status_display_color_halt))
+            remaining = self.status_timer.remainingTime()
+            self.status_timer.stop()
+            self.status_timer.setInterval(remaining)
 
     def onClickResume(self):
         """
@@ -539,11 +555,12 @@ class Ui_CustomProtocol(object):
         to resume the protocol
         """
         self._set_actionbtn_enable(True, False)
-        self.gui_controller.resume_clicked()
+        #self.gui_controller.resume_clicked()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
         self.status_display_btn.setText('running')
+        self.status_timer.start()
 
     def onClickStop(self):
         """Signals the script that stop was clicked, to home the device"""
@@ -583,6 +600,22 @@ class Ui_CustomProtocol(object):
             self.log_output_txtbox.verticalScrollBar().setValue(log_end)
         self.log_output = output
 
+    def status_timer_handler(self):
+        """Starts the timer on the current step"""
+        if self.current_step == len(self.step_widget_objs):
+            self.rep_num += 1
+            self.current_step = 0
+
+        if self.rep_num > int(self.rep_num_lbl.text()):
+            self.rep_num = 1
+            self.status_timer.stop()
+            output = 'Running Cleanup'
+        else:
+            pump_vol = int(self.step_widget_objs[self.current_step].volume_val_lbl.text())
+            self.status_timer.start(pump_vol*1000)
+            output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
+            self.current_step +=1
+        self.current_step_display_btn.setText(output)
 
 class AddStep():
     def __init__(self, step_widget, step_no, gui_controller, col_size):
