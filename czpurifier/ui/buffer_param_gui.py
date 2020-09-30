@@ -295,6 +295,13 @@ class Ui_BuffersWindow(object):
         self.wash_fc_slider.valueChanged.connect(lambda: self.slider_changed(2))
         self.elution_fc_slider.valueChanged.connect(lambda: self.slider_changed(3))
 
+        self.start_btn.clicked.connect(lambda: self.onclickStartCancel(True))
+        self.cancel_btn.clicked.connect(lambda: self.onclickStartCancel(False))
+        
     def slider_changed(self, indx):
         """Updates text label beside the slider when slider is moved"""
         self.fc_txtbox[indx].setText('{}'.format(self.sliders[indx].value()))
+
+    def onclickStartCancel(self, is_start):
+        self.gui_controller.is_sure = is_start
+        self.BuffersWindow.close()
