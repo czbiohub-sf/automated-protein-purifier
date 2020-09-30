@@ -94,14 +94,13 @@ class Ui_MainWindow(object):
         self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
         self.close_btn.clicked.connect(self.onClick_close_btn)
         self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
-        self.connect_device()
 
     def onClick_sim_btn(self):
         self.confirm_connectSim()
         if self.is_sure:
             self.is_sure = None
-            print('Connect')
-
+            self.run_sim()
+    
     def confirm_connectSim(self):
         """Confirms whether or not the user meant to click an action button"""
         msg = QtWidgets.QMessageBox()
@@ -118,31 +117,7 @@ class Ui_MainWindow(object):
         """Returns the result from the are you sure pop up"""
         self.is_sure = True if 'ok' in i.text().lower() else False
 
-    def connect_device(self):
-        """
-        Try to connect to device and if failed pop up a message to either
-        retry device connection or connect to the simulator
-        """
-        if not self.gui_controller.connect_to_device():
-            self.connect_hardware = QtWidgets.QPushButton('Retry Device Connection')
-            self.run_simulator = QtWidgets.QPushButton('Run Simulation Mode')
-            self.connect_hardware.clicked.connect(self.onClickConnect_hardware)
-            self.run_simulator.clicked.connect(self.onClickRunSim)
-            msg = QtWidgets.QMessageBox()
-            msg.setText('Failed To Connect')
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.addButton(self.connect_hardware, QtWidgets.QMessageBox.NoRole)
-            msg.addButton(self.run_simulator, QtWidgets.QMessageBox.NoRole)
-            msg.exec()
-
-    def onClickConnect_hardware(self):
-        """
-        If retry connection is clicked in the connect to device pop up
-        The connect device button is automatically clicked to call its on event action
-        """
-        self.connect_device()
-
-    def onClickRunSim(self):
+    def run_sim(self):
         """
         Call the method to run the simulator if 'run simulator' is clicked
         on the connect to device pop up
@@ -152,8 +127,6 @@ class Ui_MainWindow(object):
         msg.setText('Running Simulator')
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
-        self.purification_btn.setEnabled(True)
-        self.otherscripts_btn.setEnabled(True)
     
     def onClick_purification_btn(self):
         """

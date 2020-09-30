@@ -8,7 +8,7 @@ from math import ceil
 from gui_controller import GUI_Controller
 
 class Ui_Purification(object):
-    def __init__(self, Purification, simulator_process):
+    def __init__(self, Purification, dev_process):
         """
         Contains the initialization and functionality of the purification tab
         The lists in this class are indexed as such:
@@ -20,11 +20,11 @@ class Ui_Purification(object):
         Parameters
         ------------------------------------------------
         Purification: The QtWindow that is created to display the purification window
-        simulator_process: Either a process object, if in simulator mode, or None. Used 
+        dev_process: Either a process object, if in simulator mode, or None. Used 
         to ping the simulator process in the controller class
         """
         self.gui_controller = GUI_Controller()
-        self.gui_controller.device_process = simulator_process
+        self.gui_controller.hardware_or_sim(dev_process)
         signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
         self.Purification = Purification
@@ -1027,7 +1027,6 @@ class Ui_Purification(object):
         to allow for the buffer window to display before checking for is_sure = True
         to start the protocol"""
         if self.gui_controller.is_sure:
-            print('HERE')
             self.gui_controller.is_sure = None
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)

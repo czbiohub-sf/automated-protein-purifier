@@ -8,11 +8,11 @@ from time import sleep
 
 
 class Ui_CustomProtocol(object):
-    def __init__(self, CustomProtocol, simulator_process):
+    def __init__(self, CustomProtocol, dev_process):
         self.CustomProtocol = CustomProtocol
         signal(SIGUSR2, self.currentStepRunning)
         self.gui_controller = GUI_Controller()
-        self.gui_controller.device_process = simulator_process
+        self.gui_controller.hardware_or_sim(dev_process)
         self.setupUi(self.CustomProtocol)
         self.initEvents()
 

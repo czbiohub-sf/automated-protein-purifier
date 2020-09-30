@@ -23,12 +23,14 @@ class GUI_Controller:
         3. Controls all access to external file reads i.e. JSON file for default parameters
         """
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+        # The process is None if connected to the device or it holds the process object for the simulator
         self.device_process = None
-        self.device_present = False
-        #self.controller_ip = 'pure2.local'
-        self.controller_ip = '127.0.0.1'
-        self.controller_interface_PID = None
+        # controller_ip is set by one of the protocol windows on start based on whether the sim is running or device
+        self.controller_ip = None
+        # The object that runs the controller and its PID
         self.ctrl_proc = None
+        self.controller_interface_PID = None
+
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'w') as f:
             f.close()
@@ -39,6 +41,7 @@ class GUI_Controller:
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
         self.default_buffer_fc = [self._p['BASE']['default'], self._p['LOAD_BUFFER']['default'],
                                 self._p['WASH']['default'], self._p['ELUTION']['default']]
+
         #Stylesheets used for displaying the status
         self.status_display_color_running = '#3CB371'
         self.status_display_color_halt = '#FFFF66'
@@ -49,6 +52,7 @@ class GUI_Controller:
                                         "font-size:14px;}}\n"
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
+
         # Controlling pump time for ETA
         self.pump_vol_times = 60
         
@@ -61,19 +65,16 @@ class GUI_Controller:
     # TCP Connections #
     ###################
 
-    def connect_to_device(self):
-        """Try to bind to device ip and check if a connection is already there"""
-        self.device_present = False
-        #self.controller_ip = 'pure2.local'
-        #self.device_present = True
-        return self.device_present
+    def hardware_or_sim(self, dev_process):
+        """Called when a protocol window is opened to configure the connection variables"""
+        self.controller_ip = 'pure2.local' if dev_process is None else '127.0.0.1'
+        self.device_process = dev_process
         
     def connect_to_simulator(self):
         """Connect to the simulator by opening a pub/sub connection at local ip"""
         self.device_process = Process(target=self._connect_simulator)
         self.device_process.daemon = True
         self.device_process.start()
-        self.controller_ip = '127.0.0.1'
 
     def _connect_simulator(self):
         """Method run in the new process generated to connect to the simulator"""
@@ -87,7 +88,7 @@ class GUI_Controller:
         to be the device and pass the 'device is available check' on the controller
         """
         targ = RunPurification if is_basic_purification else RunCustomProtol
-        if not self.device_present:
+        if self.device_process is not None:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), 
                                     self.flow_rate_correction, self.controller_ip, getpid(),))
