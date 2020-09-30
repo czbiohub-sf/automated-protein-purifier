@@ -481,7 +481,7 @@ class Ui_CustomProtocol(object):
         """Get all the pump times for each step"""
         pump_times = []
         for c in self.step_widget_objs:
-            pump_times.append(int(c.volume_val_lbl.text())*60)
+            pump_times.append(int(c.volume_val_lbl.text())*self.gui_controller.pump_vol_times)
         return pump_times
 
     ## Action Button Event Handlers ##

@@ -663,15 +663,9 @@ class Ui_Purification(object):
                             self.load_vol_val: True, self.load_flowpath: False,
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
-        # Used to track if the fraction collector pathway is selected for any of the steps on start
-        # Example: [[None],[0,0,0,...,100,100], [None], [10, 10,....]]
-        # TODO: Remove fractions_selected dep in estimated time
-        self.fractions_selected = [None]*4
         # Used to keep count of the total volume passed through the flow throw columns
         # Flow throw used in either Wash or Load step
         self.frac_size = None
-        self.is_flowth_avail = [True]*4
-        self.flowth_vol_used = 0
 
         # Useful groups of widgets for easier access
         self.pbars = [self.equilibriate_pbar, self.load_pbar, self.wash_pbar, self.elute_pbar]
@@ -828,6 +822,12 @@ class Ui_Purification(object):
         run_param[1] = 5 if run_param[1] == 1 else 1
         return run_param
 
+    def calc_step_times(self):
+        """Calculates an estimate time for each step"""
+        step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
+                    int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
+        return [i*self.gui_controller.pump_vol_times for i in step_times]
+
     def protocol_buffers(self):
         """Returns the volume of buffers used"""
         return  {'BASE': int(self.equil_vol_val.text()),
@@ -888,7 +888,7 @@ class Ui_Purification(object):
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             init_params = self._init_run_param()
-            self.estimated_time = self.gui_controller.calc_step_times(init_params, self.fractions_selected)
+            self.estimated_time = self.calc_step_times()
             self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')

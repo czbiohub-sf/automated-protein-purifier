@@ -48,6 +48,8 @@ class GUI_Controller:
                                         "font-size:14px;}}\n"
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
+        # Controlling pump time for ETA
+        self.pump_vol_times = 60
         
         self.init_fraction_collector_params()
 
@@ -117,22 +119,6 @@ class GUI_Controller:
     ######################################
     # Common methods between GUI windows #
     ######################################
-
-    def calc_step_times(self, parameters, fractions):
-        """Calculates an estimate time for each step"""
-        stage_moving_time = 10
-        pump_vol_times = 60
-        step_times = []
-        i = 2
-        for f in fractions:
-            pump_total = parameters[i]*pump_vol_times
-            if f is None:
-                stage_total = 0
-            else:
-                stage_total = len(f)*stage_moving_time
-            step_times.append(pump_total+stage_total)
-            i +=2
-        return step_times
 
     def areYouSureMsg(self, action):
         """Confirms whether or not the user meant to click an action button"""
