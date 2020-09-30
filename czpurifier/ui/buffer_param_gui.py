@@ -297,6 +297,7 @@ class Ui_BuffersWindow(object):
 
         self.start_btn.clicked.connect(lambda: self.onclickStartCancel(True))
         self.cancel_btn.clicked.connect(lambda: self.onclickStartCancel(False))
+        self.flow_rate_cor_question.clicked.connect(self.onclickDefineFC)
         
     def slider_changed(self, indx):
         """Updates text label beside the slider when slider is moved"""
@@ -305,3 +306,14 @@ class Ui_BuffersWindow(object):
     def onclickStartCancel(self, is_start):
         self.gui_controller.is_sure = is_start
         self.BuffersWindow.close()
+
+    def onclickDefineFC(self):
+        msg = QtWidgets.QMessageBox()
+        msg.setText("Flow Rate Correction Factor = (Expected Flow Rate/ Actual Flow Rate)*100")
+        msg.setInformativeText('To determine the correction factor, ' 
+        'run an experiment using the Custom Protol Window that outputs N mLs of buffer'
+        ' and weigh the buffer to determine the real volume that was pumped.\n\n'
+        'Expected Flow Rate = 1ml/min or 5ml/min for 1ml columns or 5ml columns respectively')
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msg.exec()
