@@ -306,10 +306,19 @@ class Ui_BuffersWindow(object):
         self.fc_txtbox[indx].setText('{}'.format(self.sliders[indx].value()))
 
     def onclickStartCancel(self, is_start):
+        """Handles when start or cancel is clicked"""
+        if is_start:
+            self.gui_controller.setFlowCorrection(self.retriveFC())
         self.gui_controller.is_sure = is_start
         self.BuffersWindow.close()
+    
+    def retriveFC(self):
+        """Get the final values for the percentage correction for each buffer"""
+        return {'BASE': int(self.base_fc_txtbox.text()), 'LOAD_BUFFER': int(self.load_fc_txtbox.text()),
+                'WASH': int(self.wash_fc_txtbox.text()), 'ELUTION': int(self.elution_fc_txtbox.text())}
 
     def onclickDefineFC(self):
+        """Pops up a message to describe what the flow rate correction value should be"""
         msg = QtWidgets.QMessageBox()
         msg.setText("Flow Rate Correction = (Actual Flow Rate - Expected Flow Rate)*100")
         msg.setInformativeText('To determine the correction factor, ' 
@@ -329,6 +338,7 @@ class Ui_BuffersWindow(object):
         self.elution_vol.setText('{}'.format(total_buffers['ELUTION']))
 
     def updateDefaultFC(self):
+        """Displays the default flow rate correction % on start"""
         i = 0
         for t,s in zip(self.fc_txtbox, self.sliders):
             t.setText('{}'.format(self.gui_controller.default_buffer_fc[i]))

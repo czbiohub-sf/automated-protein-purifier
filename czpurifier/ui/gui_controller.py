@@ -53,6 +53,8 @@ class GUI_Controller:
         self.pump_vol_times = 60
         
         self.init_fraction_collector_params()
+        self.columnsize = 5
+        self.flow_rate_correction = None
 
     ###################
     # TCP Connections #
@@ -154,6 +156,15 @@ class GUI_Controller:
                 total += protocol_buffers[key]
             total_buffers.update({key: total})
         return total_buffers
+
+    def setFlowCorrection(self, fc_percent):
+        """Converts the percent flow correction to flow correction ratio to pass to 
+        the scripts
+        flow correction ratio = actual flow rate / expected flow rate
+        """
+        for key in fc_percent:
+            fc_percent[key] = (self.columnsize + (fc_percent[key])/100)/self.columnsize
+        self.flow_rate_correction = fc_percent
 
     ################################
     ## Fraction Collector Methods ##
