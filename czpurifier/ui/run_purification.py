@@ -5,12 +5,13 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunPurification():
-    def __init__(self, input_param, fractions, ip, gui_pid):
+    def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
         logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
         input_param[1] = '1mL' if input_param[1] == 1 else '5mL'
         self.ui = UICommands()
         self.ui.connect(input_param[1], ip, input_param[0])
+        self.buffer_calib = buffer_calib
 
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
@@ -55,13 +56,17 @@ class RunPurification():
         fraction_param = []*10 or []*4 or None. Each index contains the volume to fraction 
         """
         if process_name == 'LOAD':
+            # Load line does not need calibration
             self.ui.selectLoad()
-        elif process_name == 'WASH' or process_name == 'ELUTION':
-            self.ui.selectBuffers()
-            self.ui.selectPort(process_name)
         else:
+            p_name = process_name if process_name == 'WASH' or process_name == 'ELUTION' else 'LOAD_BUFFER'
             self.ui.selectBuffers()
-            self.ui.selectPort('LOAD_BUFFER')
+            self.ui.selectPort(p_name)
+            # there are 4 pumps and the flowRateCorrection() needs a list of the correction factor
+            # calling this everytime even if the factor is 1 because if the rate is changed it needs
+            # to be reset for the next buffer
+            correction_factor = [self.buffer_calib[p_name]]*4
+            self.ui.flowRateCorrection(correction_factor)
 
         if parameters[1] == 2:
             self._run_fraction_col(fraction_param)

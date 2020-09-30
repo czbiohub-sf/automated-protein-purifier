@@ -5,7 +5,7 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunCustomProtol():
-    def __init__(self, input_param, fractions, ip, gui_pid):
+    def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
         """[[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
 
         logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
@@ -18,6 +18,7 @@ class RunCustomProtol():
         self.buffers = ['WASH', 'LOAD_BUFFER', 'ELUTION', 'BASE']
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
+        self.buffer_calib = buffer_calib
 
         #self._purge_bubbles()
         #kill(gui_pid, SIGUSR1)
@@ -57,7 +58,13 @@ class RunCustomProtol():
             self.ui.selectLoad()
         else:
             self.ui.selectBuffers()
-            self.ui.selectPort(self.buffers[step_param[0]])
+            p_name = self.buffers[step_param[0]]
+            self.ui.selectPort(p_name)
+            # there are 4 pumps and the flowRateCorrection() needs a list of the correction factor
+            # calling this everytime even if the factor is 1 because if the rate is changed it needs
+            # to be reset for the next buffer
+            correction_factor = [self.buffer_calib[p_name]]*4
+            self.ui.flowRateCorrection(correction_factor)
         
         # 2. If fraction/flow, run the stage
         # If waste: open waste, run pump, close waste

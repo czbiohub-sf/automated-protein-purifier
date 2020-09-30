@@ -88,7 +88,8 @@ class GUI_Controller:
         targ = RunPurification if is_basic_purification else RunCustomProtol
         if not self.device_present:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), 
+                                    self.flow_rate_correction, self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
