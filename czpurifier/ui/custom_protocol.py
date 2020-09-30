@@ -355,6 +355,7 @@ class Ui_CustomProtocol(object):
         self.pause_btn.setEnabled(False)
         self.stop_btn.setEnabled(False)
         self.hold_btn.setEnabled(False)
+        self.start_btn.setEnabled(False)
 
         # Logger initialized to display the steps
         self.log_update_timer = QtCore.QTimer()
@@ -427,6 +428,7 @@ class Ui_CustomProtocol(object):
         if self.step_counter < 0:
             self.remove_step.setEnabled(False)
             self.col_vol_combo_box.setEnabled(True)
+            self.start_btn.setEnabled(False)
     
     def update_scoller(self):
         end = self.scrollArea.verticalScrollBar().maximum()
@@ -447,6 +449,8 @@ class Ui_CustomProtocol(object):
     def _msgbtn(self, i):
         """Returns the result from the are you sure pop up"""
         self.is_sure = True if 'ok' in i.text().lower() else False
+        if self.is_sure:
+            self.start_btn.setEnabled(True)
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
