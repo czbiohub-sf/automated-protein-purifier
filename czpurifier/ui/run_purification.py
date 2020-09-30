@@ -59,6 +59,9 @@ class RunPurification():
         elif process_name == 'WASH' or process_name == 'ELUTION':
             self.ui.selectBuffers()
             self.ui.selectPort(process_name)
+        else:
+            self.ui.selectBuffers()
+            self.ui.selectPort('LOAD_BUFFER')
 
         if parameters[1] == 2:
             self._run_fraction_col(fraction_param)
