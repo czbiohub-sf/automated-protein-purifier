@@ -52,9 +52,6 @@ class GUI_Controller:
                                         "font-size:14px;}}\n"
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
-
-        # Controlling pump time for ETA
-        self.pump_vol_times = 60
         
         self.init_fraction_collector_params()
         self.columnsize = None
@@ -168,6 +165,10 @@ class GUI_Controller:
         for key in fc_percent:
             fc_percent[key] = (self.columnsize + (fc_percent[key])/100)/self.columnsize
         self.flow_rate_correction = fc_percent
+
+    def getPumpTiming(self):
+        """Used for getting the timing needed to pump the vol based on columns used"""
+        return 60/self.columnsize
 
     ################################
     ## Fraction Collector Methods ##

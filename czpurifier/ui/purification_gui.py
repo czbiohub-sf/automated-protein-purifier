@@ -831,7 +831,7 @@ class Ui_Purification(object):
         """Calculates an estimate time for each step"""
         step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
                     int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
-        return [i*self.gui_controller.pump_vol_times for i in step_times]
+        return [i*self.gui_controller.getPumpTiming() for i in step_times]
 
     def protocol_buffers(self):
         """Returns the volume of buffers used"""
