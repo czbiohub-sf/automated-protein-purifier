@@ -93,7 +93,30 @@ class Ui_MainWindow(object):
         self.purification_btn.clicked.connect(self.onClick_purification_btn)
         self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
         self.close_btn.clicked.connect(self.onClick_close_btn)
+        self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
         self.connect_device()
+
+    def onClick_sim_btn(self):
+        self.confirm_connectSim()
+        if self.is_sure:
+            self.is_sure = None
+            print('Connect')
+
+    def confirm_connectSim(self):
+        """Confirms whether or not the user meant to click an action button"""
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Are you sure you want to run the simulator mode?')
+        msg.setInformativeText('If you are connected to the simulator mode and would like to '
+        'switch back to the hardware please close the software and rerun it.\n\n'
+        'Click Ok to start simulator')
+        msg.setIcon(QtWidgets.QMessageBox.Question)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.buttonClicked.connect(self._msgbtn)
+        msg.exec()
+    
+    def _msgbtn(self, i):
+        """Returns the result from the are you sure pop up"""
+        self.is_sure = True if 'ok' in i.text().lower() else False
 
     def connect_device(self):
         """
