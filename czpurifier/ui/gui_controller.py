@@ -37,7 +37,8 @@ class GUI_Controller:
         self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
                             self._p['EQUILIBRATE_VOLUME']['default'], self._p['LOAD_VOLUME']['default'],
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
-        
+        self.default_buffer_fc = [self._p['BASE']['default'], self._p['LOAD_BUFFER']['default'],
+                                self._p['WASH']['default'], self._p['ELUTION']['default']]
         #Stylesheets used for displaying the status
         self.status_display_color_running = '#3CB371'
         self.status_display_color_halt = '#FFFF66'

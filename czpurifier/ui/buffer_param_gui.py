@@ -266,7 +266,7 @@ class Ui_BuffersWindow(object):
         BuffersWindow.setWindowTitle(_translate("BuffersWindow", "Buffer Parameters"))
         self.you_sure_lbl.setText(_translate("BuffersWindow", "Fine tuning some parameters before starting"))
         self.label_5.setText(_translate("BuffersWindow", "LOAD_BUFFER"))
-        self.label_2.setText(_translate("BuffersWindow", "Volume Needed/ml"))
+        self.label_2.setText(_translate("BuffersWindow", "Volume Needed (ml)"))
         self.label_7.setText(_translate("BuffersWindow", "ELUTION"))
         self.elution_vol.setText(_translate("BuffersWindow", "TextLabel"))
         self.load_vol.setText(_translate("BuffersWindow", "TextLabel"))
@@ -279,7 +279,7 @@ class Ui_BuffersWindow(object):
         self.elution_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
         self.load_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
         self.wash_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.label_3.setText(_translate("BuffersWindow", "Flow Rate Correction Factor"))
+        self.label_3.setText(_translate("BuffersWindow", "Flow Rate Correction Factor (%)"))
         self.flow_rate_cor_question.setText(_translate("BuffersWindow", "?"))
         self.start_btn.setText(_translate("BuffersWindow", "START"))
         self.cancel_btn.setText(_translate("BuffersWindow", "CANCEL"))
@@ -287,9 +287,9 @@ class Ui_BuffersWindow(object):
     ## End of designer generated code ##
     def initEvents(self, protocol_buffers):
         """Initializes all on click actions"""
-        #self.volume_val_lbl.setText('{}'.format(1))
         self.sliders = [self.base_fc_slider, self.load_fc_slider, self.wash_fc_slider, self.elution_fc_slider]
         self.fc_txtbox = [self.base_fc_txtbox, self.load_fc_txtbox, self.wash_fc_txtbox, self.elution_fc_txtbox]
+        self.updateDefaultFC()
         self.base_fc_slider.valueChanged.connect(lambda: self.slider_changed(0))
         self.load_fc_slider.valueChanged.connect(lambda: self.slider_changed(1))
         self.wash_fc_slider.valueChanged.connect(lambda: self.slider_changed(2))
@@ -327,3 +327,10 @@ class Ui_BuffersWindow(object):
         self.load_vol.setText('{}'.format(total_buffers['LOAD_BUFFER']))
         self.wash_vol.setText('{}'.format(total_buffers['WASH']))
         self.elution_vol.setText('{}'.format(total_buffers['ELUTION']))
+
+    def updateDefaultFC(self):
+        i = 0
+        for t,s in zip(self.fc_txtbox, self.sliders):
+            t.setText('{}'.format(self.gui_controller.default_buffer_fc[i]))
+            s.setValue(self.gui_controller.default_buffer_fc[i])
+            i += 1

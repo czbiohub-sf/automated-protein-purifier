@@ -21,5 +21,21 @@
 
     "ELUTE_VOLUME": {
         "default": 10
+    },
+
+    "BASE": {
+        "default": 1
+    },
+
+    "LOAD_BUFFER": {
+        "default": 1
+    },
+
+    "WASH": {
+        "default": -3
+    },
+
+    "ELUTION": {
+        "default": -3
     }
 }
