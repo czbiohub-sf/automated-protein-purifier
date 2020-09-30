@@ -24,11 +24,11 @@
     },
 
     "BASE": {
-        "default": 1
+        "default": 0
     },
 
     "LOAD_BUFFER": {
-        "default": 1
+        "default": 0
     },
 
     "WASH": {
