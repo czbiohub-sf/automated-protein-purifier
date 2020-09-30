@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
+from buffer_param_gui import Ui_BuffersWindow
 from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
@@ -711,6 +712,10 @@ class Ui_Purification(object):
         self.log_output_txtbox.setReadOnly(True)
         self.log_output = None
 
+        #Timer for a delay between on start window pop up and checking result
+        self.check_is_sure_timer = QtCore.QTimer()
+        self.check_is_sure_timer.timeout.connect(self.check_is_sure_timer_handler)
+
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
@@ -873,6 +878,7 @@ class Ui_Purification(object):
     def onClickStart(self):
         """
         1. Pop up to confirm you want to start
+        The following actions are performed after 1s by the check_is_sure_timer handler
         2. Enable stop and close (other action btns enabled after purging)
         3. Disable everything that can be edited
         4. Call _init_run_param() to create the array to pass to controller
@@ -880,21 +886,14 @@ class Ui_Purification(object):
         6. Update the step display
         7. Run the process
         """
-        self.gui_controller.buffer_needed_msg(self.protocol_buffers())
-        if self.gui_controller.is_sure:
-            self.gui_controller.is_sure = None
-            self.start_btn.setEnabled(False)
-            self.stop_btn.setEnabled(True)
-            self.close_btn.setEnabled(False)
-            self._set_param_enable(False)
-            init_params = self._init_run_param()
-            self.estimated_time = self.calc_step_times()
-            self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
-            self.current_step_display_btn.setEnabled(True)
-            self.current_step_display_btn.setText('Setup And Purging Bubbles')
-            self.status_display_btn.setEnabled(True)
-            self.status_display_btn.setText('running')
-            self.gui_controller.run_purification_script(True, init_params)
+        self.gui_controller.columnsize = self.frac_size
+        self.startbufferWdw()
+        self.check_is_sure_timer.start(1000)
+    
+    def startbufferWdw(self):
+        self.bufferwdw = QtWidgets.QMainWindow()
+        self.bufferwdw_ui = Ui_BuffersWindow(self.bufferwdw, self.gui_controller, self.protocol_buffers())
+        self.bufferwdw.show()
 
     def onClickPauseHold(self, is_pause):
         """
@@ -1022,3 +1021,23 @@ class Ui_Purification(object):
             log_end = self.log_output_txtbox.verticalScrollBar().maximum()
             self.log_output_txtbox.verticalScrollBar().setValue(log_end)
         self.log_output = output
+    
+    def check_is_sure_timer_handler(self):
+        """Timer is ran after start button is clicked. There needs to be a short delay
+        to allow for the buffer window to display before checking for is_sure = True
+        to start the protocol"""
+        if self.gui_controller.is_sure:
+            print('HERE')
+            self.gui_controller.is_sure = None
+            self.start_btn.setEnabled(False)
+            self.stop_btn.setEnabled(True)
+            self.close_btn.setEnabled(False)
+            self._set_param_enable(False)
+            init_params = self._init_run_param()
+            self.estimated_time = self.calc_step_times()
+            self.estimated_time_remaining_lbl.setText('Estimated Time: {} min(s)'.format(sum(self.estimated_time)/60))
+            self.current_step_display_btn.setEnabled(True)
+            self.current_step_display_btn.setText('Setup And Purging Bubbles')
+            self.status_display_btn.setEnabled(True)
+            self.status_display_btn.setText('running')
+            self.gui_controller.run_purification_script(True, init_params)

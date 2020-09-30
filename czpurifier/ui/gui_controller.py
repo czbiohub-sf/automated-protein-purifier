@@ -53,8 +53,9 @@ class GUI_Controller:
         self.pump_vol_times = 60
         
         self.init_fraction_collector_params()
-        self.columnsize = 5
+        self.columnsize = None
         self.flow_rate_correction = None
+        self.is_sure = None
 
     ###################
     # TCP Connections #

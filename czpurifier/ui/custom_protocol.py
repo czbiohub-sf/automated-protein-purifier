@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
+from buffer_param_gui import Ui_BuffersWindow
 from gui_controller import GUI_Controller
 from os import chdir, path
 from signal import signal, SIGUSR2
@@ -370,6 +371,10 @@ class Ui_CustomProtocol(object):
         self.status_timer = QtCore.QTimer()
         self.status_timer.timeout.connect(self.status_timer_handler)
 
+        #Timer for a delay between on start window pop up and checking result
+        self.check_is_sure_timer = QtCore.QTimer()
+        self.check_is_sure_timer.timeout.connect(self.check_is_sure_timer_handler)
+
         #Step display
         self.current_step = 0
         self.rep_num = 1
@@ -405,9 +410,8 @@ class Ui_CustomProtocol(object):
             self.col_vol_combo_box.setEnabled(False)
             self.step_counter += 1
             self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-            col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
             self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
-                                    self.step_counter, self.gui_controller, col_size))
+                                    self.step_counter, self.gui_controller, self.col_size))
             self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
             self.remove_step.setEnabled(True)
             self.widgetscroller_timer.start(50)
@@ -432,9 +436,9 @@ class Ui_CustomProtocol(object):
 
     def confirmColVol(self):
         """Confirms whether or not the user meant to click an action button"""
-        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
         msg = QtWidgets.QMessageBox()
-        msg.setText('Is the column volume size of {}ml correct?'.format(col_size))
+        msg.setText('Is the column volume size of {}ml correct?'.format(self.col_size))
         msg.setIcon(QtWidgets.QMessageBox.Question)
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
         msg.buttonClicked.connect(self._msgbtn)
@@ -504,20 +508,24 @@ class Ui_CustomProtocol(object):
         self.start_btn.setEnabled(start_state)
 
     def onClickStart(self):
-        """"""
-        self.gui_controller.buffer_needed_msg(self.protocol_buffers())
-        if self.gui_controller.is_sure:
-            self.status_timer.start(2000)
-            init_params = self._generate_run_parameters()
-            self.gui_controller.is_sure = None
-            self._set_actionbtn_enable(True, False)
-            self.close_btn.setEnabled(False)
-            self._set_param_enable(False)
-            #self.gui_controller.run_purification_script(False, init_params)
-            self.status_display_btn.setEnabled(True)
-            self.status_display_btn.setText('running')
-            self.current_step_display_btn.setEnabled(True)
-            self.current_step_display_btn.setText('Setup And Purging Bubbles')
+        """
+        1. Pop up to confirm you want to start
+        The following actions are performed after 1s by the check_is_sure_timer handler
+        2. Enable stop and close (other action btns enabled after purging)
+        3. Disable everything that can be edited
+        4. Call _generate_run_parameters() to create the array to pass to controller
+        5. Start the logging and timers for estimated time
+        6. Update the step display
+        7. Run the process
+        """
+        self.gui_controller.columnsize = self.col_size
+        self.startbufferWdw()
+        self.check_is_sure_timer.start(1000)
+    
+    def startbufferWdw(self):
+        self.bufferwdw = QtWidgets.QMainWindow()
+        self.bufferwdw_ui = Ui_BuffersWindow(self.bufferwdw, self.gui_controller, self.protocol_buffers())
+        self.bufferwdw.show()
 
     def onClickPauseHold(self, is_pause):
         """
@@ -616,6 +624,21 @@ class Ui_CustomProtocol(object):
             output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
             self.current_step +=1
         self.current_step_display_btn.setText(output)
+
+    def check_is_sure_timer_handler(self):
+        """Runs the start protocol after the 1s timeout"""
+        if self.gui_controller.is_sure:
+            self.status_timer.start(2000)
+            init_params = self._generate_run_parameters()
+            self.gui_controller.is_sure = None
+            self._set_actionbtn_enable(True, False)
+            self.close_btn.setEnabled(False)
+            self._set_param_enable(False)
+            self.gui_controller.run_purification_script(False, init_params)
+            self.status_display_btn.setEnabled(True)
+            self.status_display_btn.setText('running')
+            self.current_step_display_btn.setEnabled(True)
+            self.current_step_display_btn.setText('Setup And Purging Bubbles')
 
 class AddStep():
     def __init__(self, step_widget, step_no, gui_controller, col_size):
