@@ -1,13 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_BuffersWindow(object):
-    def __init__(self, BuffersWindow, gui_controller):
+    def __init__(self, BuffersWindow, gui_controller, protocol_buffers):
         """This window pops up when start is clicked to show the volume of 
         buffers needed and to adjust the flow rate calibration"""
         self.BuffersWindow = BuffersWindow
         self.gui_controller = gui_controller
         self.setupUi(self.BuffersWindow)
-        self.initEvents()
+        self.initEvents(protocol_buffers)
 
     ### Desinger generated code ###
     def setupUi(self, BuffersWindow):
@@ -285,7 +285,7 @@ class Ui_BuffersWindow(object):
         self.cancel_btn.setText(_translate("BuffersWindow", "CANCEL"))
 
     ## End of designer generated code ##
-    def initEvents(self):
+    def initEvents(self, protocol_buffers):
         """Initializes all on click actions"""
         #self.volume_val_lbl.setText('{}'.format(1))
         self.sliders = [self.base_fc_slider, self.load_fc_slider, self.wash_fc_slider, self.elution_fc_slider]
@@ -298,6 +298,8 @@ class Ui_BuffersWindow(object):
         self.start_btn.clicked.connect(lambda: self.onclickStartCancel(True))
         self.cancel_btn.clicked.connect(lambda: self.onclickStartCancel(False))
         self.flow_rate_cor_question.clicked.connect(self.onclickDefineFC)
+
+        self.updateBuffersNeeded(protocol_buffers)
         
     def slider_changed(self, indx):
         """Updates text label beside the slider when slider is moved"""
@@ -317,3 +319,11 @@ class Ui_BuffersWindow(object):
         msg.setIcon(QtWidgets.QMessageBox.Information)
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
+    
+    def updateBuffersNeeded(self, protocol_buffers):
+        """Displays the vol of each buffer needed"""
+        total_buffers = self.gui_controller.buffer_needed(protocol_buffers)
+        self.base_vol.setText('{}'.format(total_buffers['BASE']))
+        self.load_vol.setText('{}'.format(total_buffers['LOAD_BUFFER']))
+        self.wash_vol.setText('{}'.format(total_buffers['WASH']))
+        self.elution_vol.setText('{}'.format(total_buffers['ELUTION']))
