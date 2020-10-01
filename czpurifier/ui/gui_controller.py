@@ -154,7 +154,7 @@ class GUI_Controller:
                 total += cleanup_buffers[key]
             if key in protocol_buffers:
                 total += protocol_buffers[key]
-            total_buffers.update({key: total})
+            total_buffers.update({key: total*self.columnsize})
         return total_buffers
 
     def setFlowCorrection(self, fc_percent):

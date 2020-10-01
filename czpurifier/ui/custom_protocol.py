@@ -461,7 +461,7 @@ class Ui_CustomProtocol(object):
         total_buffers = {}
         for c in self.step_widget_objs:
             if c.port_combo_box.isEnabled():
-                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())*self.col_size})
+                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())})
         return total_buffers
     
     def pump_times(self):
