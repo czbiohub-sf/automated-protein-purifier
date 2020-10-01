@@ -165,10 +165,6 @@ class GUI_Controller:
         for key in fc_percent:
             fc_percent[key] = round((self.columnsize + (fc_percent[key])/100)/self.columnsize, 2)
         self.flow_rate_correction = fc_percent
-
-    def getPumpTiming(self):
-        """Used for getting the timing needed to pump the vol based on columns used"""
-        return 60/self.columnsize
     
     def getET(self, protocol_times):
         """Adds the time required for purgin and clean up to generate the total estimated time"""
@@ -213,7 +209,7 @@ class GUI_Controller:
         """Throws error if the capacity of the pathway is reached"""
         msg = QMessageBox()
         msg.setText("Error! Exceeds Capacity!")
-        msg.setInformativeText('Volume available in selected pathway is {}ml'.format(limit))
+        msg.setInformativeText('Volume available in selected pathway is {} CV'.format(limit))
         msg.setIcon(QMessageBox.Information)
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec()

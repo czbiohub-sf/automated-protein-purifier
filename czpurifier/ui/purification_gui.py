@@ -601,20 +601,20 @@ class Ui_Purification(object):
         self.num_col_combo_box.setItemText(2, _translate("Purification", "3"))
         self.num_col_combo_box.setItemText(3, _translate("Purification", "4"))
         self.col_vol_lbl.setText(_translate("Purification", "Column Volume: "))
-        self.col_vol_combo_box.setItemText(0, _translate("Purification", "1 ml"))
-        self.col_vol_combo_box.setItemText(1, _translate("Purification", "5 ml"))
+        self.col_vol_combo_box.setItemText(0, _translate("Purification", "1 mL"))
+        self.col_vol_combo_box.setItemText(1, _translate("Purification", "5 mL"))
         self.equilibrate_lbl.setText(_translate("Purification", "Equilibrate"))
         self.equilibrate_vol_lbl.setText(_translate("Purification", "Volume:"))
         self.equilibriate_flowpath_lbl.setText(_translate("Purification", "Flow Path:"))
         self.equil_vol_val.setInputMask(_translate("Purification", "99999"))
-        self.label.setText(_translate("Purification", "ml"))
+        self.label.setText(_translate("Purification", "CV"))
         self.equil_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.equil_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.load_lbl.setText(_translate("Purification", "Load"))
         self.load_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_3.setText(_translate("Purification", "Flow Path:"))
         self.load_vol_val.setInputMask(_translate("Purification", "99999"))
-        self.label_2.setText(_translate("Purification", "ml"))
+        self.label_2.setText(_translate("Purification", "CV"))
         self.load_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.load_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.load_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
@@ -622,7 +622,7 @@ class Ui_Purification(object):
         self.wash_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_4.setText(_translate("Purification", "Flow Path:"))
         self.wash_vol_val.setInputMask(_translate("Purification", "99999"))
-        self.label_6.setText(_translate("Purification", "ml"))
+        self.label_6.setText(_translate("Purification", "CV"))
         self.wash_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.wash_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.wash_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
@@ -630,7 +630,7 @@ class Ui_Purification(object):
         self.elute_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_5.setText(_translate("Purification", "Flow Path:"))
         self.elute_vol_val.setInputMask(_translate("Purification", "99999"))
-        self.label_7.setText(_translate("Purification", "ml"))
+        self.label_7.setText(_translate("Purification", "CV"))
         self.elute_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.elute_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.elute_flowpath.setItemText(2, _translate("Purification", "Fraction Collector"))
@@ -721,12 +721,11 @@ class Ui_Purification(object):
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
         if self.gui_controller.default_param[1] == 1:
             self.col_vol_combo_box.setCurrentIndex(0)
-            self.elute_vol_slider.setMaximum(10)
             self.frac_size = 1
         else:
             self.col_vol_combo_box.setCurrentIndex(1)
-            self.elute_vol_slider.setMaximum(50)
             self.frac_size = 5
+        self.elute_vol_slider.setMaximum(10)
         self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
         self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
@@ -755,14 +754,9 @@ class Ui_Purification(object):
     ## Input Parameter Widget Actions ##
 
     def onClickFractionSize(self):
-        """Update the max vol allowed on elute slider based on fraction size"""
+        """Update the column fraction size based on the index selected"""
         curIndex = self.col_vol_combo_box.currentIndex()
-        if curIndex == 0:
-            self.elute_vol_slider.setMaximum(10)
-            self.frac_size = 1
-        else:
-            self.elute_vol_slider.setMaximum(50)
-            self.frac_size = 5
+        self.frac_size = 1 if curIndex == 0 else 5
 
     def onClickFlowPath(self, step_index):
         """
@@ -774,7 +768,7 @@ class Ui_Purification(object):
         and which text box to use to get the volume to flow
         """
         flow_path_combo = self.flowpath_combo[step_index]
-        col_size = self.frac_size if step_index == 3 else 50
+        col_size = 1 if step_index == 3 else 50
         self.gui_controller.flowpathwayClicked(step_index, col_size)
         curIndex = flow_path_combo.currentIndex()
         if curIndex == 2:
@@ -831,13 +825,14 @@ class Ui_Purification(object):
         """Calculates an estimate time for each step"""
         step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
                     int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
-        self.step_times = [i*self.gui_controller.getPumpTiming() for i in step_times]
+        self.step_times = [i*60 for i in step_times]
 
     def protocol_buffers(self):
-        """Returns the volume of buffers used"""
-        return  {'BASE': int(self.equil_vol_val.text()),
-                'WASH': int(self.wash_vol_val.text()),
-                'ELUTION': int(self.elute_vol_val.text())}
+        """Returns the volume of buffers used. The vol is in CV so to convert
+        it in mL need to multiply by the column size"""
+        return  {'BASE': int(self.equil_vol_val.text())*self.frac_size,
+                'WASH': int(self.wash_vol_val.text())*self.frac_size,
+                'ELUTION': int(self.elute_vol_val.text())*self.frac_size}
 
     ## Enable/Disable Widgets On GUI ##
 
