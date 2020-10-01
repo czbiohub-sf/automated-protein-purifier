@@ -168,9 +168,9 @@ class GUI_Controller:
     
     def getET(self, protocol_times):
         """Adds the time required for purgin and clean up to generate the total estimated time"""
-        purging_time = 5*self.getPumpTiming()
-        cleanup_time = 20*self.getPumpTiming()
-        total_time = (sum(protocol_times) + purging_time + cleanup_time)/60
+        purging_time = 5
+        cleanup_time = 20
+        total_time = sum(protocol_times)/60 + purging_time + cleanup_time
         return 'Estimated Time: {0:.2f} min(s)'.format(total_time)
 
     ################################
