@@ -307,10 +307,16 @@ class Ui_BuffersWindow(object):
 
     def onclickStartCancel(self, is_start):
         """Handles when start or cancel is clicked"""
+        close = True
         if is_start:
-            self.gui_controller.setFlowCorrection(self.retriveFC())
+            if self.gui_controller.checkEmptyQLines(self.fc_txtbox):
+                self.gui_controller.setFlowCorrection(self.retriveFC())
+            else: 
+                is_start = False
+                close = False
         self.gui_controller.is_sure = is_start
-        self.BuffersWindow.close()
+        if close:
+            self.BuffersWindow.close()
     
     def retriveFC(self):
         """Get the final values for the percentage correction for each buffer"""
