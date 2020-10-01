@@ -830,7 +830,7 @@ class Ui_Purification(object):
     def protocol_buffers(self):
         """Returns the volume of buffers used. The vol is in CV so to convert
         it in mL need to multiply by the column size"""
-        return  {'BASE': int(self.equil_vol_val.text())*self.frac_size,
+        return  {'LOAD_BUFFER': int(self.equil_vol_val.text())*self.frac_size,
                 'WASH': int(self.wash_vol_val.text())*self.frac_size,
                 'ELUTION': int(self.elute_vol_val.text())*self.frac_size}
 

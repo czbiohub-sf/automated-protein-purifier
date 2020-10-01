@@ -266,7 +266,7 @@ class Ui_BuffersWindow(object):
         BuffersWindow.setWindowTitle(_translate("BuffersWindow", "Buffer Parameters"))
         self.you_sure_lbl.setText(_translate("BuffersWindow", "Fine tuning some parameters before starting"))
         self.label_5.setText(_translate("BuffersWindow", "LOAD_BUFFER"))
-        self.label_2.setText(_translate("BuffersWindow", "Volume Needed (ml)"))
+        self.label_2.setText(_translate("BuffersWindow", "Volume Needed (mL)"))
         self.label_7.setText(_translate("BuffersWindow", "ELUTION"))
         self.elution_vol.setText(_translate("BuffersWindow", "TextLabel"))
         self.load_vol.setText(_translate("BuffersWindow", "TextLabel"))
