@@ -313,8 +313,8 @@ class Ui_CustomProtocol(object):
         self.num_col_combo_box.setItemText(2, _translate("CustomProtocol", "3"))
         self.num_col_combo_box.setItemText(3, _translate("CustomProtocol", "4"))
         self.col_vol_lbl.setText(_translate("CustomProtocol", "Column Volume: "))
-        self.col_vol_combo_box.setItemText(0, _translate("CustomProtocol", "1 ml"))
-        self.col_vol_combo_box.setItemText(1, _translate("CustomProtocol", "5 ml"))
+        self.col_vol_combo_box.setItemText(0, _translate("CustomProtocol", "1 mL"))
+        self.col_vol_combo_box.setItemText(1, _translate("CustomProtocol", "5 mL"))
         self.label_10.setText(_translate("CustomProtocol", "Repeat: "))
         self.rep_num_lbl.setText(_translate("CustomProtocol", "1"))
         self.add_step_btn.setText(_translate("CustomProtocol", "ADD"))
@@ -405,17 +405,14 @@ class Ui_CustomProtocol(object):
 
     def onClickAddStep(self):
         """Creates a new widget to add the input parameters"""
-        if self.step_counter < 0:
-            self.confirmColVol()
-        if self.step_counter > -1 or self.is_sure:
-            self.col_vol_combo_box.setEnabled(False)
-            self.step_counter += 1
-            self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-            self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
-                                    self.step_counter, self.gui_controller, self.col_size))
-            self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
-            self.remove_step.setEnabled(True)
-            self.widgetscroller_timer.start(50)
+        self.start_btn.setEnabled(True)
+        self.step_counter += 1
+        self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
+        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
+                                self.step_counter, self.gui_controller))
+        self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
+        self.remove_step.setEnabled(True)
+        self.widgetscroller_timer.start(50)
 
     def onClickRemoveStep(self):
         """Removes the last step that was added"""
@@ -427,30 +424,12 @@ class Ui_CustomProtocol(object):
         self.step_counter -= 1
         if self.step_counter < 0:
             self.remove_step.setEnabled(False)
-            self.col_vol_combo_box.setEnabled(True)
             self.start_btn.setEnabled(False)
     
     def update_scoller(self):
         end = self.scrollArea.verticalScrollBar().maximum()
         self.scrollArea.verticalScrollBar().setValue(end)
         self.widgetscroller_timer.stop()
-
-
-    def confirmColVol(self):
-        """Confirms whether or not the user meant to click an action button"""
-        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-        msg = QtWidgets.QMessageBox()
-        msg.setText('Is the column volume size of {}ml correct?'.format(self.col_size))
-        msg.setIcon(QtWidgets.QMessageBox.Question)
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-        msg.buttonClicked.connect(self._msgbtn)
-        msg.exec()
-    
-    def _msgbtn(self, i):
-        """Returns the result from the are you sure pop up"""
-        self.is_sure = True if 'ok' in i.text().lower() else False
-        if self.is_sure:
-            self.start_btn.setEnabled(True)
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""
@@ -463,9 +442,9 @@ class Ui_CustomProtocol(object):
         ----------------------------------
         [[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
         input_params = []
-        col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
         rep = int(self.rep_num_lbl.text())
-        input_params.append([self.num_col_combo_box.currentIndex()+1, col_size, rep])
+        input_params.append([self.num_col_combo_box.currentIndex()+1, self.col_size, rep])
         for c in self.step_widget_objs:
             inp = []
             if c.port_combo_box.isEnabled():
@@ -482,14 +461,14 @@ class Ui_CustomProtocol(object):
         total_buffers = {}
         for c in self.step_widget_objs:
             if c.port_combo_box.isEnabled():
-                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())})
+                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())*self.col_size})
         return total_buffers
     
     def pump_times(self):
         """Get all the pump times for each step"""
         pump_times = []
         for c in self.step_widget_objs:
-            pump_times.append(int(c.volume_val_lbl.text())*self.gui_controller.getPumpTiming())
+            pump_times.append(int(c.volume_val_lbl.text())*60)
         return pump_times
 
     ## Action Button Event Handlers ##
@@ -522,6 +501,7 @@ class Ui_CustomProtocol(object):
         6. Update the step display
         7. Run the process
         """
+        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
         self.gui_controller.columnsize = self.col_size
         self.startbufferWdw()
         self.check_is_sure_timer.start(1000)
@@ -645,7 +625,7 @@ class Ui_CustomProtocol(object):
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
 
 class AddStep():
-    def __init__(self, step_widget, step_no, gui_controller, col_size):
+    def __init__(self, step_widget, step_no, gui_controller):
         """Implements the initialization and control of a single step widget
         A step widget is defined as the parent widget containing all the input 
         parameters needed to define a single step
@@ -654,11 +634,9 @@ class AddStep():
         step_widget: Parent QtWidget object for the step
         step_no: The step that we are currently on
         gui_controller: GUI_Controller obj for flowpath selection
-        col_size: The size of the fraction column
         """
         self.add_step_widget = step_widget
         self.gui_controller = gui_controller
-        self.col_size = col_size
         self.step_no = step_no
         self._create_widget(step_no)
         self._init_widget_actions()
@@ -784,7 +762,7 @@ class AddStep():
         self.port_combo_box.setItemText(1, _translate("CustomProtocol", "LOAD_BUFFER"))
         self.port_combo_box.setItemText(2, _translate("CustomProtocol", "ELUTION"))
         self.port_combo_box.setItemText(3, _translate("CustomProtocol", "BASE"))
-        self.label_2.setText(_translate("CustomProtocol", "ml"))
+        self.label_2.setText(_translate("CustomProtocol", "CV"))
         self.volume_val_lbl.setInputMask(_translate("CustomProtocol", "9999"))
         self.step_num.setText(_translate("CustomProtocol", "{}".format(step_no)))
         ## Add title for any new widgets above this line
@@ -811,7 +789,7 @@ class AddStep():
             port.setEnabled(False)
 
     def onSelectFlowPath(self, current_index):
-        c_size = 50 if current_index == 3 else self.col_size
+        c_size = 50 if current_index == 3 else 1
         self.gui_controller.flowpathwayClicked(self.step_no, c_size)
         self.gui_controller.fractionCollectorUnsel(self.step_no)
         if current_index > 1:
