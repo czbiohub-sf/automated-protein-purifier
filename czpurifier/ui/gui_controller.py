@@ -163,7 +163,7 @@ class GUI_Controller:
         flow correction ratio = actual flow rate / expected flow rate
         """
         for key in fc_percent:
-            fc_percent[key] = (self.columnsize + (fc_percent[key])/100)/self.columnsize
+            fc_percent[key] = round((self.columnsize + (fc_percent[key])/100)/self.columnsize, 2)
         self.flow_rate_correction = fc_percent
 
     def getPumpTiming(self):

@@ -12,11 +12,12 @@ class RunPurification():
         self.ui = UICommands()
         self.ui.connect(input_param[1], ip, input_param[0])
         self.buffer_calib = buffer_calib
+        self.num_pumps = input_param[0]
 
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
 
-        self._purge_bubbles()
+        #self._purge_bubbles()
         kill(gui_pid, SIGUSR1)
         self._run_process('EQUILIBRATE', [input_param[2], input_param[3]], fractions[0])
         self._run_process('LOAD', [input_param[4], input_param[5]], fractions[1])
@@ -62,10 +63,10 @@ class RunPurification():
             p_name = process_name if process_name == 'WASH' or process_name == 'ELUTION' else 'LOAD_BUFFER'
             self.ui.selectBuffers()
             self.ui.selectPort(p_name)
-            # there are 4 pumps and the flowRateCorrection() needs a list of the correction factor
+            # get the num of active pumps and the flowRateCorrection() needs a list of the correction factor
             # calling this everytime even if the factor is 1 because if the rate is changed it needs
             # to be reset for the next buffer
-            correction_factor = [self.buffer_calib[p_name]]*4
+            correction_factor = [self.buffer_calib[p_name]]*self.num_pumps
             self.ui.flowRateCorrection(correction_factor)
 
         if parameters[1] == 2:

@@ -831,7 +831,7 @@ class Ui_Purification(object):
         """Calculates an estimate time for each step"""
         step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
                     int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
-        return [i*self.gui_controller.getPumpTiming() for i in step_times]
+        self.step_times = [i*self.gui_controller.getPumpTiming() for i in step_times]
 
     def protocol_buffers(self):
         """Returns the volume of buffers used"""
@@ -995,8 +995,8 @@ class Ui_Purification(object):
                 percen_comp = self.pbars[self.timer_index].value()
                 if percen_comp < 100:
                     # Calculating time remaining
-                    time_rem = self.estimated_time[self.timer_index] - (self.timer_counter*self._time_per_update/1000)
-                    percen_comp = (1-(time_rem/self.estimated_time[self.timer_index]))*100
+                    time_rem = self.step_times[self.timer_index] - (self.timer_counter*self._time_per_update/1000)
+                    percen_comp = (1-(time_rem/self.step_times[self.timer_index]))*100
                     self.timer_counter += 1
                     self.pbars[self.timer_index].setValue(percen_comp)
                     if percen_comp == 100:
@@ -1033,7 +1033,8 @@ class Ui_Purification(object):
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             init_params = self._init_run_param()
-            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.calc_step_times()))
+            self.calc_step_times()
+            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.status_display_btn.setEnabled(True)
