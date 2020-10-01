@@ -872,6 +872,7 @@ class Ui_Purification(object):
     
     def onClickStart(self):
         """
+        First check and make sure text boxes are not empty
         1. Pop up to confirm you want to start
         The following actions are performed after 1s by the check_is_sure_timer handler
         2. Enable stop and close (other action btns enabled after purging)
@@ -881,9 +882,10 @@ class Ui_Purification(object):
         6. Update the step display
         7. Run the process
         """
-        self.gui_controller.columnsize = self.frac_size
-        self.startbufferWdw()
-        self.check_is_sure_timer.start(1000)
+        if self.gui_controller.checkEmptyQLines(self.vol_vals):
+            self.gui_controller.columnsize = self.frac_size
+            self.startbufferWdw()
+            self.check_is_sure_timer.start(1000)
     
     def startbufferWdw(self):
         self.bufferwdw = QtWidgets.QMainWindow()

@@ -455,6 +455,10 @@ class Ui_CustomProtocol(object):
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
         return input_params
+
+    def get_step_qlines(self):
+        """Returns a list of all the qline widgets on display. Used to check that no field is empty"""
+        return [c.volume_val_lbl for c in self.step_widget_objs]
     
     def protocol_buffers(self):
         """Create a dic of all the buffers used and the volume of each"""
@@ -501,10 +505,11 @@ class Ui_CustomProtocol(object):
         6. Update the step display
         7. Run the process
         """
-        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-        self.gui_controller.columnsize = self.col_size
-        self.startbufferWdw()
-        self.check_is_sure_timer.start(1000)
+        if self.gui_controller.checkEmptyQLines(self.get_step_qlines()):
+            self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
+            self.gui_controller.columnsize = self.col_size
+            self.startbufferWdw()
+            self.check_is_sure_timer.start(1000)
     
     def startbufferWdw(self):
         self.bufferwdw = QtWidgets.QMainWindow()

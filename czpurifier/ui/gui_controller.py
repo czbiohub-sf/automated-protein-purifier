@@ -9,7 +9,7 @@ from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
 from run_custom_protocol import RunCustomProtol
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QLineEdit
 from math import ceil
 
 log = logging.getLogger(__name__)
@@ -172,6 +172,22 @@ class GUI_Controller:
         cleanup_time = 20
         total_time = sum(protocol_times)/60 + purging_time + cleanup_time
         return 'Estimated Time: {0:.2f} min(s)'.format(total_time)
+
+    def checkEmptyQLines(self, qline_wdjs: list):
+        """Loops through all the line widgets and throws error if any field is empty"""
+        for q in qline_wdjs:
+            if q.text() is '':
+                self._emptyQLineMsg()
+                return False
+        return True
+
+    def _emptyQLineMsg(self):
+        """Displays error if one of the boxes are empty"""
+        msg = QMessageBox()
+        msg.setText('Error! Fields cannot be empty!')
+        msg.setIcon(QMessageBox.Warning)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
 
     ################################
     ## Fraction Collector Methods ##
