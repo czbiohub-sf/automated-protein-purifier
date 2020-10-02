@@ -19,6 +19,7 @@ class RunCustomProtol():
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
         self.buffer_calib = buffer_calib
+        self.num_pumps = input_param[0][0]
 
         #self._purge_bubbles()
         kill(gui_pid, SIGUSR1)
@@ -58,10 +59,10 @@ class RunCustomProtol():
             self.ui.selectBuffers()
             p_name = self.buffers[step_param[0]]
             self.ui.selectPort(p_name)
-            # there are 4 pumps and the flowRateCorrection() needs a list of the correction factor
+            # the flowRateCorrection() needs a list of the correction factor of the number of pumps running
             # calling this everytime even if the factor is 1 because if the rate is changed it needs
             # to be reset for the next buffer
-            correction_factor = [self.buffer_calib[p_name]]*4
+            correction_factor = [self.buffer_calib[p_name]]*self.num_pumps
             self.ui.flowRateCorrection(correction_factor)
         
         # 2. If fraction/flow, run the stage
