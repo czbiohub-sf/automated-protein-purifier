@@ -388,8 +388,10 @@ class Ui_CustomProtocol(object):
         self._finish_protocol()
 
     def startProgressBar(self, signalNumber, frame):
-        """Start the timer to display the status once purging is completed"""
+        """Start the timer to display the status once purging is completed
+        Enable the pause/hold buttons after purging is completed"""
         self.status_timer.start(2000)    
+        self._set_actionbtn_enable(True, False)
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -606,7 +608,7 @@ class Ui_CustomProtocol(object):
         if self.gui_controller.is_sure:
             init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
-            self._set_actionbtn_enable(True, False)
+            self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             self.gui_controller.run_purification_script(False, init_params)
