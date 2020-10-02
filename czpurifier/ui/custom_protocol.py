@@ -405,6 +405,7 @@ class Ui_CustomProtocol(object):
         self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
                                 self.step_counter, self.gui_controller))
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
+        self.gui_controller.flowpathwayClicked(self.step_counter, 1)
         self.remove_step.setEnabled(True)
         self.widgetscroller_timer.start(50)
 
