@@ -100,6 +100,7 @@ class Ui_MainWindow(object):
         if self.is_sure:
             self.is_sure = None
             self.run_sim()
+            self.run_sim_btn.setEnabled(False)
     
     def confirm_connectSim(self):
         """Confirms whether or not the user meant to click an action button"""

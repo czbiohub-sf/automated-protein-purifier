@@ -997,7 +997,7 @@ class Ui_Purification(object):
 
     def _update_current_step(self):
         """Used to display the step that is currently running"""
-        step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Purification Complete']
+        step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
         self.current_step_display_btn.setText(step[self.timer_index])
 
     def log_timer_handler(self):
