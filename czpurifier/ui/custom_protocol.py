@@ -263,6 +263,12 @@ class Ui_CustomProtocol(object):
         self.log_output_txtbox.setMinimumSize(QtCore.QSize(500, 0))
         self.log_output_txtbox.setObjectName("log_output_txtbox")
         self.verticalLayout_7.addWidget(self.log_output_txtbox)
+        self.estimated_time_remaining_lbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.estimated_time_remaining_lbl.setFont(font)
+        self.estimated_time_remaining_lbl.setObjectName("estimated_time_remaining_lbl")
+        self.verticalLayout_7.addWidget(self.estimated_time_remaining_lbl)
         self.horizontalLayout_6.addLayout(self.verticalLayout_7)
         self.verticalLayout_2.addLayout(self.horizontalLayout_6)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -355,6 +361,7 @@ class Ui_CustomProtocol(object):
         self.hold_btn.setText(_translate("CustomProtocol", "HOLD"))
         self.stop_btn.setText(_translate("CustomProtocol", "STOP"))
         self.close_btn.setText(_translate("CustomProtocol", "Close"))
+        self.estimated_time_remaining_lbl.setText(_translate("CustomProtocol", "Total Estimated Time: <..> min(s)"))
 
     ###################
     # Event Handlers #
