@@ -3,14 +3,15 @@ from fraction_col_gui import Ui_FractionColumn
 from buffer_param_gui import Ui_BuffersWindow
 from gui_controller import GUI_Controller
 from os import chdir, path
-from signal import signal, SIGUSR2
+from signal import signal, SIGUSR2, SIGUSR1
 from time import sleep
 
 
 class Ui_CustomProtocol(object):
     def __init__(self, CustomProtocol, dev_process):
         self.CustomProtocol = CustomProtocol
-        signal(SIGUSR2, self.currentStepRunning)
+        signal(SIGUSR2, self.purificationComplete)
+        signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
         self.setupUi(self.CustomProtocol)
@@ -382,22 +383,13 @@ class Ui_CustomProtocol(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
-    def currentStepRunning(self, signalNumber, frame):
-        """Handler for SIGUSR2. Updates the current step that is running"""
-        output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
-        self.current_step_display_btn.setText(output)
-        if self.rep_num > int(self.rep_num_lbl.text()):
-            if self.current_step == 1:
-                output = 'Running Device Cleanup'
-            elif self.current_step == 2:
-                output = 'Complete'
-                self.current_step = 0
-                self._finish_protocol()
-        elif self.current_step == len(self.step_widgets):
-            self.current_step = 0
-            self.rep_num += 1
-        self.current_step += 1
-        
+    def purificationComplete(self, signalNumber, frame):
+        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
+        self._finish_protocol()
+
+    def startProgressBar(self, signalNumber, frame):
+        """Start the timer to display the status once purging is completed"""
+        self.status_timer.start(2000)    
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
@@ -603,7 +595,7 @@ class Ui_CustomProtocol(object):
             self.status_timer.stop()
             output = 'Running Cleanup'
         else:
-            pump_vol = int(self.step_widget_objs[self.current_step].volume_val_lbl.text())
+            pump_vol = self.pump_times()[self.current_step]
             self.status_timer.start(pump_vol*1000)
             output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
             self.current_step +=1
@@ -612,7 +604,6 @@ class Ui_CustomProtocol(object):
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
         if self.gui_controller.is_sure:
-            self.status_timer.start(2000)
             init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self._set_actionbtn_enable(True, False)

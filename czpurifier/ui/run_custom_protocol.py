@@ -21,11 +21,10 @@ class RunCustomProtol():
         self.buffer_calib = buffer_calib
 
         #self._purge_bubbles()
-        #kill(gui_pid, SIGUSR1)
+        kill(gui_pid, SIGUSR1)
         self._run_process(input_param[1:], fractions, input_param[0][2])
+        #self._run_cleanup()
         logging.info('Purification Complete')
-        kill(self.gui_pid, SIGUSR2)
-        self._run_cleanup()
         kill(self.gui_pid, SIGUSR2)
 
     def _purge_bubbles(self):
@@ -47,7 +46,6 @@ class RunCustomProtol():
         """Runs the process rep times"""
         for i in range(rep):
             for step, f in zip(input_params, fractions):
-                kill(self.gui_pid, SIGUSR2)
                 self._run_step(step, f)
         
     def _run_step(self, step_param, frac):
