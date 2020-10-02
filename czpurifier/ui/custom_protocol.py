@@ -531,12 +531,10 @@ class Ui_CustomProtocol(object):
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
-            """
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
-            """
             self.status_display_btn.setText('on {}'.format(msg))
             self.status_display_btn.setStyleSheet(
                 self.gui_controller.status_display_stylsheet.format(
@@ -552,7 +550,7 @@ class Ui_CustomProtocol(object):
         to resume the protocol
         """
         self._set_actionbtn_enable(True, False)
-        #self.gui_controller.resume_clicked()
+        self.gui_controller.resume_clicked()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
@@ -564,26 +562,23 @@ class Ui_CustomProtocol(object):
         self.gui_controller.areYouSureMsg('stop')
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
-            self._finish_protocol()
-            self.gui_controller.stop_clicked()
             self.current_step_display_btn.setText('STOPPED')
-
+            self.gui_controller.stop_clicked()
+            self._finish_protocol()
+    
     def _finish_protocol(self):
-        self._set_actionbtn_enable(False, True)
+        """Common protocols between when stop is pressed and once the purification
+        process completes. The window is closed and returned to the main_window"""
         self.close_btn.setEnabled(True)
-        self._set_param_enable(True)
-        self.start_btn.disconnect()
-        self.start_btn.setText('START')
-        self.start_btn.clicked.connect(self.onClickStart)
-        for w in self.step_widgets:
-            w.setParent(None)
-        self.step_widgets = []
-        self.step_widget_objs = []
-        self.step_counter = -1
-        self.status_display_btn.setEnabled(False)
-        self.status_display_btn.setText('--')
-        self.current_step_display_btn.setEnabled(False)
-        self.gui_controller.init_fraction_collector_params()
+        self._set_actionbtn_enable(False, False)
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Protocol Completed/Stopped')
+        msg.setInformativeText('Click Ok to close the window')
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        ret = msg.exec()
+        if ret == QtWidgets.QMessageBox.Ok:
+            self.close_btn.click()
 
     def log_timer_handler(self):
         """Update the logger to display the messages

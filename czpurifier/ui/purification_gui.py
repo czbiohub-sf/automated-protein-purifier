@@ -955,31 +955,24 @@ class Ui_Purification(object):
         self.gui_controller.areYouSureMsg('stop')
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
-            self._finish_protocol()
             self.current_step_display_btn.setText('STOPPED')
             self.gui_controller.stop_clicked()
+            self._finish_protocol()
     
     def _finish_protocol(self):
         """Common protocols between when stop is pressed and once the purification
-        process completes"""
-        self._set_actionbtn_enable(False, True)
-        self._timer_on_flag = False
-        self.timer.stop()
+        process completes. The window is closed and returned to the main_window"""
         self.close_btn.setEnabled(True)
-        self._set_param_enable(True)
-        self.timer_index = 0
-        self.timer_counter = 0
-        self._reset_pbar()
-        self.start_btn.disconnect()
-        self.start_btn.setText('START')
-        self.current_step_display_btn.setEnabled(False)
-        self.status_display_btn.setEnabled(False)
-        self.status_display_btn.setText('--')
-        self.estimated_time_remaining_lbl.setText( "Estimated Time: <..> min(s)") 
-        self.start_btn.clicked.connect(self.onClickStart)
-        for combo in self.flowpath_combo:
-            combo.setCurrentIndex(0)
-        self.gui_controller.init_fraction_collector_params()
+        self._set_actionbtn_enable(False, False)
+        msg = QtWidgets.QMessageBox()
+        msg.setText('Protocol Completed/Stopped')
+        msg.setInformativeText('Click Ok to close the window')
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        ret = msg.exec()
+        if ret == QtWidgets.QMessageBox.Ok:
+            self.close_btn.click()
+    
 
     ## Timer Related Events ##
 
