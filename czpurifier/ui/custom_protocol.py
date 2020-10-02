@@ -650,6 +650,7 @@ class Ui_CustomProtocol(object):
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
             self.current_step_display_btn.setText('Setup And Purging Bubbles')
+            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.pump_times()))
 
 class AddStep():
     def __init__(self, step_widget, step_no, gui_controller):
