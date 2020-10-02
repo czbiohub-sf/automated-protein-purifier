@@ -416,6 +416,10 @@ class Ui_CustomProtocol(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
+        self.progressBar.setValue(0)
+        self.pbar_timer = QtCore.QTimer()
+        self.pbar_timer.timeout.connect(self.progress_bar_handler)
+
     def purificationComplete(self, signalNumber, frame):
         """Handler for SIGUSR2. Prepares UI for another purification protocol"""
         self._finish_protocol()
@@ -423,7 +427,8 @@ class Ui_CustomProtocol(object):
     def startProgressBar(self, signalNumber, frame):
         """Start the timer to display the status once purging is completed
         Enable the pause/hold buttons after purging is completed"""
-        self.status_timer.start(2000)    
+        self.status_timer.start(2000)
+        self.pbar_timer.start(2000)    
         self._set_actionbtn_enable(True, False)
 
     def onClickClose(self):
@@ -637,12 +642,25 @@ class Ui_CustomProtocol(object):
             self.current_step +=1
         self.current_step_display_btn.setText(output)
 
+    def progress_bar_handler(self):
+        """Update the progress bar and estimated time remaining display"""
+        if self.status_timer.isActive() and self.current_step > 0:
+            percen_comp = self.progressBar.value()
+            if percen_comp < 100:
+                # Calculating time remaining
+                time_remaining = (self.status_timer.remainingTime())/1000
+                percen_comp = (1-(time_remaining/self.pump_times()[self.current_step - 1]))*100
+                self.progressBar.setValue(percen_comp)
+                if percen_comp == 100:
+                    self.progressBar.setValue(0)
+
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
         if self.gui_controller.is_sure:
             init_params = self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self.stop_btn.setEnabled(True)
+            self.start_btn.setEnabled(False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
             self.gui_controller.run_purification_script(False, init_params)
