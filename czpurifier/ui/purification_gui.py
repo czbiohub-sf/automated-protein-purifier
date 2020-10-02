@@ -734,6 +734,7 @@ class Ui_Purification(object):
         self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
         self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
         self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
+        self.last_flowpath = [0]*4
 
         # Auto click the combo boxes on start to initialize all the fraction objs
         for i in range(4):
@@ -768,28 +769,30 @@ class Ui_Purification(object):
         and which text box to use to get the volume to flow
         """
         flow_path_combo = self.flowpath_combo[step_index]
-        col_size = 1 if step_index == 3 else 50
-        self.gui_controller.flowpathwayClicked(step_index, col_size)
         curIndex = flow_path_combo.currentIndex()
-        if curIndex == 2:
-            vol = int(self.vol_vals[step_index].text())
-            max_vol = self.gui_controller.okay_vol_checker(vol, col_size)
-            if max_vol == -1:
-                # volume is okay
-                disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
-                self.frac_wdw = QtWidgets.QMainWindow()
-                self.frac_ui = Ui_FractionColumn(self.frac_wdw)
-                self.frac_wdw.show()
-                self.frac_ui.correct_frac_col_design()
-                self.frac_ui.display_selected(disp)
-                self.fraction_widgets_enabler(step_index, False)
+        if self.last_flowpath[step_index] != curIndex:
+            self.last_flowpath[step_index] = curIndex
+            col_size = 1 if step_index == 3 else 50
+            self.gui_controller.flowpathwayClicked(step_index, col_size)
+            if curIndex == 2:
+                vol = int(self.vol_vals[step_index].text())
+                max_vol = self.gui_controller.okay_vol_checker(vol, col_size)
+                if max_vol == -1:
+                    # volume is okay
+                    disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
+                    self.frac_wdw = QtWidgets.QMainWindow()
+                    self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+                    self.frac_wdw.show()
+                    self.frac_ui.correct_frac_col_design()
+                    self.frac_ui.display_selected(disp)
+                    self.fraction_widgets_enabler(step_index, False)
+                else:
+                    # volume not available
+                    self.gui_controller.vol_exceeds_msg(max_vol)
+                    flow_path_combo.setCurrentIndex(0)
             else:
-                # volume not available
-                self.gui_controller.vol_exceeds_msg(max_vol)
-                flow_path_combo.setCurrentIndex(0)
-        else:
-            self.fraction_widgets_enabler(step_index, True)
-            self.gui_controller.fractionCollectorUnsel(step_index)
+                self.fraction_widgets_enabler(step_index, True)
+                self.gui_controller.fractionCollectorUnsel(step_index)
     
     def fraction_widgets_enabler(self, step_index, is_enabled):
         """Enable/Disable widgets related to the fraction collector pathway"""
