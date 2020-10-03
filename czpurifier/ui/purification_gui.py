@@ -669,6 +669,10 @@ class Ui_Purification(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
+        # Create all the flowpathway objects on init
+        for i in range(4):
+            self.gui_controller.flowpathwayClicked(i, 1)
+        
         # Timers initialized
         self.estimated_time = None
         self.timer_index = None
