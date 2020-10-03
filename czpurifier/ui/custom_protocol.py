@@ -558,9 +558,9 @@ class Ui_CustomProtocol(object):
         msg = 'pause' if is_pause else 'hold'
         self.gui_controller.areYouSureMsg(msg)
         if self.gui_controller.is_sure:
+            self.stop_btn.setEnabled(False)
             self.gui_controller.is_sure = None
             self._set_actionbtn_enable(False, True)
-            self.stop_btn.setEnabled(True)
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
             self.start_btn.clicked.connect(self.onClickResume)
@@ -583,6 +583,7 @@ class Ui_CustomProtocol(object):
         to resume the protocol
         """
         self._set_actionbtn_enable(True, False)
+        self.stop_btn.setEnabled(True)
         self.gui_controller.resume_clicked()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(

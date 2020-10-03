@@ -876,12 +876,12 @@ class Ui_Purification(object):
         msg = 'pause' if is_pause else 'hold'
         self.gui_controller.areYouSureMsg(msg)
         if self.gui_controller.is_sure:
+            self.stop_btn.setEnabled(False)
             self.gui_controller.is_sure = None
             remaining = self.status_timer.remainingTime()
             self.status_timer.stop()
             self.status_timer.setInterval(remaining)
             self._set_actionbtn_enable(False, True)
-            self.stop_btn.setEnabled(True)
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
@@ -903,6 +903,7 @@ class Ui_Purification(object):
         3. Resumes the timer and the progress bar update
         """
         self._set_actionbtn_enable(True, False)
+        self.stop_btn.setEnabled(True)
         self.status_timer.start()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
