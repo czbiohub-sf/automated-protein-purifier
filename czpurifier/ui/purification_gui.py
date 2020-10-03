@@ -674,19 +674,18 @@ class Ui_Purification(object):
             self.gui_controller.flowpathwayClicked(i, 1)
         
         # Timers initialized
-        self.estimated_time = None
-        self.timer_index = None
-        # timer event handler called every 1s
-        self._time_per_update = 1000
-        self._timer_on_flag = False
-        self.timer_counter = 0
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.progress_bar_handler)
+        # Timer for updating the current status
+        self.protocol_step = 0
+        self.status_timer = QtCore.QTimer()
+        self.status_timer.timeout.connect(self.status_timer_handler)
+        self.progressBar.setValue(0)
+        self.pbar_timer = QtCore.QTimer()
+        self.pbar_timer.timeout.connect(self.progress_bar_handler)
 
         # Logger initialized to display the steps
         self.log_update_timer = QtCore.QTimer()
         self.log_update_timer.timeout.connect(self.log_timer_handler)
-        self.log_update_timer.start(self._time_per_update)
+        self.log_update_timer.start(2000)
         self.log_output_txtbox.setReadOnly(True)
         self.log_output = None
 
@@ -724,11 +723,9 @@ class Ui_Purification(object):
     
     def startProgressBar(self, signalNumber, frame):
         """Handler for SIGUSR1. Starts the progress bar sequence"""
-        self.timer_index = 0
+        self.status_timer.start(2000)
+        self.pbar_timer.start(2000)    
         self._set_actionbtn_enable(True, False)
-        self.current_step_display_btn.setText('Equilibrate')
-        self._timer_on_flag = True
-        self.timer.start(self._time_per_update)
 
     ## Input Parameter Widget Actions ##
 
@@ -952,31 +949,28 @@ class Ui_Purification(object):
 
     ## Timer Related Events ##
 
+    def status_timer_handler(self):
+        """Starts the timer on the current step"""
+        self._update_current_step()
+        self.status_timer.start(self.step_times[self.protocol_step]*1000)
+        self.protocol_step += 1
+
     def progress_bar_handler(self):
         """Update the progress bar and estimated time remaining display"""
-        """
-        if self._timer_on_flag:
-            # timer_index controls the progress bar to change
-            if self.timer_index < 4:
-                # Update progress bar as needed
-                percen_comp = self.pbars[self.timer_index].value()
-                if percen_comp < 100:
-                    # Calculating time remaining
-                    time_rem = self.step_times[self.timer_index] - (self.timer_counter*self._time_per_update/1000)
-                    percen_comp = (1-(time_rem/self.step_times[self.timer_index]))*100
-                    self.timer_counter += 1
-                    self.pbars[self.timer_index].setValue(percen_comp)
-                    if percen_comp == 100:
-                        self.timer_index += 1
-                        self._update_current_step()
-                        # reset the counter when completed
-                        self.timer_counter = 0
-        """
+        if self.status_timer.isActive() and self.protocol_step > 0:
+            percen_comp = self.progressBar.value()
+            if percen_comp < 100:
+                # Calculating time remaining
+                time_remaining = (self.status_timer.remainingTime())/1000
+                percen_comp = (1-(time_remaining/self.step_times[self.protocol_step - 1]))*100
+                self.progressBar.setValue(percen_comp)
+                if percen_comp == 100:
+                    self.progressBar.setValue(0)
 
     def _update_current_step(self):
         """Used to display the step that is currently running"""
         step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
-        self.current_step_display_btn.setText(step[self.timer_index])
+        self.current_step_display_btn.setText(step[self.protocol_step])
 
     def log_timer_handler(self):
         """Update the logger to display the messages
