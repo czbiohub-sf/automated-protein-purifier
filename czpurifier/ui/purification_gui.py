@@ -877,8 +877,9 @@ class Ui_Purification(object):
         self.gui_controller.areYouSureMsg(msg)
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
-            self._timer_on_flag = False
-            self.timer.stop()
+            remaining = self.status_timer.remainingTime()
+            self.status_timer.stop()
+            self.status_timer.setInterval(remaining)
             self._set_actionbtn_enable(False, True)
             self.stop_btn.setEnabled(True)
             if is_pause:
@@ -902,8 +903,7 @@ class Ui_Purification(object):
         3. Resumes the timer and the progress bar update
         """
         self._set_actionbtn_enable(True, False)
-        self._timer_on_flag = True
-        self.timer.start(self._time_per_update)
+        self.status_timer.start()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
