@@ -918,9 +918,8 @@ class Ui_Purification(object):
         self.gui_controller.areYouSureMsg('skip to next step')
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
-            self.timer_index +=1
-            self.timer_counter = 0
-            self._update_current_step()
+            self.status_timer.stop()
+            self.status_timer.start(10)
             self.gui_controller.skip_clicked()
 
     def onClickStop(self):
