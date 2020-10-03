@@ -980,7 +980,7 @@ class Ui_Purification(object):
                 self.progressLabel.setText('{:.1f}%'.format(percen_comp))
                 if percen_comp == 100:
                     self.progressBar.setValue(0)
-                    self.progressLabel.setText('0%')
+                    self.progressLabel.setText('0.0%')
 
     def _update_current_step(self):
         """Used to display the step that is currently running"""

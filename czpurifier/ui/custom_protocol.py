@@ -250,10 +250,22 @@ class Ui_CustomProtocol(object):
         self.status_display_btn.setObjectName("status_display_btn")
         self.horizontalLayout_16.addWidget(self.status_display_btn)
         self.verticalLayout_7.addLayout(self.horizontalLayout_16)
+        self.progressbarLayout = QtWidgets.QHBoxLayout()
+        self.progressbarLayout.setObjectName("progressbarLayout")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName("progressBar")
-        self.verticalLayout_7.addWidget(self.progressBar)
+        self.progressbarLayout.addWidget(self.progressBar)
+        self.progressLabel = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.progressLabel.sizePolicy().hasHeightForWidth())
+        self.progressLabel.setSizePolicy(sizePolicy)
+        self.progressLabel.setMinimumSize(QtCore.QSize(60, 0))
+        self.progressLabel.setObjectName("progressLabel")
+        self.progressbarLayout.addWidget(self.progressLabel)
+        self.verticalLayout_7.addLayout(self.progressbarLayout)
         self.log_output_txtbox = QtWidgets.QTextEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -651,9 +663,12 @@ class Ui_CustomProtocol(object):
                 # Calculating time remaining
                 time_remaining = (self.status_timer.remainingTime())/1000
                 percen_comp = (1-(time_remaining/self.pump_times()[self.current_step - 1]))*100
+                percen_comp = 0 if percen_comp < 0 else percen_comp
                 self.progressBar.setValue(percen_comp)
+                self.progressLabel.setText('{:.1f}%'.format(percen_comp))
                 if percen_comp == 100:
                     self.progressBar.setValue(0)
+                    self.progressLabel.setText('0.0%')
 
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
