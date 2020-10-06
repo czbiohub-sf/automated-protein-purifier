@@ -323,8 +323,8 @@ class Ui_CustomProtocol(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
-        self.stop_btn.setMinimumSize(QtCore.QSize(70, 70))
-        self.stop_btn.setStyleSheet("QPushButton#stop_btn {border-radius:35;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\n"
+        self.stop_btn.setMinimumSize(QtCore.QSize(85, 85))
+        self.stop_btn.setStyleSheet("QPushButton#stop_btn {border-radius:42;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\n"
 "QPushButton:pressed#stop_btn{background-color:#A9A9A9}\n"
 "QPushButton:disabled#stop_btn{background-color:#696969}")
         self.stop_btn.setObjectName("stop_btn")
