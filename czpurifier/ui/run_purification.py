@@ -63,6 +63,8 @@ class RunPurification():
         if process_name == 'LOAD':
             # Load line does not need calibration
             self.ui.selectLoad()
+            # correction still called to reset the flow rate to 1, incase prev step reqs a different factor
+            self.ui.flowRateCorrection([1]*self.num_pumps)
         else:
             p_name = process_name if process_name == 'WASH' or process_name == 'ELUTION' else 'LOAD_BUFFER'
             self.ui.selectBuffers()

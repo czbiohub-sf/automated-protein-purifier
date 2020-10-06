@@ -56,6 +56,8 @@ class RunCustomProtol():
         #  If buffer select the port
         if step_param[0] is None:
             self.ui.selectLoad()
+            # correction still called to reset the flow rate to 1, incase prev step reqs a different factor
+            self.ui.flowRateCorrection([1]*self.num_pumps)
         else:
             self.ui.selectBuffers()
             p_name = self.buffers[step_param[0]]
