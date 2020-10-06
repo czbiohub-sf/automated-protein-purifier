@@ -4,7 +4,7 @@ from custom_protocol import Ui_CustomProtocol
 from gui_controller import GUI_Controller
 import sys
 from time import sleep
-
+from multiprocessing import set_start_method
 
 class Ui_MainWindow(object):
     def __init__(self, MainWindow):
@@ -153,6 +153,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
+    set_start_method('spawn')
     app = QtWidgets.QApplication(sys.argv)
     # Timeout the QEvent to allow for signals to be caught
     timer = QtCore.QTimer()
