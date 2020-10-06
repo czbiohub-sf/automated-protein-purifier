@@ -21,10 +21,10 @@ class RunCustomProtol():
         self.buffer_calib = buffer_calib
         self.num_pumps = input_param[0][0]
 
-        #self._purge_bubbles()
+        self._purge_bubbles()
         kill(gui_pid, SIGUSR1)
         self._run_process(input_param[1:], fractions, input_param[0][2])
-        #self._run_cleanup()
+        self._run_cleanup()
         logging.info('Purification Complete')
         kill(self.gui_pid, SIGUSR2)
 
