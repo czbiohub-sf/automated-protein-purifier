@@ -79,6 +79,7 @@ class RunCustomProtol():
         for i in range(len(fraction_param)):
             if fraction_param[i] != 0:
                 self.ui.selectFraction('{0}{1}'.format(col_type, i+1))
+                self.ui.pump(fraction_param[i])
         self.ui.selectFraction('Safe')
 
     def _run_cleanup(self):
