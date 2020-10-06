@@ -730,8 +730,8 @@ class Ui_Purification(object):
     
     def startProgressBar(self, signalNumber, frame):
         """Handler for SIGUSR1. Starts the progress bar sequence"""
-        self.status_timer.start(2000)
-        self.pbar_timer.start(2000)    
+        #self.status_timer.start(2000)
+        #self.pbar_timer.start(2000)    
         self._set_actionbtn_enable(True, False)
 
     ## Input Parameter Widget Actions ##
@@ -810,7 +810,8 @@ class Ui_Purification(object):
         """Calculates an estimate time for each step"""
         step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
                     int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
-        self.step_times = [i*60 for i in step_times]
+        step_times = [i*60 for i in step_times]
+        self.step_times = self.gui_controller.getPumpTimes(step_times)
 
     def protocol_buffers(self):
         """Returns the volume of buffers used. The vol is in CV so to convert
@@ -979,7 +980,7 @@ class Ui_Purification(object):
 
     def _update_current_step(self):
         """Used to display the step that is currently running"""
-        step = ['Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
+        step = ['Setup and Purging','Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
         self.current_step_display_btn.setText(step[self.protocol_step])
 
     def log_timer_handler(self):
@@ -1012,3 +1013,5 @@ class Ui_Purification(object):
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.gui_controller.run_purification_script(True, init_params)
+            self.status_timer.start(2000)
+            self.pbar_timer.start(2000)

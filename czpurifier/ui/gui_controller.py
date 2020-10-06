@@ -168,10 +168,16 @@ class GUI_Controller:
     
     def getET(self, protocol_times):
         """Adds the time required for purgin and clean up to generate the total estimated time"""
+        total_time = sum(protocol_times)/60
+        return 'Estimated Time: {0:.2f} min(s)'.format(total_time)
+    
+    def getPumpTimes(self, protocol_times):
+        """Add the purging time and the cleanup time to the pump times"""
         purging_time = 5
         cleanup_time = 20
-        total_time = sum(protocol_times)/60 + purging_time + cleanup_time
-        return 'Estimated Time: {0:.2f} min(s)'.format(total_time)
+        protocol_times.insert(0,purging_time*60)
+        protocol_times.append(cleanup_time*60)
+        return protocol_times
 
     def checkEmptyQLines(self, qline_wdjs: list):
         """Loops through all the line widgets and throws error if any field is empty"""
