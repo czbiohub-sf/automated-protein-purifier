@@ -1,6 +1,6 @@
 import logging
 from time import sleep
-from signal import SIGUSR1, SIGUSR2
+from signal import SIGUSR1
 from os import kill
 from command_wrappers import UICommands
 
@@ -20,12 +20,16 @@ class RunPurification():
         self._purge_bubbles()
         kill(gui_pid, SIGUSR1)
         self._run_process('EQUILIBRATE', [input_param[2], input_param[3]], fractions[0])
+        kill(gui_pid, SIGUSR1)
         self._run_process('LOAD', [input_param[4], input_param[5]], fractions[1])
+        kill(gui_pid, SIGUSR1)
         self._run_process('WASH', [input_param[6], input_param[7]], fractions[2])
+        kill(gui_pid, SIGUSR1)
         self._run_process('ELUTION', [input_param[8], input_param[9]], fractions[3])
+        kill(gui_pid, SIGUSR1)
         logging.info('Purification Complete')
         self._run_cleanup()
-        kill(gui_pid, SIGUSR2)
+        kill(gui_pid, SIGUSR1)
 
     def _purge_bubbles(self):
         # Purge bubbles from lines

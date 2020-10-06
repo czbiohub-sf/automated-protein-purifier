@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from fraction_col_gui import Ui_FractionColumn
 from buffer_param_gui import Ui_BuffersWindow
 from os import chdir, path, getpid, kill
-from signal import signal, SIGUSR2, SIGUSR1
+from signal import signal, SIGUSR1
 from time import sleep
 from math import ceil
 from gui_controller import GUI_Controller
@@ -25,7 +25,6 @@ class Ui_Purification(object):
         """
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
-        signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
         self.Purification = Purification
         self.setupUi(self.Purification)
@@ -724,14 +723,18 @@ class Ui_Purification(object):
         for i in range(4):
             self.onClickFlowPath(i)
     
-    def purificationComplete(self, signalNumber, frame):
-        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
-        self._finish_protocol()
-    
     def startProgressBar(self, signalNumber, frame):
-        """Handler for SIGUSR1. Starts the progress bar sequence"""
-        #self.status_timer.start(2000)
-        #self.pbar_timer.start(2000)    
+        """Start the timer to display the status once purging is completed
+        Enable the pause/hold buttons after purging is completed"""  
+        try:
+            self.protocol_step += 1
+            self.current_step_display_btn.setText(self.get_current_step()[self.protocol_step])
+            self.status_timer.stop()
+            self.status_timer.start(self.step_times[self.protocol_step]*1000)
+            self.progressBar.setValue(0)
+        except IndexError:
+            # Reached the final step
+            self._finish_protocol()
         self._set_actionbtn_enable(True, False)
 
     ## Input Parameter Widget Actions ##
@@ -927,8 +930,6 @@ class Ui_Purification(object):
         self.gui_controller.areYouSureMsg('skip to next step')
         if self.gui_controller.is_sure:
             self.gui_controller.is_sure = None
-            self.status_timer.stop()
-            self.status_timer.start(10)
             self.gui_controller.skip_clicked()
 
     def onClickStop(self):
@@ -958,30 +959,24 @@ class Ui_Purification(object):
     ## Timer Related Events ##
 
     def status_timer_handler(self):
-        """Starts the timer on the current step"""
-        self._update_current_step()
-        self.status_timer.start(self.step_times[self.protocol_step]*1000)
-        self.protocol_step += 1
+        """Stops the timer on the current step"""
+        # Reached the final step
+        self.status_timer.stop()
 
     def progress_bar_handler(self):
         """Update the progress bar and estimated time remaining display"""
-        if self.status_timer.isActive() and self.protocol_step > 0:
-            percen_comp = self.progressBar.value()
-            if percen_comp < 100:
-                # Calculating time remaining
-                time_remaining = (self.status_timer.remainingTime())/1000
-                percen_comp = (1-(time_remaining/self.step_times[self.protocol_step - 1]))*100
-                percen_comp = 0 if percen_comp < 0 else percen_comp
-                self.progressBar.setValue(percen_comp)
-                self.progressLabel.setText('{:.1f}%'.format(percen_comp))
-                if percen_comp == 100:
-                    self.progressBar.setValue(0)
-                    self.progressLabel.setText('0.0%')
+        percen_comp = self.progressBar.value()
+        if percen_comp < 100 and self.status_timer.isActive():
+            # Calculating time remaining
+            time_remaining = (self.status_timer.remainingTime())/1000
+            percen_comp = (1-(time_remaining/self.step_times[self.protocol_step]))*100
+            percen_comp = 0 if percen_comp < 0 else percen_comp
+            self.progressBar.setValue(percen_comp)
+            self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
-    def _update_current_step(self):
+    def get_current_step(self):
         """Used to display the step that is currently running"""
-        step = ['Setup and Purging','Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
-        self.current_step_display_btn.setText(step[self.protocol_step])
+        return ['Setup and Purging','Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
 
     def log_timer_handler(self):
         """Update the logger to display the messages
@@ -1009,9 +1004,9 @@ class Ui_Purification(object):
             self.calc_step_times()
             self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
             self.current_step_display_btn.setEnabled(True)
-            self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.gui_controller.run_purification_script(True, init_params)
-            self.status_timer.start(2000)
             self.pbar_timer.start(2000)
+            self.current_step_display_btn.setText(self.get_current_step()[self.protocol_step])
+            self.status_timer.start(self.step_times[self.protocol_step]*1000)
