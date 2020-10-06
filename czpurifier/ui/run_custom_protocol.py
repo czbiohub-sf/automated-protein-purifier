@@ -1,6 +1,6 @@
 import logging
 from time import sleep
-from signal import SIGUSR1, SIGUSR2
+from signal import SIGUSR1
 from os import kill
 from command_wrappers import UICommands
 
@@ -26,7 +26,7 @@ class RunCustomProtol():
         self._run_process(input_param[1:], fractions, input_param[0][2])
         self._run_cleanup()
         logging.info('Purification Complete')
-        kill(self.gui_pid, SIGUSR2)
+        kill(gui_pid, SIGUSR1)
 
     def _purge_bubbles(self):
         # Purge bubbles from lines
@@ -48,6 +48,7 @@ class RunCustomProtol():
         for i in range(rep):
             for step, f in zip(input_params, fractions):
                 self._run_step(step, f)
+                kill(self.gui_pid, SIGUSR1)
         
     def _run_step(self, step_param, frac):
         """Runs the process for each step"""

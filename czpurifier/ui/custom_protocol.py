@@ -3,14 +3,13 @@ from fraction_col_gui import Ui_FractionColumn
 from buffer_param_gui import Ui_BuffersWindow
 from gui_controller import GUI_Controller
 from os import chdir, path
-from signal import signal, SIGUSR2, SIGUSR1
+from signal import signal, SIGUSR1
 from time import sleep
 
 
 class Ui_CustomProtocol(object):
     def __init__(self, CustomProtocol, dev_process):
         self.CustomProtocol = CustomProtocol
-        signal(SIGUSR2, self.purificationComplete)
         signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
@@ -424,7 +423,6 @@ class Ui_CustomProtocol(object):
 
         #Step display
         self.current_step = 0
-        self.rep_num = 1
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
@@ -432,15 +430,18 @@ class Ui_CustomProtocol(object):
         self.pbar_timer = QtCore.QTimer()
         self.pbar_timer.timeout.connect(self.progress_bar_handler)
 
-    def purificationComplete(self, signalNumber, frame):
-        """Handler for SIGUSR2. Prepares UI for another purification protocol"""
-        self._finish_protocol()
-
     def startProgressBar(self, signalNumber, frame):
         """Start the timer to display the status once purging is completed
-        Enable the pause/hold buttons after purging is completed"""
-        self.status_timer.start(2000)
-        self.pbar_timer.start(2000)    
+        Enable the pause/hold buttons after purging is completed"""  
+        try:
+            self.current_step += 1
+            self.current_step_display_btn.setText(self.step_output[self.current_step])
+            self.status_timer.stop()
+            self.status_timer.start(self.step_times[self.current_step]*1000)
+            self.progressBar.setValue(0)
+        except IndexError:
+            # Reached the final step
+            self._finish_protocol()
         self._set_actionbtn_enable(True, False)
 
     def onClickClose(self):
@@ -518,7 +519,9 @@ class Ui_CustomProtocol(object):
         pump_times = []
         for c in self.step_widget_objs:
             pump_times.append(int(c.volume_val_lbl.text())*60)
-        return pump_times
+        # Multiply it with the number of reps so that the pump times repeat for each rep
+        pump_times = pump_times*int(self.rep_num_lbl.text())
+        self.step_times = self.gui_controller.getPumpTimes(pump_times)
 
     ## Action Button Event Handlers ##
 
@@ -640,35 +643,32 @@ class Ui_CustomProtocol(object):
 
     def status_timer_handler(self):
         """Starts the timer on the current step"""
-        if self.current_step == len(self.step_widget_objs):
-            self.rep_num += 1
-            self.current_step = 0
+        # Reached the final step
+        self.status_timer.stop()
 
-        if self.rep_num > int(self.rep_num_lbl.text()):
-            self.rep_num = 1
-            self.status_timer.stop()
-            output = 'Running Cleanup'
-        else:
-            pump_vol = self.pump_times()[self.current_step]
-            self.status_timer.start(pump_vol*1000)
-            output = 'Step# {} Rep# {}'.format(self.current_step, self.rep_num)
-            self.current_step +=1
-        self.current_step_display_btn.setText(output)
+    def create_step_label(self):
+        """Create the text output for the status bar"""
+        step_list = [i for i in range(len(self.step_widget_objs))]
+        num_reps = int(self.rep_num_lbl.text())
+        step_list = step_list*num_reps
+        rep_list = []
+        for i in range(num_reps):
+            rep_list += [i+1]*len(self.step_widget_objs)
+        self.step_output = ['Step# {} Rep# {}'.format(i,j) for i,j in zip(step_list, rep_list)]
+        self.step_output.insert(0, 'Setup and Purging')
+        self.step_output.append('Clean Up')
+
 
     def progress_bar_handler(self):
         """Update the progress bar and estimated time remaining display"""
-        if self.status_timer.isActive() and self.current_step > 0:
-            percen_comp = self.progressBar.value()
-            if percen_comp < 100:
-                # Calculating time remaining
-                time_remaining = (self.status_timer.remainingTime())/1000
-                percen_comp = (1-(time_remaining/self.pump_times()[self.current_step - 1]))*100
-                percen_comp = 0 if percen_comp < 0 else percen_comp
-                self.progressBar.setValue(percen_comp)
-                self.progressLabel.setText('{:.1f}%'.format(percen_comp))
-                if percen_comp == 100:
-                    self.progressBar.setValue(0)
-                    self.progressLabel.setText('0.0%')
+        percen_comp = self.progressBar.value()
+        if percen_comp < 100 and self.status_timer.isActive():
+            # Calculating time remaining
+            time_remaining = (self.status_timer.remainingTime())/1000
+            percen_comp = (1-(time_remaining/self.step_times[self.current_step]))*100
+            percen_comp = 0 if percen_comp < 0 else percen_comp
+            self.progressBar.setValue(percen_comp)
+            self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
@@ -683,8 +683,13 @@ class Ui_CustomProtocol(object):
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
-            self.current_step_display_btn.setText('Setup And Purging Bubbles')
-            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.pump_times()))
+            #self.current_step_display_btn.setText('Setup And Purging Bubbles')
+            self.pump_times()
+            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
+            self.create_step_label()
+            self.pbar_timer.start(2000)
+            self.current_step_display_btn.setText(self.step_output[self.current_step])
+            self.status_timer.start(self.step_times[self.current_step]*1000)
 
 class AddStep():
     def __init__(self, step_widget, step_no, gui_controller):
