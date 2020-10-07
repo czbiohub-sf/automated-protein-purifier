@@ -94,6 +94,11 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 ### Updating Without Cloning
 1. Update module (__pip install git+https://github.com/czbiohub/ProteinPurifier --upgrade__)
 
+### Using GUI
+1. If running the GUI for the first time, locate ProteinPurifier/czpurifier/ui/purification_parameters.json and update the PURIFIER_IP to refer to the ip of the device
+2. Go to the base of the directory and run:
+    >> python3 czpurifier/ui/main_window_gui.py
+
 ### Using Module
 1. Edit files to include `import czpurifier` or a variant such as `from czpurifier import ValveControllerI2c`
 2. Activate virtual environment with module installed

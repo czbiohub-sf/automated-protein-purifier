@@ -1,4 +1,7 @@
 {
+    "PURIFIER_IP":{
+        "ip": "pure1.local"
+    },
     "NUM_COL": {
         "default": 4
     },

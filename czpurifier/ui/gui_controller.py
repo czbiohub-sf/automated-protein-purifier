@@ -40,6 +40,7 @@ class GUI_Controller:
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
         self.default_buffer_fc = [self._p['BASE']['default'], self._p['LOAD_BUFFER']['default'],
                                 self._p['WASH']['default'], self._p['ELUTION']['default']]
+        self.controller_ip = self._p['PURIFIER_IP']['ip']
 
         #Stylesheets used for displaying the status
         self.status_display_color_running = '#3CB371'
@@ -63,7 +64,7 @@ class GUI_Controller:
 
     def hardware_or_sim(self, dev_process):
         """Called when a protocol window is opened to configure the connection variables"""
-        self.controller_ip = 'pure1.local' if dev_process is None else '127.0.0.1'
+        self.controller_ip = self.controller_ip if dev_process is None else '127.0.0.1'
         self.device_process = dev_process
         
     def connect_to_simulator(self):
