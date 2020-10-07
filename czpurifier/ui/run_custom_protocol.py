@@ -4,7 +4,7 @@ from signal import SIGUSR1
 from os import kill
 from command_wrappers import UICommands
 
-class RunCustomProtol():
+class RunCustomProtocol():
     def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
         """[[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
 

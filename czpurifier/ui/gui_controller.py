@@ -1,14 +1,13 @@
 import zmq
 import logging
 from logging import NullHandler
-import socket
 from multiprocessing import Process
 from czpurifier.middleware import SimulatorInterface, DeviceInterface
 from os import chdir, path, kill, getpid
 from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
-from run_custom_protocol import RunCustomProtol
+from run_custom_protocol import RunCustomProtocol
 from PyQt5.QtWidgets import QMessageBox, QLineEdit
 from math import ceil
 
@@ -84,7 +83,7 @@ class GUI_Controller:
         If the protocol is run on the simulator a signal is sent to the simulator
         to be the device and pass the 'device is available check' on the controller
         """
-        targ = RunPurification if is_basic_purification else RunCustomProtol
+        targ = RunPurification if is_basic_purification else RunCustomProtocol
         if self.device_process is not None:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), 
