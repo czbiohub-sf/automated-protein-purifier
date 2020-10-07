@@ -63,7 +63,7 @@ class GUI_Controller:
 
     def hardware_or_sim(self, dev_process):
         """Called when a protocol window is opened to configure the connection variables"""
-        self.controller_ip = 'pure2.local' if dev_process is None else '127.0.0.1'
+        self.controller_ip = 'pure1.local' if dev_process is None else '127.0.0.1'
         self.device_process = dev_process
         
     def connect_to_simulator(self):
