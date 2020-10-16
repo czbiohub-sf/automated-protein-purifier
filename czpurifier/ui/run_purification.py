@@ -102,10 +102,12 @@ class RunPurification():
 
     def _run_cleanup(self):
         # Run cleanup
+        self.ui.openPostColumnWaste()
         self.ui.selectPort('BASE')
         self.ui.pump(10)
         self.ui.selectPort('LOAD_BUFFER')
         self.ui.pump(10)
+        self.ui.closePostColumnWaste()
 
 if __name__ == "__main__":
     run = RunPurification([2, 5, 5, 1, 4, 1, 5, 1], '127.0.0.1')
