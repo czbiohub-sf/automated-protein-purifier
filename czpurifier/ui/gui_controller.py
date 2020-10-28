@@ -17,29 +17,37 @@ log.addHandler(NullHandler())
 class GUI_Controller:
     def __init__(self):
         """
-        1. Controls the communication between device and controller interface and the GUI
+        1. Controls the communication between the controller interface and the GUI
         2. Contains all common methods between the different GUI windows
         3. Controls all access to external file reads i.e. JSON file for default parameters
+        4. Initializes the fraction collector and tracks its use in the GUI
+            - Flow Throw Columns: 4 larger columns on the fraction collector
+            - Fraction Columns: 10 smaller columns on the fraction collector
         """
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # The process is None if connected to the device or it holds the process object for the simulator
         self.device_process = None
-        # controller_ip is set by one of the protocol windows on start based on whether the sim is running or device
-        self.controller_ip = None
         # The object that runs the controller and its PID
         self.ctrl_proc = None
         self.controller_interface_PID = None
 
+        # Writes to the purifier.log to create an empty log
+        # The log file is read and displayed on the gui
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'w') as f:
             f.close()
+        # Open the json file that contains all the defualt parameters
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
+        # Default parameters for the basic purification window
         self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
                             self._p['EQUILIBRATE_VOLUME']['default'], self._p['LOAD_VOLUME']['default'],
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
+        # Default flow rate correction factors for each 
         self.default_buffer_fc = [self._p['BASE']['default'], self._p['LOAD_BUFFER']['default'],
                                 self._p['WASH']['default'], self._p['ELUTION']['default']]
+        # The controller_ip is saved in the json file as pure1/pure2 based on the hardware
+        # The controller_ip is overwritten to a local address if the simulation mode is selected
         self.controller_ip = self._p['PURIFIER_IP']['ip']
 
         #Stylesheets used for displaying the status
@@ -53,6 +61,7 @@ class GUI_Controller:
                                         "QPushButton:disabled#status_display_btn{{"
                                         "background-color:#A9A9A9}}")
         
+        # Initializing empty fraction collectors
         self.init_fraction_collector_params()
         self.columnsize = None
         self.flow_rate_correction = None

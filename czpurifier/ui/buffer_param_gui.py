@@ -3,7 +3,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BuffersWindow(object):
     def __init__(self, BuffersWindow, gui_controller, protocol_buffers):
         """This window pops up when start is clicked to show the volume of 
-        buffers needed and to adjust the flow rate calibration"""
+        buffers needed and to adjust the flow rate calibration
+        The default flow rate calibration is loaded from the json file"""
         self.BuffersWindow = BuffersWindow
         self.gui_controller = gui_controller
         self.setupUi(self.BuffersWindow)
@@ -306,7 +307,9 @@ class Ui_BuffersWindow(object):
         self.fc_txtbox[indx].setText('{}'.format(self.sliders[indx].value()))
 
     def onclickStartCancel(self, is_start):
-        """Handles when start or cancel is clicked"""
+        """Handles when start or cancel is clicked
+        They are grouped together as the action is the same. It closes the window
+        but if it is start then it puts up the start flag"""
         close = True
         if is_start:
             if self.gui_controller.checkEmptyQLines(self.fc_txtbox):
