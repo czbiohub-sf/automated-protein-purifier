@@ -87,7 +87,9 @@ class RunCustomProtocol():
 
     def _run_cleanup(self):
         # Run cleanup
+        self.ui.openPostColumnWaste()
         self.ui.selectPort('BASE')
         self.ui.pump(10)
         self.ui.selectPort('LOAD_BUFFER')
         self.ui.pump(10)
+        self.ui.closePostColumnWaste()
