@@ -41,7 +41,7 @@ class GUI_Controller:
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
         # Default parameters for the basic purification window
-        self.default_param = [self._p['NUM_COL']['default'], self._p['COL_VOLUME']['default'],
+        self.default_param = [self._p['NUM_COL']['default'],
                             self._p['EQUILIBRATE_VOLUME']['default'], self._p['LOAD_VOLUME']['default'],
                             self._p['WASH_VOLUME']['default'], self._p['ELUTE_VOLUME']['default']]
         # Default flow rate correction factors for each 

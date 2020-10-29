@@ -21,11 +21,6 @@
     "NUM_COL": {
         "default": 4
     },
-
-    "COL_VOLUME" : {
-        "default": 1
-    },
-
     "EQUILIBRATE_VOLUME": {
         "default": 3
     },

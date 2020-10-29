@@ -683,14 +683,14 @@ class Ui_Purification(object):
         """Sets the default input parameters that are on the json file"""
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
         self.elute_vol_slider.setMaximum(10)
-        self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
-        self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
-        self.wash_vol_val.setText(str(self.gui_controller.default_param[4]))
-        self.elute_vol_val.setText(str(self.gui_controller.default_param[5]))
-        self.equil_vol_slider.setSliderPosition(self.gui_controller.default_param[2])
-        self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
-        self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
-        self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[5])
+        self.equil_vol_val.setText(str(self.gui_controller.default_param[1]))
+        self.load_vol_val.setText(str(self.gui_controller.default_param[2]))
+        self.wash_vol_val.setText(str(self.gui_controller.default_param[3]))
+        self.elute_vol_val.setText(str(self.gui_controller.default_param[4]))
+        self.equil_vol_slider.setSliderPosition(self.gui_controller.default_param[1])
+        self.load_vol_slider.setSliderPosition(self.gui_controller.default_param[2])
+        self.wash_vol_slider.setSliderPosition(self.gui_controller.default_param[3])
+        self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
         self.last_flowpath = [0]*4
 
         # Auto click the combo boxes on start to initialize all the fraction objs
