@@ -22,7 +22,7 @@
         "default": 4
     },
     "EQUILIBRATE_VOLUME": {
-        "default": 3
+        "default": 10
     },
 
     "LOAD_VOLUME": {
@@ -30,7 +30,7 @@
     },
 
     "WASH_VOLUME": {
-        "default": 4
+        "default": 60
     },
 
     "ELUTE_VOLUME": {
