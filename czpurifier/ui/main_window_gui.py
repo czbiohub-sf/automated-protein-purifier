@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification_gui import Ui_Purification
 from custom_protocol import Ui_CustomProtocol
+from calib_protocol import Ui_CalibrationProtocol
 from gui_controller import GUI_Controller
 import sys
 from time import sleep
@@ -239,10 +240,16 @@ class Ui_MainWindow(object):
 
     def initEvents(self):
         """Initialize all buttons"""
+        self.run_calib_prot_btn.clicked.connect(self.onClick_calib_protocol)
         self.purification_btn.clicked.connect(self.onClick_purification_btn)
         self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
         self.close_btn.clicked.connect(self.onClick_close_btn)
         self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
+
+    def onClick_calib_protocol(self):
+        self.calib = QtWidgets.QMainWindow()
+        self.calib_ui = Ui_CalibrationProtocol(self.calib)
+        self.calib.show()
 
     def onClick_sim_btn(self):
         self.confirm_connectSim()
