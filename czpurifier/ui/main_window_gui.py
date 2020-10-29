@@ -291,8 +291,9 @@ class Ui_MainWindow(object):
         self.update_calib_disp(actual_val, expected_val)
 
     def onClick_calib_protocol(self):
+        num_cols = self.comboBox.currentIndex() + 1
         self.calib = QtWidgets.QMainWindow()
-        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumncalib())
+        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumncalib(), num_cols)
         self.calib.show()
 
     def onClick_sim_btn(self):

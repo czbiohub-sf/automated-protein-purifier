@@ -5,7 +5,7 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunCalibrationProtocol():
-    def __init__(self, columnsize, caliblist, ip, gui_pid):
+    def __init__(self, columnsize, caliblist, num_cols, ip, gui_pid):
         """
         columnsize: '1mL' or '5mL'
         ip: 'pure2.local'
@@ -14,7 +14,7 @@ class RunCalibrationProtocol():
 
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         self.ui = UICommands()
-        self.ui.connect(columnsize, ip, 4, caliblist)
+        self.ui.connect(columnsize, ip, num_cols, caliblist)
         
         pump_time = 10 if columnsize == '1mL' else 5
         self.run_calib(pump_time)
