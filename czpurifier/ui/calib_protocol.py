@@ -86,11 +86,27 @@ class Ui_CalibrationProtocol(object):
         self.column_size_lbl.setText(self.columnsize)
         self.start_btn.clicked.connect(self.onClickStart)
 
+        # All progress bars run the following way
+        # There is a progress bar timer that times out every 2s
+        # There is a status timer that times out after the step is completed
+        # The progress bar timeout handler updates the progress bar while the status timer is running
+        # When the status timer times out the progress bar timer is stopped
+        self.progressBar.setValue(0)
+        self.pbar_timer = QtCore.QTimer()
+        self.pbar_timer.timeout.connect(self.progress_bar_handler)
+
+        self.status_timer = QtCore.QTimer()
+        self.status_timer.timeout.connect(self.status_timer_handler)
+        # Add the 2 for the purging time
+        self.time = (10+2) if self.columnsize == '1mL' else (5+2)
+
     def onClickStart(self):
         """Start the calibration protocol
         TODO: start the progress bar"""
         self.start_btn.setEnabled(False)
         self.gui_controller.run_calibration_protocol(self.columnsize)
+        self.pbar_timer.start(2000)
+        self.status_timer.start(self.time*60*1000)
     
     def onClickDone(self):
         """Close the window when calibration is completed"""
@@ -102,7 +118,22 @@ class Ui_CalibrationProtocol(object):
         self.start_btn.setEnabled(True)
         self.start_btn.setText('DONE')
         self.start_btn.clicked.connect(self.onClickDone)
+        self.status_timer.stop()
+        self.progressBar.setValue(100)
 
+    def progress_bar_handler(self):
+        """Update the progress bar and estimated time remaining display"""
+        percen_comp = self.progressBar.value()
+        if percen_comp < 100:
+            # Calculating time remaining
+            time_remaining = (self.status_timer.remainingTime())/1000
+            percen_comp = (1-(time_remaining/(self.time*60)))*100
+            percen_comp = 0 if percen_comp < 0 else percen_comp
+            self.progressBar.setValue(percen_comp)
+    
+    def status_timer_handler(self):
+        self.progressBar.setValue(99)
+        self.pbar_timer.stop()
 
 if __name__ == "__main__":
     import sys
