@@ -8,7 +8,7 @@ from math import ceil
 from gui_controller import GUI_Controller
 
 class Ui_Purification(object):
-    def __init__(self, Purification, dev_process):
+    def __init__(self, Purification, dev_process, columnsize):
         """
         Contains the initialization and functionality of the purification tab
         The lists in this class are indexed as such:
@@ -25,6 +25,7 @@ class Ui_Purification(object):
         """
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
+        self.columnsize = columnsize
         signal(SIGUSR1, self.startProgressBar)
         self.Purification = Purification
         self.setupUi(self.Purification)
@@ -40,7 +41,7 @@ class Ui_Purification(object):
     def setupUi(self, Purification):
         Purification.setObjectName("Purification")
         Purification.setWindowModality(QtCore.Qt.ApplicationModal)
-        Purification.resize(1440, 775)
+        Purification.resize(1440, 900)
         self.centralwidget = QtWidgets.QWidget(Purification)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -49,6 +50,9 @@ class Ui_Purification(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_10 = QtWidgets.QLabel(self.centralwidget)
+        self.label_10.setObjectName("label_10")
+        self.verticalLayout_2.addWidget(self.label_10)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
@@ -73,26 +77,6 @@ class Ui_Purification(object):
         self.num_col_combo_box.addItem("")
         self.num_col_combo_box.addItem("")
         self.horizontalLayout_13.addWidget(self.num_col_combo_box)
-        self.col_vol_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.col_vol_lbl.sizePolicy().hasHeightForWidth())
-        self.col_vol_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.col_vol_lbl.setFont(font)
-        self.col_vol_lbl.setStyleSheet("")
-        self.col_vol_lbl.setObjectName("col_vol_lbl")
-        self.horizontalLayout_13.addWidget(self.col_vol_lbl)
-        self.col_vol_combo_box = QtWidgets.QComboBox(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.col_vol_combo_box.setFont(font)
-        self.col_vol_combo_box.setObjectName("col_vol_combo_box")
-        self.col_vol_combo_box.addItem("")
-        self.col_vol_combo_box.addItem("")
-        self.horizontalLayout_13.addWidget(self.col_vol_combo_box)
         self.verticalLayout_3.addLayout(self.horizontalLayout_13)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -577,14 +561,12 @@ class Ui_Purification(object):
     def retranslateUi(self, Purification):
         _translate = QtCore.QCoreApplication.translate
         Purification.setWindowTitle(_translate("Purification", "Purification"))
+        self.label_10.setText(_translate("Purification", "<html><head/><body><p>Run basic purification protocols using the following window. </p><p>To change the column size please close the window and update the column size in the main window.</p><p>The per column calibration from the main window will be applied to protocols here, to update the calibration please close the window and update the calibration on the main window.</p><p>On START a prompt will display the buffer and load volumes needed, along with the ability to update buffer dependent flow rates.</p></body></html>"))
         self.num_col_lbl.setText(_translate("Purification", "Number of Columns: "))
         self.num_col_combo_box.setItemText(0, _translate("Purification", "1"))
         self.num_col_combo_box.setItemText(1, _translate("Purification", "2"))
         self.num_col_combo_box.setItemText(2, _translate("Purification", "3"))
         self.num_col_combo_box.setItemText(3, _translate("Purification", "4"))
-        self.col_vol_lbl.setText(_translate("Purification", "Column Volume: "))
-        self.col_vol_combo_box.setItemText(0, _translate("Purification", "1 mL"))
-        self.col_vol_combo_box.setItemText(1, _translate("Purification", "5 mL"))
         self.equilibrate_lbl.setText(_translate("Purification", "Equilibrate"))
         self.equilibrate_vol_lbl.setText(_translate("Purification", "Volume:"))
         self.equilibriate_flowpath_lbl.setText(_translate("Purification", "Flow Path:"))
@@ -641,22 +623,19 @@ class Ui_Purification(object):
         Creates additional class attributes"""
         # Parsed when start is clicked to determine the input parameters for run purification
         # Key: Name of the widget, Value: True = textbox widget, False = combobox widget
-        self.input_param = {self.num_col_combo_box: False, self.col_vol_combo_box: False,
+        self.input_param = {self.num_col_combo_box: False, self.columnsize: None,
                             self.equil_vol_val: True, self.equil_flowpath: False, 
                             self.load_vol_val: True, self.load_flowpath: False,
                             self.wash_vol_val: True, self.wash_flowpath: False,
                             self.elute_vol_val: True, self.elute_flowpath: False}
-        # Used to keep count of the total volume passed through the flow throw columns
-        # Flow throw used in either Wash or Load step
-        self.frac_size = None
-
         # Useful groups of widgets for easier access
         self.vol_vals = [self.equil_vol_val, self.load_vol_val, self.wash_vol_val, self.elute_vol_val]
         self.vol_sliders = [self.equil_vol_slider, self.load_vol_slider, self.wash_vol_slider, self.elute_vol_slider]
         self.flowpath_combo = [self.equil_flowpath, self.load_flowpath, self.wash_flowpath, self.elute_flowpath]
+
+        self.columnsize_int = 1 if self.columnsize == '1mL' else 5
         # Widget setup and activation on start
         self._set_actionbtn_enable(False, True)
-        self.col_vol_combo_box.activated.connect(self.onClickFractionSize)
         self.setDefaultParam()
         self.equil_flowpath.activated.connect(lambda: self.onClickFlowPath(0))
         self.load_flowpath.activated.connect(lambda: self.onClickFlowPath(1))
@@ -702,12 +681,6 @@ class Ui_Purification(object):
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
-        if self.gui_controller.default_param[1] == 1:
-            self.col_vol_combo_box.setCurrentIndex(0)
-            self.frac_size = 1
-        else:
-            self.col_vol_combo_box.setCurrentIndex(1)
-            self.frac_size = 5
         self.elute_vol_slider.setMaximum(10)
         self.equil_vol_val.setText(str(self.gui_controller.default_param[2]))
         self.load_vol_val.setText(str(self.gui_controller.default_param[3]))
@@ -738,11 +711,6 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(True, False)
 
     ## Input Parameter Widget Actions ##
-
-    def onClickFractionSize(self):
-        """Update the column fraction size based on the index selected"""
-        curIndex = self.col_vol_combo_box.currentIndex()
-        self.frac_size = 1 if curIndex == 0 else 5
 
     def onClickFlowPath(self, step_index):
         """
@@ -783,8 +751,6 @@ class Ui_Purification(object):
         """Enable/Disable widgets related to the fraction collector pathway"""
         self.vol_vals[step_index].setEnabled(is_enabled)
         self.vol_sliders[step_index].setEnabled(is_enabled)
-        if step_index == 3:
-            self.col_vol_combo_box.setEnabled(is_enabled)
 
     def slider_changed(self, step_index):
         """Updates text label beside the slider when slider is moved
@@ -802,11 +768,14 @@ class Ui_Purification(object):
             if self.input_param[widget]:
                 # Handle text inputs
                 run_param.append(int(widget.text()))
+            elif self.input_param[widget] is None:
+                # handle the columnsize
+                run_param.append(widget)
             else:
                 # Handle combo box
                 run_param.append(widget.currentIndex())
+        # +1 needs to be added to the number of pumps
         run_param[0] = run_param[0] + 1
-        run_param[1] = 5 if run_param[1] == 1 else 1
         return run_param
 
     def calc_step_times(self):
@@ -867,7 +836,7 @@ class Ui_Purification(object):
         7. Run the process
         """
         if self.gui_controller.checkEmptyQLines(self.vol_vals):
-            self.gui_controller.columnsize = self.frac_size
+            self.gui_controller.columnsize = self.columnsize_int
             self.startbufferWdw()
             self.check_is_sure_timer.start(1000)
     

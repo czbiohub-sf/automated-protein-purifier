@@ -8,7 +8,6 @@ class RunPurification():
     def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
-        input_param[1] = '1mL' if input_param[1] == 1 else '5mL'
         self.ui = UICommands()
         self.ui.connect(input_param[1], ip, input_param[0])
         self.buffer_calib = buffer_calib
