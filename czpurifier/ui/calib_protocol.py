@@ -4,10 +4,11 @@ from signal import signal, SIGUSR1
 
 
 class Ui_CalibrationProtocol(object):
-    def __init__(self, CalibrationProtocol, columnsize):
+    def __init__(self, CalibrationProtocol, columnsize, caliblist):
         """Runs the calibration protocol used to calculate the correction factor"""
         self.CalibrationProtocol = CalibrationProtocol
         self.columnsize = columnsize
+        self.caliblist = caliblist
         self.gui_controller = GUI_Controller()
         self.setupUi(self.CalibrationProtocol)
         self.initEvents()
@@ -121,7 +122,7 @@ class Ui_CalibrationProtocol(object):
         """Start the calibration protocol
         TODO: start the progress bar"""
         self.start_btn.setEnabled(False)
-        self.gui_controller.run_calibration_protocol(self.columnsize)
+        self.gui_controller.run_calibration_protocol(self.columnsize, self.calib_list)
         self.pbar_timer.start(2000)
         self.status_timer.start(self.time*60*1000)
     

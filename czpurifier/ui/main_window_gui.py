@@ -277,7 +277,7 @@ class Ui_MainWindow(object):
 
     def onClick_calib_protocol(self):
         self.calib = QtWidgets.QMainWindow()
-        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize)
+        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumncalib())
         self.calib.show()
 
     def onClick_sim_btn(self):

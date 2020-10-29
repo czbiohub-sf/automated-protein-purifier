@@ -107,9 +107,9 @@ class GUI_Controller:
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
     
-    def run_calibration_protocol(self, columnsize):
+    def run_calibration_protocol(self, columnsize, calib_list):
         """Runs the calibration protocol"""
-        self.ctrl_proc = Process(target=RunCalibrationProtocol, args = (columnsize, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=RunCalibrationProtocol, args = (columnsize, calib_list, self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
