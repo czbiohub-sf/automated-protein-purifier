@@ -478,7 +478,13 @@ class Ui_CustomProtocol(object):
             inp.append(int(c.volume_val_lbl.text()))
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
-        return input_params
+        
+        # Create the per column calibration factor list
+        calibfactor = []
+        for i in range(self.num_col_combo_box.currentIndex()+1):
+            calibfactor.append(self.percolumncalib[i])
+
+        return input_params, calibfactor
 
     def get_step_qlines(self):
         """Returns a list of all the qline widgets on display. Used to check that no field is empty"""
@@ -650,13 +656,13 @@ class Ui_CustomProtocol(object):
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
         if self.gui_controller.is_sure:
-            init_params = self._generate_run_parameters()
+            init_params, calib_list = self._generate_run_parameters()
             self.gui_controller.is_sure = None
             self.stop_btn.setEnabled(True)
             self.start_btn.setEnabled(False)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            self.gui_controller.run_purification_script(False, init_params)
+            self.gui_controller.run_purification_script(False, init_params, calib_list)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
