@@ -22,7 +22,7 @@
         "default": 4
     },
     "EQUILIBRATE_VOLUME": {
-        "default": 10
+        "default": 15
     },
 
     "LOAD_VOLUME": {
