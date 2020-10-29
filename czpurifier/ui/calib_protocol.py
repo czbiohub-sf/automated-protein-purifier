@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from gui_controller import GUI_Controller
 
 
 class Ui_CalibrationProtocol(object):
@@ -6,6 +7,7 @@ class Ui_CalibrationProtocol(object):
         """Runs the calibration protocol used to calculate the correction factor"""
         self.CalibrationProtocol = CalibrationProtocol
         self.columnsize = columnsize
+        self.gui_controller = GUI_Controller()
         self.setupUi(self.CalibrationProtocol)
         self.initEvents()
 
@@ -13,6 +15,7 @@ class Ui_CalibrationProtocol(object):
     def setupUi(self, CalibrationProtocol):
         CalibrationProtocol.setObjectName("CalibrationProtocol")
         CalibrationProtocol.resize(673, 375)
+        CalibrationProtocol.setWindowModality(QtCore.Qt.ApplicationModal)
         self.centralwidget = QtWidgets.QWidget(CalibrationProtocol)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -77,7 +80,15 @@ class Ui_CalibrationProtocol(object):
 
     ## End of designer generated code ##
     def initEvents(self):
+        """Initialize buttons and text displays"""
         self.column_size_lbl.setText(self.columnsize)
+        self.start_btn.clicked.connect(self.onClickStart)
+
+    def onClickStart(self):
+        """Start the calibration protocol
+        TODO: start the progress bar"""
+        self.start_btn.setEnabled(False)
+        self.gui_controller.run_calibration_protocol(self.columnsize)
 
 
 if __name__ == "__main__":

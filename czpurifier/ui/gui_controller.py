@@ -8,6 +8,7 @@ from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
 from run_purification import RunPurification
 from run_custom_protocol import RunCustomProtocol
+from run_calib_protocol import RunCalibrationProtocol
 from PyQt5.QtWidgets import QMessageBox, QLineEdit
 from math import ceil
 
@@ -101,6 +102,13 @@ class GUI_Controller:
             kill(self.device_process.pid, SIGUSR1)
         self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), 
                                     self.flow_rate_correction, self.controller_ip, getpid(),))
+        self.ctrl_proc.daemon = True
+        self.ctrl_proc.start()
+        self.controller_interface_PID = self.ctrl_proc.pid
+    
+    def run_calibration_protocol(self, columnsize):
+        """Runs the calibration protocol"""
+        self.ctrl_proc = Process(target=RunCalibrationProtocol, args = (columnsize, self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
