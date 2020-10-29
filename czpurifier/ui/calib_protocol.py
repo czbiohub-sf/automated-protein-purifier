@@ -114,6 +114,9 @@ class Ui_CalibrationProtocol(object):
         # Add the 2 for the purging time
         self.time = (10+2) if self.columnsize == '1mL' else (5+2)
 
+        load_vol = 10 if self.columnsize == '1mL' else 25
+        self.load_vol.setText('{} mL'.format(load_vol+2))
+
     def onClickStart(self):
         """Start the calibration protocol
         TODO: start the progress bar"""
