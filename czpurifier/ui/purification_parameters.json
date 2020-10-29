@@ -2,6 +2,22 @@
     "PURIFIER_IP":{
         "ip": "pure1.local"
     },
+    "PUMP1":{
+        "1mL": 9.2,
+        "5mL": 24
+    },
+    "PUMP2":{
+        "1mL": 9.2,
+        "5mL": 24
+    },
+    "PUMP3":{
+        "1mL": 9.2,
+        "5mL": 24
+    },
+    "PUMP4":{
+        "1mL": 9.2,
+        "5mL": 24
+    },
     "NUM_COL": {
         "default": 4
     },

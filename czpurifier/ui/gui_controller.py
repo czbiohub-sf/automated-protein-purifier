@@ -49,6 +49,9 @@ class GUI_Controller:
         # The controller_ip is saved in the json file as pure1/pure2 based on the hardware
         # The controller_ip is overwritten to a local address if the simulation mode is selected
         self.controller_ip = self._p['PURIFIER_IP']['ip']
+        # Default actual per column volumes for 1mL col size
+        self.actualvol1mL = [self._p['PUMP1']['1mL'], self._p['PUMP2']['1mL'], self._p['PUMP3']['1mL'], self._p['PUMP4']['1mL']]
+        self.actualvol5mL = [self._p['PUMP1']['5mL'], self._p['PUMP2']['5mL'], self._p['PUMP3']['5mL'], self._p['PUMP4']['5mL']]
 
         #Stylesheets used for displaying the status
         self.status_display_color_running = '#3CB371'

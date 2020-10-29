@@ -245,6 +245,31 @@ class Ui_MainWindow(object):
         self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
         self.close_btn.clicked.connect(self.onClick_close_btn)
         self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
+        self.columnsize_combo.activated.connect(self.onSelect_columnSize)
+
+        self.update_calib_disp(self.gui_controller.actualvol1mL, 10)
+
+    def update_calib_disp(self, actual_val, expected_val):
+        """Update the expected and actual values for the flow volume"""
+        self.p1_actual.setText('{}'.format(actual_val[0]))
+        self.p2_actual.setText('{}'.format(actual_val[1]))
+        self.p3_actual.setText('{}'.format(actual_val[2]))
+        self.p4_actual.setText('{}'.format(actual_val[3]))
+
+        self.p1_expected.setText('{}'.format(expected_val))
+        self.p2_expected.setText('{}'.format(expected_val))
+        self.p3_expected.setText('{}'.format(expected_val))
+        self.p4_expected.setText('{}'.format(expected_val))
+
+    def onSelect_columnSize(self):
+        if self.columnsize_combo.currentIndex() == 0:
+            actual_val = self.gui_controller.actualvol1mL
+            expected_val = 10
+        else:
+            actual_val = self.gui_controller.actualvol5mL
+            expected_val = 25
+        
+        self.update_calib_disp(actual_val, expected_val)
 
     def onClick_calib_protocol(self):
         self.calib = QtWidgets.QMainWindow()
