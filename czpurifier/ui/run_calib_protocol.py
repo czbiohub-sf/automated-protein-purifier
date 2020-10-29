@@ -27,14 +27,16 @@ class RunCalibrationProtocol():
         Run the pump for 10mins for 1mL col size, and for 5mins for 5mL col size
         """
         # Purge bubbles from lines
+        self.ui.openPreColumnWaste()
         self.ui.selectLoad()
         self.ui.pump(1)
-
         self.ui.closePreColumnWaste()
+        
+        self.ui.openPostColumnWaste
         self.ui.selectLoad()
         self.ui.pump(1)
-
         self.ui.closePostColumnWaste()
+        
         self.ui.selectLoad()
         self.ui.selectFraction('Flow1')
         self.ui.pump(pump_time)
