@@ -8,7 +8,7 @@ from math import ceil
 from gui_controller import GUI_Controller
 
 class Ui_Purification(object):
-    def __init__(self, Purification, dev_process, columnsize):
+    def __init__(self, Purification, dev_process, columnsize, percolumncalib):
         """
         Contains the initialization and functionality of the purification tab
         The lists in this class are indexed as such:
@@ -26,6 +26,7 @@ class Ui_Purification(object):
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
         self.columnsize = columnsize
+        self.percolumncalib = percolumncalib
         signal(SIGUSR1, self.startProgressBar)
         self.Purification = Purification
         self.setupUi(self.Purification)
@@ -776,7 +777,13 @@ class Ui_Purification(object):
                 run_param.append(widget.currentIndex())
         # +1 needs to be added to the number of pumps
         run_param[0] = run_param[0] + 1
-        return run_param
+
+        # Make the per column calibration list
+        calib_list = []
+        for i in range(run_param[0]):
+            calib_list.append(self.percolumncalib[i])
+
+        return run_param, calib_list
 
     def calc_step_times(self):
         """Calculates an estimate time for each step"""
@@ -798,7 +805,8 @@ class Ui_Purification(object):
         """Enables/Disables all the widgets that allow initializing input parameters
         Used to disable inputting parameters when purifier is running"""
         for widget in self.input_param:
-            widget.setEnabled(state)
+            if self.input_param[widget] is not None:
+                widget.setEnabled(state)
         self.equil_vol_slider.setEnabled(state)
         self.load_vol_slider.setEnabled(state)
         self.wash_vol_slider.setEnabled(state)
@@ -969,13 +977,13 @@ class Ui_Purification(object):
             self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)
             self._set_param_enable(False)
-            init_params = self._init_run_param()
+            init_params, calib_list = self._init_run_param()
             self.calc_step_times()
             self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
             self.current_step_display_btn.setEnabled(True)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
-            self.gui_controller.run_purification_script(True, init_params)
+            self.gui_controller.run_purification_script(True, init_params, calib_list)
             self.pbar_timer.start(2000)
             self.current_step_display_btn.setText(self.get_current_step()[self.protocol_step])
             self.status_timer.start(self.step_times[self.protocol_step]*1000)

@@ -5,11 +5,11 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunPurification():
-    def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
+    def __init__(self, input_param, calib_list, fractions, buffer_calib, ip, gui_pid):
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
         self.ui = UICommands()
-        self.ui.connect(input_param[1], ip, input_param[0])
+        self.ui.connect(input_param[1], ip, input_param[0], calib_list)
         self.buffer_calib = buffer_calib
         self.num_pumps = input_param[0]
 

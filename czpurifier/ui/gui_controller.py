@@ -92,7 +92,7 @@ class GUI_Controller:
         si = SimulatorInterface()
         si.autorun()
     
-    def run_purification_script(self, is_basic_purification, parameters):
+    def run_purification_script(self, is_basic_purification, parameters, calib_list):
         """
         Run the purification protocal on a new process
         If the protocol is run on the simulator a signal is sent to the simulator
@@ -101,7 +101,7 @@ class GUI_Controller:
         targ = RunPurification if is_basic_purification else RunCustomProtocol
         if self.device_process is not None:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=targ, args=(parameters, self.getFractionParameters(), 
+        self.ctrl_proc = Process(target=targ, args=(parameters, calib_list, self.getFractionParameters(), 
                                     self.flow_rate_correction, self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()

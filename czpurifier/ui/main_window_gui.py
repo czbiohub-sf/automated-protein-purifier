@@ -319,7 +319,7 @@ class Ui_MainWindow(object):
         Opens the purification window 
         """
         self.purifier = QtWidgets.QMainWindow()
-        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process, self.columnsize)
+        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process, self.columnsize, self.percolumncalib())
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
@@ -334,7 +334,18 @@ class Ui_MainWindow(object):
         """
         Closes the GUI
         """
-        quit()        
+        quit()
+
+    def percolumncalib(self):
+        """Create the list of per column calibration factor based on the input values in the GUI"""
+        expected = 10 if self.columnsize == '1mL' else 25
+        percolumn = []
+        percolumn.append(expected/float(self.p1_actual.text()))
+        percolumn.append(expected/float(self.p2_actual.text()))
+        percolumn.append(expected/float(self.p3_actual.text()))
+        percolumn.append(expected/float(self.p4_actual.text()))
+
+        return percolumn       
 
 if __name__ == "__main__":
     import sys
