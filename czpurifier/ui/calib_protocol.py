@@ -113,6 +113,7 @@ class Ui_CalibrationProtocol(object):
         """Initialize buttons and text displays"""
         self.column_size_lbl.setText(self.columnsize)
         self.start_btn.clicked.connect(self.onClickStart)
+        self.stop_btn.clicked.connect(self.onClickStop)
 
         # All progress bars run the following way
         # There is a progress bar timer that times out every 2s
@@ -139,6 +140,14 @@ class Ui_CalibrationProtocol(object):
         self.pbar_timer.start(2000)
         self.status_timer.start(self.time*60*1000)
     
+    def onClickStop(self):
+        """Signals the script that stop was clicked, to home the device"""
+        self.gui_controller.areYouSureMsg('stop')
+        if self.gui_controller.is_sure:
+            self.gui_controller.is_sure = None
+            self.gui_controller.stop_clicked()
+            self.CalibrationProtocol.close()
+
     def onClickDone(self):
         """Close the window when calibration is completed"""
         self.CalibrationProtocol.close()
