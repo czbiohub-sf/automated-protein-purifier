@@ -248,6 +248,7 @@ class Ui_MainWindow(object):
         self.columnsize_combo.activated.connect(self.onSelect_columnSize)
 
         self.update_calib_disp(self.gui_controller.actualvol1mL, 10)
+        self.columnsize = '1mL'
 
     def update_calib_disp(self, actual_val, expected_val):
         """Update the expected and actual values for the flow volume"""
@@ -262,10 +263,13 @@ class Ui_MainWindow(object):
         self.p4_expected.setText('{}'.format(expected_val))
 
     def onSelect_columnSize(self):
+        """Update the default parameter display based on the column size selected"""
         if self.columnsize_combo.currentIndex() == 0:
+            self.columnsize = '1mL'
             actual_val = self.gui_controller.actualvol1mL
             expected_val = 10
         else:
+            self.columnsize = '5mL'
             actual_val = self.gui_controller.actualvol5mL
             expected_val = 25
         
@@ -273,7 +277,7 @@ class Ui_MainWindow(object):
 
     def onClick_calib_protocol(self):
         self.calib = QtWidgets.QMainWindow()
-        self.calib_ui = Ui_CalibrationProtocol(self.calib)
+        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize)
         self.calib.show()
 
     def onClick_sim_btn(self):

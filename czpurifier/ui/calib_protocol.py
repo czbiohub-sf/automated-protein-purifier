@@ -2,10 +2,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_CalibrationProtocol(object):
-    def __init__(self, CalibrationProtocol):
+    def __init__(self, CalibrationProtocol, columnsize):
         """Runs the calibration protocol used to calculate the correction factor"""
         self.CalibrationProtocol = CalibrationProtocol
+        self.columnsize = columnsize
         self.setupUi(self.CalibrationProtocol)
+        self.initEvents()
 
     ## Designer Generated Code ##
     def setupUi(self, CalibrationProtocol):
@@ -74,6 +76,8 @@ class Ui_CalibrationProtocol(object):
         self.start_btn.setText(_translate("CalibrationProtocol", "START"))
 
     ## End of designer generated code ##
+    def initEvents(self):
+        self.column_size_lbl.setText(self.columnsize)
 
 
 if __name__ == "__main__":
