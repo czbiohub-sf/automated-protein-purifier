@@ -327,7 +327,7 @@ class Ui_MainWindow(object):
         Opens the other scripts window
         """
         self.oth_sc_window = QtWidgets.QMainWindow()
-        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window, self.gui_controller.device_process)
+        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window, self.gui_controller.device_process, self.columnsize, self.percolumncalib())
         self.oth_sc_window.show() 
     
     def onClick_close_btn(self):

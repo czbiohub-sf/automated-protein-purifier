@@ -8,8 +8,10 @@ from time import sleep
 
 
 class Ui_CustomProtocol(object):
-    def __init__(self, CustomProtocol, dev_process):
+    def __init__(self, CustomProtocol, dev_process, columnsize, percolumncalib):
         self.CustomProtocol = CustomProtocol
+        self.columnsize = columnsize
+        self.percolumncalib = percolumncalib
         signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
@@ -80,26 +82,6 @@ class Ui_CustomProtocol(object):
         self.num_col_combo_box.addItem("")
         self.num_col_combo_box.addItem("")
         self.horizontalLayout_13.addWidget(self.num_col_combo_box)
-        self.col_vol_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.col_vol_lbl.sizePolicy().hasHeightForWidth())
-        self.col_vol_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.col_vol_lbl.setFont(font)
-        self.col_vol_lbl.setStyleSheet("")
-        self.col_vol_lbl.setObjectName("col_vol_lbl")
-        self.horizontalLayout_13.addWidget(self.col_vol_lbl)
-        self.col_vol_combo_box = QtWidgets.QComboBox(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.col_vol_combo_box.setFont(font)
-        self.col_vol_combo_box.setObjectName("col_vol_combo_box")
-        self.col_vol_combo_box.addItem("")
-        self.col_vol_combo_box.addItem("")
-        self.horizontalLayout_13.addWidget(self.col_vol_combo_box)
         self.verticalLayout_3.addLayout(self.horizontalLayout_13)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -356,9 +338,6 @@ class Ui_CustomProtocol(object):
         self.num_col_combo_box.setItemText(1, _translate("CustomProtocol", "2"))
         self.num_col_combo_box.setItemText(2, _translate("CustomProtocol", "3"))
         self.num_col_combo_box.setItemText(3, _translate("CustomProtocol", "4"))
-        self.col_vol_lbl.setText(_translate("CustomProtocol", "Column Volume: "))
-        self.col_vol_combo_box.setItemText(0, _translate("CustomProtocol", "1 mL"))
-        self.col_vol_combo_box.setItemText(1, _translate("CustomProtocol", "5 mL"))
         self.label_10.setText(_translate("CustomProtocol", "Repeat: "))
         self.rep_num_lbl.setText(_translate("CustomProtocol", "1"))
         self.add_step_btn.setText(_translate("CustomProtocol", "+"))
@@ -488,9 +467,8 @@ class Ui_CustomProtocol(object):
         ----------------------------------
         [[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
         input_params = []
-        self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
         rep = int(self.rep_num_lbl.text())
-        input_params.append([self.num_col_combo_box.currentIndex()+1, self.col_size, rep])
+        input_params.append([self.num_col_combo_box.currentIndex()+1, self.columnsize, rep])
         for c in self.step_widget_objs:
             inp = []
             if c.port_combo_box.isEnabled():
@@ -527,7 +505,6 @@ class Ui_CustomProtocol(object):
 
     def _set_param_enable(self, is_enabled):
         """Enables/Disables all input parameters"""
-        self.col_vol_combo_box.setEnabled(is_enabled)
         self.num_col_combo_box.setEnabled(is_enabled)
         self.rep_num_slider.setEnabled(is_enabled)
         for w in self.step_widgets:
@@ -554,8 +531,8 @@ class Ui_CustomProtocol(object):
         7. Run the process
         """
         if self.gui_controller.checkEmptyQLines(self.get_step_qlines()):
-            self.col_size = 1 if self.col_vol_combo_box.currentIndex() == 0 else 5
-            self.gui_controller.columnsize = self.col_size
+            col_size = 1 if self.columnsize == '1mL' else 5
+            self.gui_controller.columnsize = col_size
             self.startbufferWdw()
             self.check_is_sure_timer.start(1000)
     

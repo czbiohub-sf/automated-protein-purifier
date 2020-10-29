@@ -5,13 +5,12 @@ from os import kill
 from command_wrappers import UICommands
 
 class RunCustomProtocol():
-    def __init__(self, input_param, fractions, buffer_calib, ip, gui_pid):
+    def __init__(self, input_param, calib_list, fractions, buffer_calib, ip, gui_pid):
         """[[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
 
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
         self.gui_pid = gui_pid
-        input_param[0][1] = '1mL' if input_param[0][1] == 1 else '5mL'
         self.ui = UICommands()
         self.ui.connect(input_param[0][1], ip, input_param[0][0])
 
