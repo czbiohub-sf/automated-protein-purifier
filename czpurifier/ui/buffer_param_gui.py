@@ -367,6 +367,7 @@ class Ui_BuffersWindow(object):
         self.load_vol.setText('{}'.format(total_buffers['LOAD_BUFFER']))
         self.wash_vol.setText('{}'.format(total_buffers['WASH']))
         self.elution_vol.setText('{}'.format(total_buffers['ELUTION']))
+        self.load_volume_needed.setText('{} mL'.format(total_buffers['LOAD']))
 
     def updateDefaultFC(self):
         """Displays the default flow rate correction % on start"""

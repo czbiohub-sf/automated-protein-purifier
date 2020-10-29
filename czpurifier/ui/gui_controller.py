@@ -166,7 +166,7 @@ class GUI_Controller:
         protocol_buffers = {'BASE': 20, 'ELUTION': 1, ...}
         """
         total_buffers = {}
-        purging_buffers = {'BASE': 1, 'ELUTION': 1, 'WASH': 1, 'LOAD_BUFFER': 1}
+        purging_buffers = {'BASE': 1, 'ELUTION': 1, 'WASH': 1, 'LOAD_BUFFER': 1, 'LOAD': 1}
         cleanup_buffers = {'BASE': 10, 'LOAD_BUFFER': 10}
 
         for key in purging_buffers:

@@ -800,7 +800,7 @@ class Ui_Purification(object):
         it in mL need to multiply by the column size"""
         return  {'LOAD_BUFFER': int(self.equil_vol_val.text()),
                 'WASH': int(self.wash_vol_val.text()),
-                'ELUTION': int(self.elute_vol_val.text())}
+                'ELUTION': int(self.elute_vol_val.text()), 'LOAD': int(self.load_vol_val.text())}
 
     ## Enable/Disable Widgets On GUI ##
 
