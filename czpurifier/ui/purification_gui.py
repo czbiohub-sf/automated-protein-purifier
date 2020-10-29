@@ -603,7 +603,7 @@ class Ui_Purification(object):
         self.current_step_display_btn.setText(_translate("Purification", "--"))
         self.label_9.setText(_translate("Purification", "Status:"))
         self.status_display_btn.setText(_translate("Purification", "--"))
-        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Total Estimated Time: <..> min(s)"))
+        self.estimated_time_remaining_lbl.setText(_translate("Purification", "Estimated Time: <..> min(s)"))
         self.start_btn.setText(_translate("Purification", "START"))
         self.pause_btn.setText(_translate("Purification", "PAUSE"))
         self.hold_btn.setText(_translate("Purification", "HOLD"))
@@ -678,6 +678,9 @@ class Ui_Purification(object):
         #Timer for a delay between on start window pop up and checking result
         self.check_is_sure_timer = QtCore.QTimer()
         self.check_is_sure_timer.timeout.connect(self.check_is_sure_timer_handler)
+
+        #Timer to track the total time remaining
+        self.total_time_timer = QtCore.QTimer()
 
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
@@ -869,6 +872,10 @@ class Ui_Purification(object):
             remaining = self.status_timer.remainingTime()
             self.status_timer.stop()
             self.status_timer.setInterval(remaining)
+
+            total_remaining = self.total_time_timer.remainingTime()
+            self.total_time_timer.stop()
+            self.total_time_timer.setInterval(total_remaining)
             self._set_actionbtn_enable(False, True)
             if is_pause:
                 self.gui_controller.pause_clicked()
@@ -893,6 +900,7 @@ class Ui_Purification(object):
         self._set_actionbtn_enable(True, False)
         self.stop_btn.setEnabled(True)
         self.status_timer.start()
+        self.total_time_timer.start()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
@@ -951,6 +959,10 @@ class Ui_Purification(object):
             self.progressBar.setValue(percen_comp)
             self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
+        if self.total_time_timer.isActive():
+            lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(self.total_time_timer.remainingTime()/(1000*60))
+            self.estimated_time_remaining_lbl.setText(lbl)
+
     def get_current_step(self):
         """Used to display the step that is currently running"""
         return ['Setup and Purging','Equilibrate', 'Load', 'Wash', 'Elute', 'Running Clean Up']
@@ -979,7 +991,8 @@ class Ui_Purification(object):
             self._set_param_enable(False)
             init_params, calib_list = self._init_run_param()
             self.calc_step_times()
-            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
+            #self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
+            self.total_time_timer.start(sum(self.step_times)*1000)
             self.current_step_display_btn.setEnabled(True)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
