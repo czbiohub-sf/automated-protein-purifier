@@ -82,6 +82,7 @@ class GUI_Controller:
         
     def connect_to_simulator(self):
         """Connect to the simulator by opening a pub/sub connection at local ip"""
+        self.controller_ip = '127.0.0.1'
         self.device_process = Process(target=self._connect_simulator)
         self.device_process.daemon = True
         self.device_process.start()

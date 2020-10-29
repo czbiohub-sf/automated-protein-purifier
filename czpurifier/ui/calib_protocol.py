@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from gui_controller import GUI_Controller
+from signal import signal, SIGUSR1
 
 
 class Ui_CalibrationProtocol(object):
@@ -10,6 +11,7 @@ class Ui_CalibrationProtocol(object):
         self.gui_controller = GUI_Controller()
         self.setupUi(self.CalibrationProtocol)
         self.initEvents()
+        signal(SIGUSR1, self.calibrationComplete)
 
     ## Designer Generated Code ##
     def setupUi(self, CalibrationProtocol):
@@ -89,6 +91,17 @@ class Ui_CalibrationProtocol(object):
         TODO: start the progress bar"""
         self.start_btn.setEnabled(False)
         self.gui_controller.run_calibration_protocol(self.columnsize)
+    
+    def onClickDone(self):
+        """Close the window when calibration is completed"""
+        self.CalibrationProtocol.close()
+
+    def calibrationComplete(self, signalNumber, frame):
+        """Gets this signal when the calibration protcol is finished. Change the START button to done"""  
+        self.start_btn.disconnect()
+        self.start_btn.setEnabled(True)
+        self.start_btn.setText('DONE')
+        self.start_btn.clicked.connect(self.onClickDone)
 
 
 if __name__ == "__main__":
