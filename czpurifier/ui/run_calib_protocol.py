@@ -13,14 +13,12 @@ class RunCalibrationProtocol():
         """
 
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
-        """
         self.ui = UICommands()
         self.ui.connect(columnsize, ip, 4)
         
         pump_time = 10 if columnsize == '1mL' else 5
         self.run_calib(pump_time)
-        """
-        sleep(5)
+    
         kill(gui_pid, SIGUSR1)
 
     def run_calib(self, pump_time):

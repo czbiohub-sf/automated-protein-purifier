@@ -12,7 +12,7 @@ class RunCustomProtocol():
         # Setup
         self.gui_pid = gui_pid
         self.ui = UICommands()
-        self.ui.connect(input_param[0][1], ip, input_param[0][0])
+        self.ui.connect(input_param[0][1], ip, input_param[0][0], calib_list)
 
         self.buffers = ['WASH', 'LOAD_BUFFER', 'ELUTION', 'BASE']
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
