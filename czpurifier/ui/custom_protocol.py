@@ -498,8 +498,11 @@ class Ui_CustomProtocol(object):
         """Create a dic of all the buffers used and the volume of each"""
         total_buffers = {}
         for c in self.step_widget_objs:
-            if c.port_combo_box.isEnabled():
-                total_buffers.update({str(c.port_combo_box.currentText()): int(c.volume_val_lbl.text())})
+            key_name = str(c.port_combo_box.currentText()) if c.port_combo_box.isEnabled() else 'LOAD'
+            if key_name in total_buffers:
+                total_buffers[key_name] = total_buffers[key_name] + int(c.volume_val_lbl.text())
+            else:
+                total_buffers.update({key_name: int(c.volume_val_lbl.text())})
         return total_buffers
     
     def pump_times(self):
