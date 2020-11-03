@@ -30,7 +30,9 @@ class Ui_CalibrationProtocol(object):
         self.horizontalLayout.addItem(spacerItem)
         self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
         self.stop_btn.setMinimumSize(QtCore.QSize(85, 85))
-        self.stop_btn.setStyleSheet("QPushButton#stop_btn {border-radius:42;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\\nQPushButton:pressed#stop_btn{background-color:#A9A9A9}\\nQPushButton:disabled#stop_btn{background-color:#696969}")
+        self.stop_btn.setStyleSheet("QPushButton#stop_btn {border-radius:42;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\n"
+        "QPushButton:pressed#stop_btn{background-color:#A9A9A9}\n"
+        "QPushButton:disabled#stop_btn{background-color:#696969}")        
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout.addWidget(self.stop_btn)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -112,6 +114,7 @@ class Ui_CalibrationProtocol(object):
     ## End of designer generated code ##
     def initEvents(self):
         """Initialize buttons and text displays"""
+        self.stop_btn.setEnabled(False)
         self.column_size_lbl.setText(self.columnsize)
         self.start_btn.clicked.connect(self.onClickStart)
         self.stop_btn.clicked.connect(self.onClickStop)
@@ -134,9 +137,9 @@ class Ui_CalibrationProtocol(object):
         self.load_vol.setText('{} mL'.format(load_vol+2))
 
     def onClickStart(self):
-        """Start the calibration protocol
-        TODO: start the progress bar"""
+        """Start the calibration protocol"""
         self.start_btn.setEnabled(False)
+        self.stop_btn.setEnabled(True)
         self.gui_controller.run_calibration_protocol(self.columnsize, self.caliblist, self.num_cols)
         self.pbar_timer.start(2000)
         self.status_timer.start(self.time*60*1000)
