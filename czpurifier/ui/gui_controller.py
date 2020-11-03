@@ -50,6 +50,7 @@ class GUI_Controller:
         # The controller_ip is saved in the json file as pure1/pure2 based on the hardware
         # The controller_ip is overwritten to a local address if the simulation mode is selected
         self.controller_ip = self._p['PURIFIER_IP']['ip']
+        #self.controller_ip = '127.0.0.1'
         # Default actual per column volumes for 1mL col size
         self.actualvol1mL = [self._p['PUMP1']['1mL'], self._p['PUMP2']['1mL'], self._p['PUMP3']['1mL'], self._p['PUMP4']['1mL']]
         self.actualvol5mL = [self._p['PUMP1']['5mL'], self._p['PUMP2']['5mL'], self._p['PUMP3']['5mL'], self._p['PUMP4']['5mL']]
@@ -186,11 +187,6 @@ class GUI_Controller:
         for key in fc_percent:
             fc_percent[key] = round((self.columnsize + (fc_percent[key])/100)/self.columnsize, 2)
         self.flow_rate_correction = fc_percent
-    
-    def getET(self, protocol_times):
-        """Adds the time required for purgin and clean up to generate the total estimated time"""
-        total_time = sum(protocol_times)/60
-        return 'Estimated Time: {0:.2f} min(s)'.format(total_time)
     
     def getPumpTimes(self, protocol_times):
         """Add the purging time and the cleanup time to the pump times"""

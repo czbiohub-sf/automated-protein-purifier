@@ -991,7 +991,6 @@ class Ui_Purification(object):
             self._set_param_enable(False)
             init_params, calib_list = self._init_run_param()
             self.calc_step_times()
-            #self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
             self.total_time_timer.start(sum(self.step_times)*1000)
             self.current_step_display_btn.setEnabled(True)
             self.status_display_btn.setEnabled(True)

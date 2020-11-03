@@ -410,6 +410,9 @@ class Ui_CustomProtocol(object):
         self.pbar_timer = QtCore.QTimer()
         self.pbar_timer.timeout.connect(self.progress_bar_handler)
 
+        #Update Total Time Remaining
+        self.total_time_timer = QtCore.QTimer()
+
     def startProgressBar(self, signalNumber, frame):
         """Start the timer to display the status once purging is completed
         Enable the pause/hold buttons after purging is completed"""  
@@ -558,6 +561,9 @@ class Ui_CustomProtocol(object):
         self.gui_controller.areYouSureMsg(msg)
         if self.gui_controller.is_sure:
             self.stop_btn.setEnabled(False)
+            total_remaining = self.total_time_timer.remainingTime()
+            self.total_time_timer.stop()
+            self.total_time_timer.setInterval(total_remaining)
             self.gui_controller.is_sure = None
             self._set_actionbtn_enable(False, True)
             self.start_btn.disconnect()
@@ -584,6 +590,7 @@ class Ui_CustomProtocol(object):
         self._set_actionbtn_enable(True, False)
         self.stop_btn.setEnabled(True)
         self.gui_controller.resume_clicked()
+        self.total_time_timer.start()
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
@@ -654,6 +661,10 @@ class Ui_CustomProtocol(object):
             self.progressBar.setValue(percen_comp)
             self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
+        if self.total_time_timer.isActive():
+            lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(self.total_time_timer.remainingTime()/(1000*60))
+            self.estimated_time_remaining_lbl.setText(lbl)
+
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
         if self.gui_controller.is_sure:
@@ -667,9 +678,8 @@ class Ui_CustomProtocol(object):
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
-            #self.current_step_display_btn.setText('Setup And Purging Bubbles')
             self.pump_times()
-            self.estimated_time_remaining_lbl.setText(self.gui_controller.getET(self.step_times))
+            self.total_time_timer.start(sum(self.step_times)*1000)
             self.create_step_label()
             self.pbar_timer.start(2000)
             self.current_step_display_btn.setText(self.step_output[self.current_step])
