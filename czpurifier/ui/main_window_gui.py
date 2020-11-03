@@ -264,6 +264,7 @@ class Ui_MainWindow(object):
 
         self.update_calib_disp(self.gui_controller.actualvol1mL, 10)
         self.columnsize = '1mL'
+        self.comboBox.setCurrentIndex(3)
 
     def update_calib_disp(self, actual_val, expected_val):
         """Update the expected and actual values for the flow volume"""

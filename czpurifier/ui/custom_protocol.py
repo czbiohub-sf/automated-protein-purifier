@@ -375,6 +375,7 @@ class Ui_CustomProtocol(object):
         self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
         self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
         self.stop_btn.clicked.connect(self.onClickStop)
+        self.num_col_combo_box.setCurrentIndex(3)
 
         self.pause_btn.setEnabled(False)
         self.stop_btn.setEnabled(False)
