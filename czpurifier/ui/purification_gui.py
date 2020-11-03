@@ -959,6 +959,10 @@ class Ui_Purification(object):
             self.progressBar.setValue(percen_comp)
             self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
+        # Disable skip to next on clean up
+        if self.protocol_step == 5:
+            self.skip_btn.setEnabled(False)
+
         if self.total_time_timer.isActive():
             lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(self.total_time_timer.remainingTime()/(1000*60))
             self.estimated_time_remaining_lbl.setText(lbl)
