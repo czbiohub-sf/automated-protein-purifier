@@ -256,8 +256,8 @@ class Ui_MainWindow(object):
     def initEvents(self):
         """Initialize all buttons"""
         self.run_calib_prot_btn.clicked.connect(self.onClick_calib_protocol)
-        self.purification_btn.clicked.connect(self.onClick_purification_btn)
-        self.otherscripts_btn.clicked.connect(self.onClick_otherscripts_btn)
+        self.purification_btn.clicked.connect(lambda: self.percolumncalib(True))
+        self.otherscripts_btn.clicked.connect(lambda: self.percolumncalib(False))
         self.close_btn.clicked.connect(self.onClick_close_btn)
         self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
         self.columnsize_combo.activated.connect(self.onSelect_columnSize)
@@ -265,6 +265,14 @@ class Ui_MainWindow(object):
         self.update_calib_disp(self.gui_controller.actualvol1mL, 10)
         self.columnsize = '1mL'
         self.comboBox.setCurrentIndex(3)
+        self.p1_actual.setValidator(QtGui.QDoubleValidator())
+        self.p2_actual.setValidator(QtGui.QDoubleValidator())
+        self.p3_actual.setValidator(QtGui.QDoubleValidator())
+        self.p4_actual.setValidator(QtGui.QDoubleValidator())
+
+        # Timer needed between checking for correct input and opening the new window
+        self.start_protocol_timer = QtCore.QTimer()
+        self.start_protocol_timer.timeout.connect(self.startProtocol)
 
     def update_calib_disp(self, actual_val, expected_val):
         """Update the expected and actual values for the flow volume"""
@@ -336,7 +344,7 @@ class Ui_MainWindow(object):
         Opens the purification window 
         """
         self.purifier = QtWidgets.QMainWindow()
-        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process, self.columnsize, self.percolumncalib())
+        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process, self.columnsize, self.percolumn)
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
@@ -344,7 +352,7 @@ class Ui_MainWindow(object):
         Opens the other scripts window
         """
         self.oth_sc_window = QtWidgets.QMainWindow()
-        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window, self.gui_controller.device_process, self.columnsize, self.percolumncalib())
+        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window, self.gui_controller.device_process, self.columnsize, self.percolumn)
         self.oth_sc_window.show() 
     
     def onClick_close_btn(self):
@@ -353,16 +361,38 @@ class Ui_MainWindow(object):
         """
         quit()
 
-    def percolumncalib(self):
+    def percolumncalib(self, is_basic_purification):
         """Create the list of per column calibration factor based on the input values in the GUI"""
-        expected = 10 if self.columnsize == '1mL' else 25
-        percolumn = []
-        percolumn.append(expected/float(self.p1_actual.text()))
-        percolumn.append(expected/float(self.p2_actual.text()))
-        percolumn.append(expected/float(self.p3_actual.text()))
-        percolumn.append(expected/float(self.p4_actual.text()))
+        try:
+            expected = 10 if self.columnsize == '1mL' else 25
+            self.percolumn = []
+            self.percolumn.append(expected/float(self.p1_actual.text()))
+            self.percolumn.append(expected/float(self.p2_actual.text()))
+            self.percolumn.append(expected/float(self.p3_actual.text()))
+            self.percolumn.append(expected/float(self.p4_actual.text()))
+            self.start_protocol_timer.start(500)
+            self.is_basic_purification = is_basic_purification
+        except ZeroDivisionError:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Error! Require non-zero actual volume for pumps!')
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
+        except ValueError:
+            msg = QtWidgets.QMessageBox()
+            msg.setText('Error! Actual Volume can\'t be empty!')
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.exec()
 
-        return percolumn       
+    def startProtocol(self):
+        """Starts the protocol window after the wait time passes
+        Wait time required for pyqt widgets"""
+        if self.is_basic_purification:
+            self.onClick_purification_btn()
+        else:
+            self.onClick_otherscripts_btn()
+        self.start_protocol_timer.stop()
 
 if __name__ == "__main__":
     import sys
