@@ -683,6 +683,7 @@ class Ui_Purification(object):
 
         #Timer to track the total time remaining
         self.total_time_timer = QtCore.QTimer()
+        self.total_time_timer.timeout.connect(self.total_time_handler)
 
         self.fraction_collector_window_on = True
 
@@ -992,6 +993,11 @@ class Ui_Purification(object):
             log_end = self.log_output_txtbox.verticalScrollBar().maximum()
             self.log_output_txtbox.verticalScrollBar().setValue(log_end)
         self.log_output = output
+    
+    def total_time_handler(self):
+        self.total_time_timer.stop()
+        lbl = 'Less than a minute remaining'
+        self.estimated_time_remaining_lbl.setText(lbl)
     
     def check_is_sure_timer_handler(self):
         """Timer is ran after start button is clicked. There needs to be a short delay

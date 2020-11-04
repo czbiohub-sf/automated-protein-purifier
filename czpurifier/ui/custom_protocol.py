@@ -412,6 +412,7 @@ class Ui_CustomProtocol(object):
 
         #Update Total Time Remaining
         self.total_time_timer = QtCore.QTimer()
+        self.total_time_timer.timeout.connect(self.total_time_handler)
 
     def startProgressBar(self, signalNumber, frame):
         """Start the timer to display the status once purging is completed
@@ -668,6 +669,11 @@ class Ui_CustomProtocol(object):
             lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(self.total_time_timer.remainingTime()/(1000*60))
             self.estimated_time_remaining_lbl.setText(lbl)
 
+    def total_time_handler(self):
+        self.total_time_timer.stop()
+        lbl = 'Less than a minute remaining'
+        self.estimated_time_remaining_lbl.setText(lbl)
+        
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout"""
         if self.gui_controller.is_sure:
