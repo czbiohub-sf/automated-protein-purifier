@@ -571,14 +571,12 @@ class Ui_Purification(object):
         self.equilibrate_lbl.setText(_translate("Purification", "Equilibrate"))
         self.equilibrate_vol_lbl.setText(_translate("Purification", "Volume:"))
         self.equilibriate_flowpath_lbl.setText(_translate("Purification", "Flow Path:"))
-        self.equil_vol_val.setInputMask(_translate("Purification", "99999"))
         self.label.setText(_translate("Purification", "CV"))
         self.equil_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.equil_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
         self.load_lbl.setText(_translate("Purification", "Load"))
         self.load_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_3.setText(_translate("Purification", "Flow Path:"))
-        self.load_vol_val.setInputMask(_translate("Purification", "99999"))
         self.label_2.setText(_translate("Purification", "CV"))
         self.load_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.load_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
@@ -586,7 +584,6 @@ class Ui_Purification(object):
         self.wash_lbl.setText(_translate("Purification", "Wash"))
         self.wash_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_4.setText(_translate("Purification", "Flow Path:"))
-        self.wash_vol_val.setInputMask(_translate("Purification", "99999"))
         self.label_6.setText(_translate("Purification", "CV"))
         self.wash_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.wash_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
@@ -594,7 +591,6 @@ class Ui_Purification(object):
         self.elute_lbl.setText(_translate("Purification", "Elute"))
         self.elute_ph_lbl.setText(_translate("Purification", "Volume:"))
         self.label_5.setText(_translate("Purification", "Flow Path:"))
-        self.elute_vol_val.setInputMask(_translate("Purification", "99999"))
         self.label_7.setText(_translate("Purification", "CV"))
         self.elute_flowpath.setItemText(0, _translate("Purification", "Pre Column Waste"))
         self.elute_flowpath.setItemText(1, _translate("Purification", "Post Column Waste"))
@@ -655,6 +651,12 @@ class Ui_Purification(object):
         self.current_step_display_btn.setEnabled(False)
         self.status_display_btn.setEnabled(False)
 
+        # Set decimal validators for all text box
+        self.equil_vol_val.setValidator(QtGui.QDoubleValidator())
+        self.load_vol_val.setValidator(QtGui.QDoubleValidator())
+        self.wash_vol_val.setValidator(QtGui.QDoubleValidator())
+        self.elute_vol_val.setValidator(QtGui.QDoubleValidator())
+        
         # Create all the flowpathway objects on init
         for i in range(4):
             self.gui_controller.flowpathwayClicked(i, 1)
