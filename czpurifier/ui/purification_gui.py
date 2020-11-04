@@ -684,6 +684,8 @@ class Ui_Purification(object):
         #Timer to track the total time remaining
         self.total_time_timer = QtCore.QTimer()
 
+        self.fraction_collector_window_on = True
+
     def setDefaultParam(self):
         """Sets the default input parameters that are on the json file"""
         self.num_col_combo_box.setCurrentIndex(self.gui_controller.default_param[0]-1)
@@ -698,6 +700,11 @@ class Ui_Purification(object):
         self.elute_vol_slider.setSliderPosition(self.gui_controller.default_param[4])
         self.last_flowpath = [0]*4
 
+        self.fraction_collector_window_on = False
+        self.equil_flowpath.setCurrentIndex(1)
+        self.load_flowpath.setCurrentIndex(1)
+        self.wash_flowpath.setCurrentIndex(1)
+        self.elute_flowpath.setCurrentIndex(2)
         # Auto click the combo boxes on start to initialize all the fraction objs
         for i in range(4):
             self.onClickFlowPath(i)
@@ -739,11 +746,12 @@ class Ui_Purification(object):
                 if max_vol == -1:
                     # volume is okay
                     disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
-                    self.frac_wdw = QtWidgets.QMainWindow()
-                    self.frac_ui = Ui_FractionColumn(self.frac_wdw)
-                    self.frac_wdw.show()
-                    self.frac_ui.correct_frac_col_design()
-                    self.frac_ui.display_selected(disp)
+                    if self.fraction_collector_window_on:
+                        self.frac_wdw = QtWidgets.QMainWindow()
+                        self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+                        self.frac_wdw.show()
+                        self.frac_ui.correct_frac_col_design()
+                        self.frac_ui.display_selected(disp)
                     self.fraction_widgets_enabler(step_index, False)
                 else:
                     # volume not available
