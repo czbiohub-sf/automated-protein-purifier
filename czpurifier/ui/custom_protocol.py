@@ -827,7 +827,6 @@ class AddStep():
         self.port_combo_box.setItemText(2, _translate("CustomProtocol", "ELUTION"))
         self.port_combo_box.setItemText(3, _translate("CustomProtocol", "BASE"))
         self.label_2.setText(_translate("CustomProtocol", "CV"))
-        self.volume_val_lbl.setInputMask(_translate("CustomProtocol", "9999"))
         self.step_num.setText(_translate("CustomProtocol", "{}".format(step_no)))
         ## Add title for any new widgets above this line
 
@@ -841,6 +840,7 @@ class AddStep():
                                                 self.port_combo_box))
         self.flowpath_combo_box.activated.connect(self.onSelectFlowPath)
         self.onSelectFlowPath(0)
+        self.volume_val_lbl.setValidator(QtGui.QDoubleValidator())
 
     def slider_changed(self, value, lbl):
         """Updates text label beside the slider when slider is moved"""

@@ -299,10 +299,6 @@ class Ui_BuffersWindow(object):
         self.base_vol.setText(_translate("BuffersWindow", "TextLabel"))
         self.label_6.setText(_translate("BuffersWindow", "WASH"))
         self.label_4.setText(_translate("BuffersWindow", "BASE"))
-        self.base_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.elution_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.load_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.wash_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
         self.label_3.setText(_translate("BuffersWindow", "Flow Rate Correction Factor (%)"))
         self.flow_rate_cor_question.setText(_translate("BuffersWindow", "?"))
         self.label_8.setText(_translate("BuffersWindow", "Load Volume Needed:"))
@@ -323,6 +319,11 @@ class Ui_BuffersWindow(object):
         self.flow_rate_cor_question.clicked.connect(self.onclickDefineFC)
 
         self.updateBuffersNeeded(protocol_buffers)
+
+        self.base_fc_txtbox.setValidator(QtGui.QDoubleValidator())
+        self.elution_fc_txtbox.setValidator(QtGui.QDoubleValidator())
+        self.load_fc_txtbox.setValidator(QtGui.QDoubleValidator())
+        self.wash_fc_txtbox.setValidator(QtGui.QDoubleValidator())
         
     def slider_changed(self, indx):
         """Updates text label beside the slider when slider is moved"""
