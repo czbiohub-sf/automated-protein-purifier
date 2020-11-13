@@ -255,9 +255,9 @@ class Ui_MainWindow(object):
 
     def initEvents(self):
         """Initialize all buttons"""
-        self.run_calib_prot_btn.clicked.connect(self.onClick_calib_protocol)
-        self.purification_btn.clicked.connect(lambda: self.percolumncalib(True))
-        self.otherscripts_btn.clicked.connect(lambda: self.percolumncalib(False))
+        self.run_calib_prot_btn.clicked.connect(lambda: self.percolumncalib(2))
+        self.purification_btn.clicked.connect(lambda: self.percolumncalib(0))
+        self.otherscripts_btn.clicked.connect(lambda: self.percolumncalib(1))
         self.close_btn.clicked.connect(self.onClick_close_btn)
         self.run_sim_btn.clicked.connect(self.onClick_sim_btn)
         self.columnsize_combo.activated.connect(self.onSelect_columnSize)
@@ -302,7 +302,7 @@ class Ui_MainWindow(object):
     def onClick_calib_protocol(self):
         num_cols = self.comboBox.currentIndex() + 1
         self.calib = QtWidgets.QMainWindow()
-        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumncalib(), num_cols)
+        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumn, num_cols)
         self.calib.show()
 
     def onClick_sim_btn(self):
@@ -362,7 +362,8 @@ class Ui_MainWindow(object):
         quit()
 
     def percolumncalib(self, is_basic_purification):
-        """Create the list of per column calibration factor based on the input values in the GUI"""
+        """Create the list of per column calibration factor based on the input values in the GUI
+        Initiated when either basic purification, column calibration or other script button is clicked"""
         try:
             expected = 10 if self.columnsize == '1mL' else 25
             self.percolumn = []
@@ -388,10 +389,12 @@ class Ui_MainWindow(object):
     def startProtocol(self):
         """Starts the protocol window after the wait time passes
         Wait time required for pyqt widgets"""
-        if self.is_basic_purification:
+        if self.is_basic_purification == 0:
             self.onClick_purification_btn()
-        else:
+        elif self.is_basic_purification == 1:
             self.onClick_otherscripts_btn()
+        else:
+            self.onClick_calib_protocol()
         self.start_protocol_timer.stop()
 
 if __name__ == "__main__":
