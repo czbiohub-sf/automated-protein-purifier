@@ -10,7 +10,7 @@ from run_purification import RunPurification
 from run_custom_protocol import RunCustomProtocol
 from run_calib_protocol import RunCalibrationProtocol
 from fraction_col_gui import Ui_FractionColumn
-from PyQt5.QtWidgets import QMessageBox, QLineEdit
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QMainWindow
 from math import ceil
 
 log = logging.getLogger(__name__)
@@ -217,7 +217,7 @@ class GUI_Controller:
     ## Fraction Collector Methods ##
     ################################
 
-    def setFlowPath(flow_id, pathway, volume):
+    def setFlowPath(self, flow_id, pathway, volume):
         """Configures the flow pathway for the selected step
         flow_id: The unique id used to characterize the step
         pathway: Either one of the wastes or one of the collectors
@@ -229,20 +229,20 @@ class GUI_Controller:
             self.flowpathwayClicked(flow_id, col_limit)
 
             max_vol = self.okay_vol_checker(volume*self.columnsize, col_limit)
-                if max_vol == -1:
-                    # volume is okay
-                    selected_columns = self.fractionCollectorSel(step_index, vol, col_size)
-                    self._dispFracFlow(selected_columns)
-                else:
-                    self.vol_exceeds_msg(max_vol)
+            if max_vol == -1:
+                # volume is okay
+                selected_columns = self.fractionCollectorSel(flow_id, volume*self.columnsize, col_limit)
+                self._dispFracFlow(selected_columns)
+            else:
+                self.vol_exceeds_msg(max_vol)
     
     def _dispFracFlow(self, selected_columns):
         """Display the fraction collector window"""
-        self.frac_wdw = QtWidgets.QMainWindow()
+        self.frac_wdw = QMainWindow()
         self.frac_ui = Ui_FractionColumn(self.frac_wdw)
         self.frac_wdw.show()
         self.frac_ui.correct_frac_col_design()
-        self.frac_ui.display_selected(selected_columns)   
+        self.frac_ui.display_selected(selected_columns)
 
     def init_fraction_collector_params(self):
         self.frac_col_sel = [0]*10
@@ -254,14 +254,22 @@ class GUI_Controller:
         if id not in self.fracflow_objs:
             self.fracflow_objs.update({id: FractionsSelected(id, col_limit)})
 
-    def fractionCollectorSel(self, id, vol, col_size):
+    def fractionCollectorSel(self, id, vol, col_limit):
         """id: unique identifier for the step selecting fraction collector
-        vol: the volume flowing through the fraction collector
-        col_size: either 1 or 5 or 50"""
-        pathway_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
-        num_needed = ceil(vol/col_size)
-        last_volume = vol - (col_size*(num_needed-1))
-        pathway_array = self.fracflow_objs[id].add_path(pathway_array, col_size, num_needed, last_volume)
+        vol: the volume flowing through the fraction collector in mL
+        col_limit: The max volume each column can handle"""
+        pathway_array = self.flow_col_sel if col_limit == 50 else self.frac_col_sel
+        num_needed = ceil(vol/col_limit)
+        # The volume for the last collector may be less than the col_limit
+        # The last volume is recorded in CV
+        last_volume = (vol - (col_limit*(num_needed-1)))/self.columnsize
+        # the col limit is fixed 50mL for the flow through 
+        # for fraction collector the column limit is dep on the column size
+        if col_limit == 50:
+            col_limit_cv = 50 if self.columnsize == 1 else 10
+        else:
+            col_limit_cv = 1
+        pathway_array = self.fracflow_objs[id].add_path(pathway_array, col_limit_cv, num_needed, last_volume)
         return self.fracflow_objs[id].selectedList
 
     def okay_vol_checker(self, vol, col_limit):
@@ -273,7 +281,7 @@ class GUI_Controller:
         -1 : There is available space left in the collector
         > 0 : Max volume that is left in the collector (in mL)
         """
-        vol_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
+        vol_array = self.flow_col_sel if col_limit == 50 else self.frac_col_sel
         if vol_array.count(0) >= ceil(vol/col_limit):
             return -1
         return col_limit*(vol_array.count(0))
@@ -310,18 +318,29 @@ class FractionsSelected():
         self.is_frac = None
     
     def _created_emptySelList(self, col_limit):
-        """Create the empty selectedList. The length can change based on the dropdown selection"""
+        """Create the empty selectedList. The length can change based on the dropdown selection
+        Accepts column limit in either mL or CV"""
         # if col_limit > 5 it means the flow path is the flow through column
-        array_len = 4 if col_limit == 50 else 10
+        array_len = 4 if col_limit > 5 else 10
         self.selectedList = [0]*array_len
         self.is_flow = True if array_len == 4 else False
 
-    def add_path(self, current_path, col_size, num_needed, last_volume):
+    def add_path(self, current_path, col_limit_cv, num_needed, last_volume):
         """current_path: [50,0,0,0] The fractions that are already occupied
-        col_size: Either 1 or 5 or 50 (the max volume)
+        col_limit_cv: Either 1, 50 or 10 depending on the pathway and column size
         num_needed: The number of fractions needed to be added
-        last_volume: The volume in the last fraction (might be less than col_size)"""
-        self._created_emptySelList(col_size)
+        last_volume: The volume in the last fraction (might be less than the column limit) in CV
+
+        Updates 2 lists:
+        1. The current path to display in the fraction collector window
+        2. The complete path including other selections of the fraction collector, to keep track of the 
+        overall volume left
+
+        Return
+        --------------------------
+        The fractions for the current path -> used to display in the fraction collector window
+        """
+        self._created_emptySelList(col_limit_cv)
         num_filled = 0
         for i in range(len(current_path)):
             if current_path[i] == 0:
@@ -330,8 +349,8 @@ class FractionsSelected():
                     current_path[i] = last_volume
                     self.selectedList[i] = last_volume
                 else:
-                    current_path[i] = col_size
-                    self.selectedList[i] = col_size
+                    current_path[i] = col_limit_cv
+                    self.selectedList[i] = col_limit_cv
             if num_filled == num_needed:
                 break
         return current_path

@@ -23,9 +23,10 @@ class Ui_Purification(object):
         dev_process: Either a process object, if in simulator mode, or None. Used 
         to ping the simulator process in the controller class
         """
+        self.columnsize = columnsize
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
-        self.columnsize = columnsize
+        self.gui_controller.columnsize = 1 if columnsize == '1mL' else 5
         self.percolumncalib = percolumncalib
         signal(SIGUSR1, self.startProgressBar)
         self.Purification = Purification
@@ -735,32 +736,12 @@ class Ui_Purification(object):
         step_index: The index of the step, used to determine whether to use fraction/flow column
         and which text box to use to get the volume to flow
         """
-        flow_path_combo = self.flowpath_combo[step_index]
-        curIndex = flow_path_combo.currentIndex()
+        flow_path_map = {0: 'PRECOLUMNWASTE', 1: 'POSTCOLUMNWASTE', 2: 'FLOWCOL', 3: 'FRACCOL'}
+        curIndex = self.flowpath_combo[step_index].currentIndex()
+        # ensure that reclicking the same flowpath twice does not mess the fraction collector pathway
         if self.last_flowpath[step_index] != curIndex:
-            self.last_flowpath[step_index] = curIndex
-            col_size = 1 if step_index == 3 else 50
-            self.gui_controller.flowpathwayClicked(step_index, col_size)
-            if curIndex == 2:
-                vol = int(self.vol_vals[step_index].text())
-                max_vol = self.gui_controller.okay_vol_checker(vol, col_size)
-                if max_vol == -1:
-                    # volume is okay
-                    disp = self.gui_controller.fractionCollectorSel(step_index, vol, col_size)
-                    if self.fraction_collector_window_on:
-                        self.frac_wdw = QtWidgets.QMainWindow()
-                        self.frac_ui = Ui_FractionColumn(self.frac_wdw)
-                        self.frac_wdw.show()
-                        self.frac_ui.correct_frac_col_design()
-                        self.frac_ui.display_selected(disp)
-                    self.fraction_widgets_enabler(step_index, False)
-                else:
-                    # volume not available
-                    self.gui_controller.vol_exceeds_msg(max_vol)
-                    flow_path_combo.setCurrentIndex(0)
-            else:
-                self.fraction_widgets_enabler(step_index, True)
-                self.gui_controller.fractionCollectorUnsel(step_index)
+            vol = int(self.vol_vals[step_index].text())
+            self.gui_controller.setFlowPath(step_index, flow_path_map[curIndex], vol)
     
     def fraction_widgets_enabler(self, step_index, is_enabled):
         """Enable/Disable widgets related to the fraction collector pathway"""
