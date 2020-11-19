@@ -15,6 +15,7 @@ class Ui_CustomProtocol(object):
         signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
+        self.gui_controller.columnsize = 1 if columnsize == '1mL' else 5
         self.setupUi(self.CustomProtocol)
         self.initEvents()
 
@@ -860,29 +861,24 @@ class AddStep():
             port.setEnabled(False)
 
     def onSelectFlowPath(self, current_index):
+        """
+        Control the enable/disable of widgets based on path selected
+        Call the fraction collector methods to display the selected fractions if pathway is 3
+        Parameters
+        ---------------------------------------
+        current_index: The index of the step, used to determine whether to use fraction/flow column
+        and which text box to use to get the volume to flow
+        """
+        flow_path_map = {0: 'PRECOLUMNWASTE', 1: 'POSTCOLUMNWASTE', 2: 'FLOWCOL', 3: 'FRACCOL'}
+        # ensure that reclicking the same flowpath twice does not mess the fraction collector pathway
         if self.last_flowpath != current_index:
             self.last_flowpath = current_index
-            c_size = 50 if current_index == 3 else 1
-            self.gui_controller.flowpathwayClicked(self.step_no, c_size)
-            self.gui_controller.fractionCollectorUnsel(self.step_no)
-            if current_index > 1:
-                vol = int(self.volume_val_lbl.text())
-                max_vol = self.gui_controller.okay_vol_checker(vol, c_size)
-                if max_vol == -1:
-                    # volume is okay
-                    disp = self.gui_controller.fractionCollectorSel(self.step_no, vol, c_size)
-                    self.frac_wdw = QtWidgets.QMainWindow()
-                    self.frac_ui = Ui_FractionColumn(self.frac_wdw)
-                    self.frac_wdw.show()
-                    self.frac_ui.correct_frac_col_design()
-                    self.frac_ui.display_selected(disp)
-                    self.fraction_widgets_enabler(False)
-                else:
-                    # volume not available
-                    self.gui_controller.vol_exceeds_msg(max_vol)
-                    self.flowpath_combo_box.setCurrentIndex(0)
-            else:
-                self.fraction_widgets_enabler(True)
+            vol = int(self.volume_val_lbl.text())
+            enable_widgets, rejected = self.gui_controller.setFlowPath(self.step_no, flow_path_map[current_index], vol)
+            self.fraction_widgets_enabler(enable_widgets)
+            if rejected:
+                self.flowpath_combo_box.setCurrentIndex(0)
+                self.last_flowpath = 0
         
     def fraction_widgets_enabler(self, is_enabled):
         self.volume_val_lbl.setEnabled(is_enabled)

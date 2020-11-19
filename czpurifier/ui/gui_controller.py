@@ -217,12 +217,11 @@ class GUI_Controller:
     ## Fraction Collector Methods ##
     ################################
 
-    def setFlowPath(self, flow_id, pathway, volume, flowpath_combo, frac_wdw = True):
+    def setFlowPath(self, flow_id, pathway, volume, frac_wdw = True):
         """Configures the flow pathway for the selected step
         flow_id: The unique id used to characterize the step
         pathway: Either one of the wastes or one of the collectors
         volume: The volume going through the pathway in CV
-        flowpath_combo: The combobox for the flowpath
         frac_wdw: Used to determine whether or not to display the fraction collector window
         Return
         -------------
@@ -230,6 +229,7 @@ class GUI_Controller:
         based on answer
         """
         enable_widgets = True
+        pathway_rejected = False
         # set the column limit in mL:
         #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
         col_limit = self.columnsize if pathway == 'FRACCOL' else 50
@@ -245,8 +245,8 @@ class GUI_Controller:
                 enable_widgets = False
             else:
                 self.vol_exceeds_msg(max_vol)
-                flowpath_combo.setCurrentIndex(0)
-        return enable_widgets
+                pathway_rejected = True
+        return enable_widgets, pathway_rejected
     
     def _dispFracFlow(self, selected_columns):
         """Display the fraction collector window"""

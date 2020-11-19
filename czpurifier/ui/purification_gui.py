@@ -744,9 +744,12 @@ class Ui_Purification(object):
         if self.last_flowpath[step_index] != curIndex:
             self.last_flowpath[step_index] = curIndex
             vol = int(self.vol_vals[step_index].text())
-            enable_widgets = self.gui_controller.setFlowPath(step_index, flow_path_map[curIndex], 
-                                                vol, self.flowpath_combo[step_index], self.fraction_collector_window_on)
+            enable_widgets, rejected = self.gui_controller.setFlowPath(step_index, flow_path_map[curIndex], 
+                                                vol, self.fraction_collector_window_on)
             self.fraction_widgets_enabler(step_index, enable_widgets)
+            if rejected:
+                self.flowpath_combo[step_index].setCurrentIndex(0)
+                self.last_flowpath[step_index] = 0
     
     def fraction_widgets_enabler(self, step_index, is_enabled):
         """Enable/Disable widgets related to the fraction collector pathway"""
