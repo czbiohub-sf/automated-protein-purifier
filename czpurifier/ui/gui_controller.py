@@ -234,6 +234,7 @@ class GUI_Controller:
         #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
         col_limit = self.columnsize if pathway == 'FRACCOL' else 50
         self.flowpathwayClicked(flow_id, col_limit)
+        self.fractionCollectorUnsel(flow_id)
         if pathway == 'FRACCOL' or pathway == 'FLOWCOL':
             max_vol = self.okay_vol_checker(volume*self.columnsize, col_limit)
             if max_vol == -1:
@@ -245,8 +246,6 @@ class GUI_Controller:
             else:
                 self.vol_exceeds_msg(max_vol)
                 flowpath_combo.setCurrentIndex(0)
-        else:
-            self.fractionCollectorUnsel(flow_id)
         return enable_widgets
     
     def _dispFracFlow(self, selected_columns):

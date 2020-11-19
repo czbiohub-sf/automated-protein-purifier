@@ -75,7 +75,7 @@ class RunPurification():
             correction_factor = [i*self.buffer_calib[p_name] for i in self.per_column_calib]
             self.ui.flowRateCorrection(correction_factor)
 
-        if parameters[1] == 2:
+        if parameters[1] > 1:
             self._run_fraction_col(fraction_param)
         else:
             # Open the waste 
