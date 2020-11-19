@@ -222,12 +222,11 @@ class GUI_Controller:
         flow_id: The unique id used to characterize the step
         pathway: Either one of the wastes or one of the collectors
         volume: The volume going through the pathway in CV"""
+        # set the column limit in mL:
+        #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
+        col_limit = self.columnsize if pathway == 'FRACCOL' else 50
+        self.flowpathwayClicked(flow_id, col_limit)
         if pathway == 'FRACCOL' or pathway == 'FLOWCOL':
-            # set the column limit in mL:
-            #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
-            col_limit = self.columnsize if pathway == 'FRACCOL' else 50
-            self.flowpathwayClicked(flow_id, col_limit)
-
             max_vol = self.okay_vol_checker(volume*self.columnsize, col_limit)
             if max_vol == -1:
                 # volume is okay
@@ -235,6 +234,8 @@ class GUI_Controller:
                 self._dispFracFlow(selected_columns)
             else:
                 self.vol_exceeds_msg(max_vol)
+        else:
+            self.fractionCollectorUnsel(flow_id)
     
     def _dispFracFlow(self, selected_columns):
         """Display the fraction collector window"""
