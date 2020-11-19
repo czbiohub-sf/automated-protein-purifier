@@ -217,12 +217,13 @@ class GUI_Controller:
     ## Fraction Collector Methods ##
     ################################
 
-    def setFlowPath(self, flow_id, pathway, volume, flowpath_combo):
+    def setFlowPath(self, flow_id, pathway, volume, flowpath_combo, frac_wdw = True):
         """Configures the flow pathway for the selected step
         flow_id: The unique id used to characterize the step
         pathway: Either one of the wastes or one of the collectors
         volume: The volume going through the pathway in CV
         flowpath_combo: The combobox for the flowpath
+        frac_wdw: Used to determine whether or not to display the fraction collector window
         Return
         -------------
         whether the fraction collector was updated or not, the widgets are enabled/disabled 
@@ -238,7 +239,8 @@ class GUI_Controller:
             if max_vol == -1:
                 # volume is okay
                 selected_columns = self.fractionCollectorSel(flow_id, volume*self.columnsize, col_limit)
-                self._dispFracFlow(selected_columns)
+                if frac_wdw:
+                    self._dispFracFlow(selected_columns)
                 enable_widgets = False
             else:
                 self.vol_exceeds_msg(max_vol)
