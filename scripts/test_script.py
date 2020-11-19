@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/samia.sama/Documents/Protein_Purifier/venv/bin/python3.7
 import logging
 from czpurifier.ui import UICommands
 
@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Setup
 ui = UICommands()
-ui.connect('1mL', 'pure1')
+ui.connect('1mL', '127.0.0.1')
 
 # Purge bubbles from lines
 ui.selectLoad()

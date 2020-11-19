@@ -14,6 +14,7 @@ setuptools.setup(
         'zmq',
         'pymotors@git+https://github.com/czbiohub/PyMotors#egg=pymotors',
         'pyconfighandler@git+https://github.com/czbiohub/PyConfigHandler#egg=pyconfighandler',
+        'vext.pyqt5',
     ],
     test_suite="tests",
     classifiers=[

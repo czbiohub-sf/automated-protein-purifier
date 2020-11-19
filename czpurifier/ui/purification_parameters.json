@@ -1,0 +1,55 @@
+{
+    "PURIFIER_IP":{
+        "ip": "pure2.local"
+    },
+    "PUMP1":{
+        "1mL": 10,
+        "5mL": 25
+    },
+    "PUMP2":{
+        "1mL": 10,
+        "5mL": 25
+    },
+    "PUMP3":{
+        "1mL": 10,
+        "5mL": 25
+    },
+    "PUMP4":{
+        "1mL": 10,
+        "5mL": 25
+    },
+    "NUM_COL": {
+        "default": 4
+    },
+    "EQUILIBRATE_VOLUME": {
+        "default": 15
+    },
+
+    "LOAD_VOLUME": {
+        "default": 50
+    },
+
+    "WASH_VOLUME": {
+        "default": 60
+    },
+
+    "ELUTE_VOLUME": {
+        "default": 10
+    },
+
+    "BASE": {
+        "default": 0
+    },
+
+    "LOAD_BUFFER": {
+        "default": 0
+    },
+
+    "WASH": {
+        "default": -3
+    },
+
+    "ELUTION": {
+        "default": -3
+    }
+}

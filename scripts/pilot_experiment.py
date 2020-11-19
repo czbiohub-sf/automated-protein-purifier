@@ -21,7 +21,7 @@ ui.pump(1)
 ui.selectPort('WASH')
 ui.pump(1)
 ui.selectPort('LOAD_BUFFER')
-ui.pump(1)
+ui.(1)
 ui.closePreColumnWaste()
 ui.selectFraction("Flow4")
 
