@@ -10,7 +10,7 @@ from run_purification import RunPurification
 from run_custom_protocol import RunCustomProtocol
 from run_calib_protocol import RunCalibrationProtocol
 from fraction_col_gui import Ui_FractionColumn
-from PyQt5.QtWidgets import QMessageBox, QLineEdit, QMainWindow
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QMainWindow, QComboBox
 from math import ceil
 
 log = logging.getLogger(__name__)
@@ -217,11 +217,18 @@ class GUI_Controller:
     ## Fraction Collector Methods ##
     ################################
 
-    def setFlowPath(self, flow_id, pathway, volume):
+    def setFlowPath(self, flow_id, pathway, volume, flowpath_combo):
         """Configures the flow pathway for the selected step
         flow_id: The unique id used to characterize the step
         pathway: Either one of the wastes or one of the collectors
-        volume: The volume going through the pathway in CV"""
+        volume: The volume going through the pathway in CV
+        flowpath_combo: The combobox for the flowpath
+        Return
+        -------------
+        whether the fraction collector was updated or not, the widgets are enabled/disabled 
+        based on answer
+        """
+        enable_widgets = True
         # set the column limit in mL:
         #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
         col_limit = self.columnsize if pathway == 'FRACCOL' else 50
@@ -232,10 +239,13 @@ class GUI_Controller:
                 # volume is okay
                 selected_columns = self.fractionCollectorSel(flow_id, volume*self.columnsize, col_limit)
                 self._dispFracFlow(selected_columns)
+                enable_widgets = False
             else:
                 self.vol_exceeds_msg(max_vol)
+                flowpath_combo.setCurrentIndex(0)
         else:
             self.fractionCollectorUnsel(flow_id)
+        return enable_widgets
     
     def _dispFracFlow(self, selected_columns):
         """Display the fraction collector window"""
