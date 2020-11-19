@@ -212,6 +212,16 @@ class GUI_Controller:
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec()
 
+    def setFlowPath(flow_id, pathway):
+        """Configures the flow pathway for the selected step
+        flow_id: The unique id used to characterize the step
+        pathway: Either one of the wastes or one of the collectors"""
+        if pathway == 'FRACCOL' or pathway == 'FLOWCOL':
+            # set the column limit in mL:
+            #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
+            col_limit = self.columnsize if pathway == 'FRACCOL' else 50
+            self.flowpathwayClicked(flow_id, col_limit)
+
     ################################
     ## Fraction Collector Methods ##
     ################################
@@ -221,10 +231,10 @@ class GUI_Controller:
         self.flow_col_sel = [0]*4
         self.fracflow_objs = {}
 
-    def flowpathwayClicked(self, id, col_size):
+    def flowpathwayClicked(self, id, col_limit):
         """id: unique identifier for the step selecting the flowpathway"""
         if id not in self.fracflow_objs:
-            self.fracflow_objs.update({id: FractionsSelected(id, col_size)})
+            self.fracflow_objs.update({id: FractionsSelected(id, col_limit)})
 
     def fractionCollectorSel(self, id, vol, col_size):
         """id: unique identifier for the step selecting fraction collector
@@ -265,18 +275,20 @@ class GUI_Controller:
         return param
 
 class FractionsSelected():
-    def __init__(self, id, col_size):
+    def __init__(self, id, col_limit):
         """id: Unique identifier of the step
         selectedList: [0,50,0,0] The list of fractions selected
         and the volume to fraction for the step
+        col_limit: The limit for each of the pathway (in mL)
         is_frac: Stores if the last flowpath was the fraction or the flow through"""
         self.id = id
-        self._created_emptySelList(col_size)
+        self._created_emptySelList(col_limit)
         self.is_frac = None
     
-    def _created_emptySelList(self, col_size):
+    def _created_emptySelList(self, col_limit):
         """Create the empty selectedList. The length can change based on the dropdown selection"""
-        array_len = 4 if col_size == 50 else 10
+        # if col_limit > 5 it means the flow path is the flow through column
+        array_len = 4 if col_limit == 50 else 10
         self.selectedList = [0]*array_len
         self.is_flow = True if array_len == 4 else False
 
