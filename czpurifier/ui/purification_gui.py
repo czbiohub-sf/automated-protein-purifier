@@ -740,6 +740,7 @@ class Ui_Purification(object):
         curIndex = self.flowpath_combo[step_index].currentIndex()
         # ensure that reclicking the same flowpath twice does not mess the fraction collector pathway
         if self.last_flowpath[step_index] != curIndex:
+            self.last_flowpath[step_index] = curIndex
             vol = int(self.vol_vals[step_index].text())
             self.gui_controller.setFlowPath(step_index, flow_path_map[curIndex], vol)
     
