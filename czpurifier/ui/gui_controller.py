@@ -9,6 +9,7 @@ from json import load
 from run_purification import RunPurification
 from run_custom_protocol import RunCustomProtocol
 from run_calib_protocol import RunCalibrationProtocol
+from fraction_col_gui import Ui_FractionColumn
 from PyQt5.QtWidgets import QMessageBox, QLineEdit
 from math import ceil
 
@@ -210,21 +211,38 @@ class GUI_Controller:
         msg.setText('Error! Fields cannot be empty!')
         msg.setIcon(QMessageBox.Warning)
         msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec()
+        msg.exec()                 
 
-    def setFlowPath(flow_id, pathway):
+    ################################
+    ## Fraction Collector Methods ##
+    ################################
+
+    def setFlowPath(flow_id, pathway, volume):
         """Configures the flow pathway for the selected step
         flow_id: The unique id used to characterize the step
-        pathway: Either one of the wastes or one of the collectors"""
+        pathway: Either one of the wastes or one of the collectors
+        volume: The volume going through the pathway in CV"""
         if pathway == 'FRACCOL' or pathway == 'FLOWCOL':
             # set the column limit in mL:
             #  1mL/5mL for fraction collector with 1mL/5mL columns, 50mL for FLOW regardless of column size 
             col_limit = self.columnsize if pathway == 'FRACCOL' else 50
             self.flowpathwayClicked(flow_id, col_limit)
 
-    ################################
-    ## Fraction Collector Methods ##
-    ################################
+            max_vol = self.okay_vol_checker(volume*self.columnsize, col_limit)
+                if max_vol == -1:
+                    # volume is okay
+                    selected_columns = self.fractionCollectorSel(step_index, vol, col_size)
+                    self._dispFracFlow(selected_columns)
+                else:
+                    self.vol_exceeds_msg(max_vol)
+    
+    def _dispFracFlow(self, selected_columns):
+        """Display the fraction collector window"""
+        self.frac_wdw = QtWidgets.QMainWindow()
+        self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+        self.frac_wdw.show()
+        self.frac_ui.correct_frac_col_design()
+        self.frac_ui.display_selected(selected_columns)   
 
     def init_fraction_collector_params(self):
         self.frac_col_sel = [0]*10
@@ -246,19 +264,25 @@ class GUI_Controller:
         pathway_array = self.fracflow_objs[id].add_path(pathway_array, col_size, num_needed, last_volume)
         return self.fracflow_objs[id].selectedList
 
-    def okay_vol_checker(self, vol, col_size):
-        """Checks if the volume exceeds the maximum"""
+    def okay_vol_checker(self, vol, col_limit):
+        """Checks if the volume exceeds the maximum
+        vol: The volume in mL to check
+        col_limit: The max volume each column can handle
+        Return
+        ---------------------
+        -1 : There is available space left in the collector
+        > 0 : Max volume that is left in the collector (in mL)
+        """
         vol_array = self.flow_col_sel if col_size == 50 else self.frac_col_sel
-        max_vol = col_size*len(vol_array)
-        if vol_array.count(0) >= ceil(vol/col_size):
+        if vol_array.count(0) >= ceil(vol/col_limit):
             return -1
-        return col_size*(vol_array.count(0))
+        return col_limit*(vol_array.count(0))
     
     def vol_exceeds_msg(self, limit):
         """Throws error if the capacity of the pathway is reached"""
         msg = QMessageBox()
         msg.setText("Error! Exceeds Capacity!")
-        msg.setInformativeText('Volume available in selected pathway is {} CV'.format(limit))
+        msg.setInformativeText('Volume available in selected pathway is {} mL'.format(limit))
         msg.setIcon(QMessageBox.Information)
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec()
