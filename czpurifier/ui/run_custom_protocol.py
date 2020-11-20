@@ -6,8 +6,10 @@ from command_wrappers import UICommands
 
 class RunCustomProtocol():
     def __init__(self, input_param, calib_list, fractions, buffer_calib, ip, gui_pid):
-        """[[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
-
+        """input_param = [[4, '1mL', 1], [2, 6, 0], [None, 1, 0], [2, 12, 2]]
+        input_param[0] = [num_columns, column_size, num_repeats]
+        input_param[1:] = [none:load 0/1/2/3: buffer, volume, flow_path]"""
+        
         logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # Setup
         self.gui_pid = gui_pid

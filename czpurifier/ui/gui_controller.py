@@ -274,7 +274,7 @@ class GUI_Controller:
         num_needed = ceil(vol/col_limit)
         # The volume for the last collector may be less than the col_limit
         # The last volume is recorded in CV
-        last_volume = (vol - (col_limit*(num_needed-1)))/self.columnsize
+        last_volume = int((vol - (col_limit*(num_needed-1)))/self.columnsize)
         # the col limit is fixed 50mL for the flow through 
         # for fraction collector the column limit is dep on the column size
         if col_limit == 50:
