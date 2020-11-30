@@ -2,7 +2,7 @@ import logging
 from time import sleep
 from signal import SIGUSR1
 from os import kill
-from command_wrappers import UICommands
+from czpurifier.ui.command_wrappers import UICommands
 
 class RunCalibrationProtocol():
     def __init__(self, columnsize, caliblist, num_cols, ip, gui_pid):

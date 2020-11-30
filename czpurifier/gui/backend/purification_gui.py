@@ -5,7 +5,7 @@ from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR1
 from time import sleep
 from math import ceil
-from gui_controller import GUI_Controller
+from czpurifier.gui.control import GUI_Controller
 
 class Ui_Purification(object):
     def __init__(self, Purification, dev_process, columnsize, percolumncalib):

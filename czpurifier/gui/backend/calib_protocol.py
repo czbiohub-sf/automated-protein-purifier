@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from gui_controller import GUI_Controller
+from czpurifier.gui.control import GUI_Controller
 from signal import signal, SIGUSR1
 
 

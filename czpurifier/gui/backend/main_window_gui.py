@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from purification_gui import Ui_Purification
 from custom_protocol import Ui_CustomProtocol
 from calib_protocol import Ui_CalibrationProtocol
-from gui_controller import GUI_Controller
+from czpurifier.gui.control import GUI_Controller
 import sys
 from time import sleep
 from multiprocessing import set_start_method
