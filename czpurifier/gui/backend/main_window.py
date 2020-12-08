@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from purification_gui import BackEnd_Purification
+from purification import BackEnd_Purification
 from custom_protocol import Ui_CustomProtocol
 from calib_protocol import Ui_CalibrationProtocol
 from czpurifier.gui.control import GUI_Controller
