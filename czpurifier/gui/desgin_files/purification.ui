@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>775</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -187,12 +187,6 @@
                     <property name="maximum">
                      <number>200</number>
                     </property>
-                    <property name="value">
-                     <number>0</number>
-                    </property>
-                    <property name="sliderPosition">
-                     <number>0</number>
-                    </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -217,15 +211,6 @@
                       <pointsize>15</pointsize>
                      </font>
                     </property>
-                    <property name="inputMask">
-                     <string>99999</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="maxLength">
-                     <number>5</number>
-                    </property>
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -239,7 +224,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>ml</string>
+                     <string>CV</string>
                     </property>
                    </widget>
                   </item>
@@ -362,9 +347,6 @@
                       <pointsize>15</pointsize>
                      </font>
                     </property>
-                    <property name="inputMask">
-                     <string>99999</string>
-                    </property>
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -378,7 +360,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>ml</string>
+                     <string>CV</string>
                     </property>
                    </widget>
                   </item>
@@ -403,7 +385,7 @@
                   </item>
                   <item>
                    <property name="text">
-                    <string>Fraction Collector</string>
+                    <string>Flow Through Collector</string>
                    </property>
                   </item>
                  </widget>
@@ -515,9 +497,6 @@
                       <pointsize>15</pointsize>
                      </font>
                     </property>
-                    <property name="inputMask">
-                     <string>99999</string>
-                    </property>
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -531,7 +510,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>ml</string>
+                     <string>CV</string>
                     </property>
                    </widget>
                   </item>
@@ -556,7 +535,7 @@
                   </item>
                   <item>
                    <property name="text">
-                    <string>Fraction Collector</string>
+                    <string>Flow Through Collector</string>
                    </property>
                   </item>
                  </widget>
@@ -635,9 +614,6 @@
                  <layout class="QHBoxLayout" name="horizontalLayout_11">
                   <item>
                    <widget class="QSlider" name="elute_vol_slider">
-                    <property name="maximum">
-                     <number>50</number>
-                    </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -662,9 +638,6 @@
                       <pointsize>15</pointsize>
                      </font>
                     </property>
-                    <property name="inputMask">
-                     <string>99999</string>
-                    </property>
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -678,7 +651,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>ml</string>
+                     <string>CV</string>
                     </property>
                    </widget>
                   </item>
@@ -699,6 +672,11 @@
                   <item>
                    <property name="text">
                     <string>Post Column Waste</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Flow Through Collector</string>
                    </property>
                   </item>
                   <item>
@@ -829,7 +807,7 @@ QPushButton:disabled#current_step_display_btn{background-color:#A9A9A9}</string>
 QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                 </property>
                 <property name="text">
-                 <string>Running</string>
+                 <string>--</string>
                 </property>
                </widget>
               </item>
@@ -857,9 +835,6 @@ QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                   <width>60</width>
                   <height>0</height>
                  </size>
-                </property>
-                <property name="text">
-                 <string>TextLabel</string>
                 </property>
                </widget>
               </item>
@@ -889,7 +864,7 @@ QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                </font>
               </property>
               <property name="text">
-               <string>Total Estimated Time: &lt;..&gt; min(s)</string>
+               <string>Estimated Time: &lt;..&gt; min(s)</string>
               </property>
              </widget>
             </item>

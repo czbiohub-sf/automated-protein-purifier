@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Purification(object):    
+class Ui_Purification(object):
     def setupUi(self, Purification):
         Purification.setObjectName("Purification")
         Purification.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -123,8 +123,6 @@ class Ui_Purification(object):
         font = QtGui.QFont()
         font.setPointSize(15)
         self.equil_vol_val.setFont(font)
-        self.equil_vol_val.setText("")
-        self.equil_vol_val.setMaxLength(5)
         self.equil_vol_val.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.equil_vol_val.setObjectName("equil_vol_val")
         self.horizontalLayout_8.addWidget(self.equil_vol_val)
@@ -581,3 +579,13 @@ class Ui_Purification(object):
         self.skip_btn.setText(_translate("Purification", "SKIP TO NEXT"))
         self.stop_btn.setText(_translate("Purification", "STOP"))
         self.close_btn.setText(_translate("Purification", "Close"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Purification = QtWidgets.QMainWindow()
+    ui = Ui_Purification()
+    ui.setupUi(Purification)
+    Purification.show()
+    sys.exit(app.exec_())
