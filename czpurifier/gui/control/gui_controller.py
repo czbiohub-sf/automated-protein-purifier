@@ -6,10 +6,8 @@ from czpurifier.middleware import SimulatorInterface, DeviceInterface
 from os import chdir, path, kill, getpid
 from signal import signal, SIGQUIT, SIGCONT, SIGUSR1, SIGTERM, SIGUSR2
 from json import load
-from run_purification import RunPurification
-from run_custom_protocol import RunCustomProtocol
-from run_calib_protocol import RunCalibrationProtocol
-from fraction_col_gui import Ui_FractionColumn
+from czpurifier.gui.scripts import RunPurification, RunCustomProtocol, RunCalibrationProtocol
+from czpurifier.gui.backend import BackEnd_FractionColumn
 from PyQt5.QtWidgets import QMessageBox, QLineEdit, QMainWindow, QComboBox
 from math import ceil
 
@@ -251,7 +249,7 @@ class GUI_Controller:
     def _dispFracFlow(self, selected_columns):
         """Display the fraction collector window"""
         self.frac_wdw = QMainWindow()
-        self.frac_ui = Ui_FractionColumn(self.frac_wdw)
+        self.frac_ui = BackEnd_FractionColumn(self.frac_wdw)
         self.frac_wdw.show()
         self.frac_ui.correct_frac_col_design()
         self.frac_ui.display_selected(selected_columns)

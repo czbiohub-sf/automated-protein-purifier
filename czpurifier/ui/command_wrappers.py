@@ -205,7 +205,6 @@ class UICommands():
     def _raisePauseFlag(self, signalNumber, frame):
         """Raise pause flag if SIGQUIT recieved"""
         self._pause_flag = True
-        return
     
     def _raiseHoldFlag(self, signalNumber, frame):
         """Raise hold flag if SIGUSR1 recieved"""
@@ -221,7 +220,6 @@ class UICommands():
     
     def _raiseSkipFlag(self, signalNumber, frame):
         self._skip_flag = True
-        return
 
     def _softStop(self, signalNumber, frame):
         """Safely disconnects the interface when stop is called"""
