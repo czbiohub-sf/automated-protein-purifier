@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification import BackEnd_Purification
 from custom_protocol import Ui_CustomProtocol
-from calib_protocol import Ui_CalibrationProtocol
+from calib_protocol import BackEnd_CalibrationWindow
 from czpurifier.gui.control import GUI_Controller
 from czpurifier.gui.frontend import Ui_MainWindow
 import sys
@@ -64,7 +64,7 @@ class BackEnd_MainWindow(Ui_MainWindow):
     def onClick_calib_protocol(self):
         num_cols = self.comboBox.currentIndex() + 1
         self.calib = QtWidgets.QMainWindow()
-        self.calib_ui = Ui_CalibrationProtocol(self.calib, self.columnsize, self.percolumn, num_cols)
+        self.calib_ui = BackEnd_CalibrationWindow(self.calib, self.columnsize, self.percolumn, num_cols)
         self.calib.show()
 
     def onClick_sim_btn(self):
