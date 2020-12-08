@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main_window.ui'
+# Form implementation generated from reading ui file 'desgin_files/main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.0
 #
@@ -247,3 +247,13 @@ class Ui_MainWindow(object):
         self.otherscripts_btn.setText(_translate("MainWindow", "Custom Protocol"))
         self.run_sim_btn.setText(_translate("MainWindow", "Run Simulation Mode"))
         self.close_btn.setText(_translate("MainWindow", "Close"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

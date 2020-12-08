@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Purification</class>
- <widget class="QMainWindow" name="Purification">
+ <class>PurificationWindow</class>
+ <widget class="QMainWindow" name="PurificationWindow">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

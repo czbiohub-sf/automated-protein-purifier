@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'buffer_parameters.ui'
+# Form implementation generated from reading ui file 'desgin_files/buffer_parameters.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.0
 #

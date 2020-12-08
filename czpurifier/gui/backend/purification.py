@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from czpurifier.gui.frontend import Ui_Purification
+from czpurifier.gui.frontend import Ui_PurificationWindow
 from fraction_col_gui import Ui_FractionColumn
 from buffer_parameters import BackEnd_BuffersWindow
 from os import chdir, path, getpid, kill
@@ -9,7 +9,7 @@ from math import ceil
 from czpurifier.gui.control import GUI_Controller
 
 
-class BackEnd_Purification(Ui_Purification):
+class BackEnd_Purification(Ui_PurificationWindow):
     def __init__(self, Purification, dev_process, columnsize, percolumncalib):
         """
         Contains the initialization and functionality of the purification tab
