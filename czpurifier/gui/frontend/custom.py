@@ -214,8 +214,8 @@ class Ui_CustomWindow(object):
         sizePolicy.setHeightForWidth(self.current_step_display_btn.sizePolicy().hasHeightForWidth())
         self.current_step_display_btn.setSizePolicy(sizePolicy)
         self.current_step_display_btn.setMinimumSize(QtCore.QSize(300, 25))
-        self.current_step_display_btn.setStyleSheet("QPushButton#cur_step_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}\n"
-"QPushButton:disabled#cur_step_btn{background-color:#A9A9A9}")
+        self.current_step_display_btn.setStyleSheet("QPushButton#current_step_display_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}\n"
+"QPushButton:disabled#current_step_display_btn{background-color:#A9A9A9}")
         self.current_step_display_btn.setObjectName("current_step_display_btn")
         self.horizontalLayout_2.addWidget(self.current_step_display_btn)
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)

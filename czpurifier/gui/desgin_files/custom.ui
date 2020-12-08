@@ -403,8 +403,8 @@ QPushButton:disabled#remove_step{background-color:#696969}</string>
                  </size>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">QPushButton#cur_step_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}
-QPushButton:disabled#cur_step_btn{background-color:#A9A9A9}</string>
+                 <string notr="true">QPushButton#current_step_display_btn {border-radius:10;border-width: 2px; background-color: #3CB371; font-size:14px;}
+QPushButton:disabled#current_step_display_btn{background-color:#A9A9A9}</string>
                 </property>
                 <property name="text">
                  <string>--</string>
