@@ -1,6 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from czpurifier.gui.frontend import Ui_PurificationWindow
-from fraction_col_gui import Ui_FractionColumn
 from buffer_parameters import BackEnd_BuffersWindow
 from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR1
