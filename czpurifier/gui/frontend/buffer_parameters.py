@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'buffer.ui'
+# Form implementation generated from reading ui file 'buffer_parameters.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.0
 #
@@ -151,7 +151,7 @@ class Ui_BuffersWindow(object):
         self.horizontalLayout.setContentsMargins(-1, 10, -1, 10)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.base_fc_slider = QtWidgets.QSlider(self.centralwidget)
-        self.base_fc_slider.setMinimum(1)
+        self.base_fc_slider.setMinimum(-10)
         self.base_fc_slider.setMaximum(10)
         self.base_fc_slider.setOrientation(QtCore.Qt.Horizontal)
         self.base_fc_slider.setObjectName("base_fc_slider")
@@ -162,7 +162,6 @@ class Ui_BuffersWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.base_fc_txtbox.sizePolicy().hasHeightForWidth())
         self.base_fc_txtbox.setSizePolicy(sizePolicy)
-        self.base_fc_txtbox.setText("")
         self.base_fc_txtbox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.base_fc_txtbox.setObjectName("base_fc_txtbox")
         self.horizontalLayout.addWidget(self.base_fc_txtbox)
@@ -171,7 +170,7 @@ class Ui_BuffersWindow(object):
         self.horizontalLayout_4.setContentsMargins(-1, 10, -1, 10)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.elution_fc_slider = QtWidgets.QSlider(self.centralwidget)
-        self.elution_fc_slider.setMinimum(1)
+        self.elution_fc_slider.setMinimum(-10)
         self.elution_fc_slider.setMaximum(10)
         self.elution_fc_slider.setOrientation(QtCore.Qt.Horizontal)
         self.elution_fc_slider.setObjectName("elution_fc_slider")
@@ -182,7 +181,6 @@ class Ui_BuffersWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.elution_fc_txtbox.sizePolicy().hasHeightForWidth())
         self.elution_fc_txtbox.setSizePolicy(sizePolicy)
-        self.elution_fc_txtbox.setText("")
         self.elution_fc_txtbox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.elution_fc_txtbox.setObjectName("elution_fc_txtbox")
         self.horizontalLayout_4.addWidget(self.elution_fc_txtbox)
@@ -191,7 +189,7 @@ class Ui_BuffersWindow(object):
         self.horizontalLayout_2.setContentsMargins(-1, 10, -1, 10)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.load_fc_slider = QtWidgets.QSlider(self.centralwidget)
-        self.load_fc_slider.setMinimum(1)
+        self.load_fc_slider.setMinimum(-10)
         self.load_fc_slider.setMaximum(10)
         self.load_fc_slider.setOrientation(QtCore.Qt.Horizontal)
         self.load_fc_slider.setObjectName("load_fc_slider")
@@ -210,7 +208,7 @@ class Ui_BuffersWindow(object):
         self.horizontalLayout_3.setContentsMargins(-1, 10, -1, 10)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.wash_fc_slider = QtWidgets.QSlider(self.centralwidget)
-        self.wash_fc_slider.setMinimum(1)
+        self.wash_fc_slider.setMinimum(-10)
         self.wash_fc_slider.setMaximum(10)
         self.wash_fc_slider.setOrientation(QtCore.Qt.Horizontal)
         self.wash_fc_slider.setObjectName("wash_fc_slider")
@@ -291,9 +289,9 @@ class Ui_BuffersWindow(object):
         BuffersWindow.setWindowTitle(_translate("BuffersWindow", "Buffer Parameters"))
         self.start_btn.setText(_translate("BuffersWindow", "START"))
         self.cancel_btn.setText(_translate("BuffersWindow", "CANCEL"))
-        self.you_sure_lbl.setText(_translate("BuffersWindow", "Are you sure you want to start?"))
+        self.you_sure_lbl.setText(_translate("BuffersWindow", "Fine tuning some parameters before starting"))
         self.label_5.setText(_translate("BuffersWindow", "LOAD_BUFFER"))
-        self.label_2.setText(_translate("BuffersWindow", "Volume Needed/ml"))
+        self.label_2.setText(_translate("BuffersWindow", "Volume Needed/mL"))
         self.label_7.setText(_translate("BuffersWindow", "ELUTION"))
         self.elution_vol.setText(_translate("BuffersWindow", "TextLabel"))
         self.load_vol.setText(_translate("BuffersWindow", "TextLabel"))
@@ -302,10 +300,6 @@ class Ui_BuffersWindow(object):
         self.base_vol.setText(_translate("BuffersWindow", "TextLabel"))
         self.label_6.setText(_translate("BuffersWindow", "WASH"))
         self.label_4.setText(_translate("BuffersWindow", "BASE"))
-        self.base_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.elution_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.load_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
-        self.wash_fc_txtbox.setInputMask(_translate("BuffersWindow", "###"))
         self.label_3.setText(_translate("BuffersWindow", "Flow Rate Correction Factor (%)"))
         self.flow_rate_cor_question.setText(_translate("BuffersWindow", "?"))
         self.label_8.setText(_translate("BuffersWindow", "Load Volume Needed:"))

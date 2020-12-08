@@ -75,7 +75,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Are you sure you want to start?</string>
+         <string>Fine tuning some parameters before starting</string>
         </property>
        </widget>
       </item>
@@ -117,7 +117,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Volume Needed/ml</string>
+         <string>Volume Needed/mL</string>
         </property>
        </widget>
       </item>
@@ -271,7 +271,7 @@
         <item>
          <widget class="QSlider" name="base_fc_slider">
           <property name="minimum">
-           <number>1</number>
+           <number>-10</number>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -288,12 +288,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="inputMask">
-           <string>###</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -313,7 +307,7 @@
         <item>
          <widget class="QSlider" name="elution_fc_slider">
           <property name="minimum">
-           <number>1</number>
+           <number>-10</number>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -330,12 +324,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="inputMask">
-           <string>###</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -355,7 +343,7 @@
         <item>
          <widget class="QSlider" name="load_fc_slider">
           <property name="minimum">
-           <number>1</number>
+           <number>-10</number>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -372,9 +360,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="inputMask">
-           <string>###</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -394,7 +379,7 @@
         <item>
          <widget class="QSlider" name="wash_fc_slider">
           <property name="minimum">
-           <number>1</number>
+           <number>-10</number>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -411,9 +396,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="inputMask">
-           <string>###</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
