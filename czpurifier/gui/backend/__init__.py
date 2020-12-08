@@ -1,1 +1,1 @@
-from .fraction_col_gui import Ui_FractionColumn
+from .fraction_col_gui import BackEnd_FractionColumn
