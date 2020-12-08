@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CustomProtocol</class>
- <widget class="QMainWindow" name="CustomProtocol">
+ <class>CustomWindow</class>
+ <widget class="QMainWindow" name="CustomWindow">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>775</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -259,230 +259,12 @@ QPushButton:disabled#stop_btn{background-color:#696969}</string>
                    <x>0</x>
                    <y>0</y>
                    <width>694</width>
-                   <height>297</height>
+                   <height>422</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_6">
                   <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_5">
-                    <item>
-                     <widget class="QWidget" name="add_step_widget" native="true">
-                      <layout class="QGridLayout" name="gridLayout_4">
-                       <item row="0" column="0">
-                        <layout class="QGridLayout" name="gridLayout_3">
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="valve_inp_lbl">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Valve Input:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="2" column="0">
-                          <widget class="QLabel" name="port_lbl">
-                           <property name="enabled">
-                            <bool>false</bool>
-                           </property>
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Port:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="3" column="0">
-                          <widget class="QLabel" name="vol_lbl">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Total Volume:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="4" column="0">
-                          <widget class="QLabel" name="flowpath_lbl">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Flow Path:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="4" column="1">
-                          <widget class="QComboBox" name="flowpath_combo_box">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <item>
-                            <property name="text">
-                             <string>Pre Column Waste</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Post Column Waste</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Fraction Column</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Flow Through Column</string>
-                            </property>
-                           </item>
-                          </widget>
-                         </item>
-                         <item row="3" column="1">
-                          <widget class="QSlider" name="volume_slider">
-                           <property name="maximum">
-                            <number>200</number>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QComboBox" name="valve_inp_combo_box">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <item>
-                            <property name="text">
-                             <string>Load</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Buffer</string>
-                            </property>
-                           </item>
-                          </widget>
-                         </item>
-                         <item row="2" column="1">
-                          <widget class="QComboBox" name="port_combo_box">
-                           <property name="enabled">
-                            <bool>false</bool>
-                           </property>
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <item>
-                            <property name="text">
-                             <string>Wash</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Load Buffer</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Elution</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>Base</string>
-                            </property>
-                           </item>
-                          </widget>
-                         </item>
-                         <item row="3" column="3">
-                          <widget class="QLabel" name="label_2">
-                           <property name="font">
-                            <font>
-                             <pointsize>15</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>ml</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1" colspan="3">
-                          <widget class="Line" name="line_3">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="3" column="2">
-                          <widget class="QLineEdit" name="volume_val_lbl">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="maximumSize">
-                            <size>
-                             <width>60</width>
-                             <height>16777215</height>
-                            </size>
-                           </property>
-                           <property name="inputMask">
-                            <string>9999</string>
-                           </property>
-                           <property name="text">
-                            <string>2</string>
-                           </property>
-                           <property name="alignment">
-                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="5" column="1" colspan="3">
-                          <widget class="Line" name="line_5">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="step_num">
-                           <property name="font">
-                            <font>
-                             <pointsize>18</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>1</string>
-                           </property>
-                           <property name="alignment">
-                            <set>Qt::AlignCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                   </layout>
+                   <layout class="QVBoxLayout" name="verticalLayout_5"/>
                   </item>
                  </layout>
                 </widget>
@@ -607,7 +389,7 @@ QPushButton:disabled#remove_step{background-color:#696969}</string>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="cur_step_btn">
+               <widget class="QPushButton" name="current_step_display_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -625,7 +407,7 @@ QPushButton:disabled#remove_step{background-color:#696969}</string>
 QPushButton:disabled#cur_step_btn{background-color:#A9A9A9}</string>
                 </property>
                 <property name="text">
-                 <string>1</string>
+                 <string>--</string>
                 </property>
                </widget>
               </item>
@@ -673,7 +455,7 @@ QPushButton:disabled#cur_step_btn{background-color:#A9A9A9}</string>
 QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                 </property>
                 <property name="text">
-                 <string>Running</string>
+                 <string>--</string>
                 </property>
                </widget>
               </item>
@@ -703,7 +485,7 @@ QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                  </size>
                 </property>
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string/>
                 </property>
                </widget>
               </item>
@@ -733,7 +515,7 @@ QPushButton:disabled#status_display_btn{background-color:#A9A9A9}</string>
                </font>
               </property>
               <property name="text">
-               <string>Total Estimated Time: &lt;..&gt; min(s)</string>
+               <string>Estimated Time: &lt;..&gt; min(s)</string>
               </property>
              </widget>
             </item>
