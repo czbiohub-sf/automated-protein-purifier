@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from buffer_parameters import BackEnd_BuffersWindow
+from single_step import BackEnd_StepWidget
+from czpurifier.gui.frontend import Ui_StepWidget
 from czpurifier.gui.control import GUI_Controller
 from os import chdir, path
 from signal import signal, SIGUSR1
@@ -437,7 +439,7 @@ class Ui_CustomProtocol(object):
         self.start_btn.setEnabled(True)
         self.step_counter += 1
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
-        self.step_widget_objs.append(AddStep(self.step_widgets[self.step_counter], 
+        self.step_widget_objs.append(BackEnd_StepWidget(self.step_widgets[self.step_counter], 
                                 self.step_counter, self.gui_controller))
         self.verticalLayout_5.addWidget(self.step_widgets[self.step_counter])
         self.gui_controller.flowpathwayClicked(self.step_counter, 1)
@@ -693,195 +695,6 @@ class Ui_CustomProtocol(object):
             self.pbar_timer.start(2000)
             self.current_step_display_btn.setText(self.step_output[self.current_step])
             self.status_timer.start(self.step_times[self.current_step]*1000)
-
-class AddStep():
-    def __init__(self, step_widget, step_no, gui_controller):
-        """Implements the initialization and control of a single step widget
-        A step widget is defined as the parent widget containing all the input 
-        parameters needed to define a single step
-        Parameters
-        ---------------------------
-        step_widget: Parent QtWidget object for the step
-        step_no: The step that we are currently on
-        gui_controller: GUI_Controller obj for flowpath selection
-        """
-        self.add_step_widget = step_widget
-        self.gui_controller = gui_controller
-        self.step_no = step_no
-        self._create_widget(step_no)
-        self._init_widget_actions()
-    
-    def _create_widget(self, step_no):
-        """Contains implementation for the widgets for each step"""
-
-        ####################################################################################
-        # Designer Generated Code 
-        # To update find the first line below in the new code and paste till indicated below
-        ####################################################################################
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.add_step_widget)
-        self.gridLayout_4.setObjectName("gridLayout_4")
-        self.gridLayout_3 = QtWidgets.QGridLayout()
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.valve_inp_lbl = QtWidgets.QLabel(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.valve_inp_lbl.setFont(font)
-        self.valve_inp_lbl.setObjectName("valve_inp_lbl")
-        self.gridLayout_3.addWidget(self.valve_inp_lbl, 1, 0, 1, 1)
-        self.port_lbl = QtWidgets.QLabel(self.add_step_widget)
-        self.port_lbl.setEnabled(False)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.port_lbl.setFont(font)
-        self.port_lbl.setObjectName("port_lbl")
-        self.gridLayout_3.addWidget(self.port_lbl, 2, 0, 1, 1)
-        self.vol_lbl = QtWidgets.QLabel(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.vol_lbl.setFont(font)
-        self.vol_lbl.setObjectName("vol_lbl")
-        self.gridLayout_3.addWidget(self.vol_lbl, 3, 0, 1, 1)
-        self.flowpath_lbl = QtWidgets.QLabel(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.flowpath_lbl.setFont(font)
-        self.flowpath_lbl.setObjectName("flowpath_lbl")
-        self.gridLayout_3.addWidget(self.flowpath_lbl, 4, 0, 1, 1)
-        self.flowpath_combo_box = QtWidgets.QComboBox(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.flowpath_combo_box.setFont(font)
-        self.flowpath_combo_box.setObjectName("flowpath_combo_box")
-        self.flowpath_combo_box.addItem("")
-        self.flowpath_combo_box.addItem("")
-        self.flowpath_combo_box.addItem("")
-        self.flowpath_combo_box.addItem("")
-        self.gridLayout_3.addWidget(self.flowpath_combo_box, 4, 1, 1, 1)
-        self.volume_slider = QtWidgets.QSlider(self.add_step_widget)
-        self.volume_slider.setMaximum(200)
-        self.volume_slider.setOrientation(QtCore.Qt.Horizontal)
-        self.volume_slider.setObjectName("volume_slider")
-        self.gridLayout_3.addWidget(self.volume_slider, 3, 1, 1, 1)
-        self.valve_inp_combo_box = QtWidgets.QComboBox(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.valve_inp_combo_box.setFont(font)
-        self.valve_inp_combo_box.setObjectName("valve_inp_combo_box")
-        self.valve_inp_combo_box.addItem("")
-        self.valve_inp_combo_box.addItem("")
-        self.gridLayout_3.addWidget(self.valve_inp_combo_box, 1, 1, 1, 1)
-        self.port_combo_box = QtWidgets.QComboBox(self.add_step_widget)
-        self.port_combo_box.setEnabled(False)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.port_combo_box.setFont(font)
-        self.port_combo_box.setObjectName("port_combo_box")
-        self.port_combo_box.addItem("")
-        self.port_combo_box.addItem("")
-        self.port_combo_box.addItem("")
-        self.port_combo_box.addItem("")
-        self.gridLayout_3.addWidget(self.port_combo_box, 2, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_3.addWidget(self.label_2, 3, 3, 1, 1)
-        self.line_3 = QtWidgets.QFrame(self.add_step_widget)
-        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.gridLayout_3.addWidget(self.line_3, 0, 1, 1, 3)
-        self.volume_val_lbl = QtWidgets.QLineEdit(self.add_step_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.volume_val_lbl.sizePolicy().hasHeightForWidth())
-        self.volume_val_lbl.setSizePolicy(sizePolicy)
-        self.volume_val_lbl.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.volume_val_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.volume_val_lbl.setObjectName("volume_val_lbl")
-        self.gridLayout_3.addWidget(self.volume_val_lbl, 3, 2, 1, 1)
-        self.line_5 = QtWidgets.QFrame(self.add_step_widget)
-        self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_5.setObjectName("line_5")
-        self.gridLayout_3.addWidget(self.line_5, 5, 1, 1, 3)
-        self.step_num = QtWidgets.QLabel(self.add_step_widget)
-        font = QtGui.QFont()
-        font.setPointSize(18)
-        self.step_num.setFont(font)
-        self.step_num.setAlignment(QtCore.Qt.AlignCenter)
-        self.step_num.setObjectName("step_num")
-        self.gridLayout_3.addWidget(self.step_num, 0, 0, 1, 1)
-        self.gridLayout_4.addLayout(self.gridLayout_3, 0, 0, 1, 1)
-        ###### Fine the above line and paste until that#######
-        
-        _translate = QtCore.QCoreApplication.translate
-        self.valve_inp_lbl.setText(_translate("CustomProtocol", "Valve Input:"))
-        self.port_lbl.setText(_translate("CustomProtocol", "Port:"))
-        self.vol_lbl.setText(_translate("CustomProtocol", "Total Volume:"))
-        self.flowpath_lbl.setText(_translate("CustomProtocol", "Flow Path:"))
-        self.flowpath_combo_box.setItemText(0, _translate("CustomProtocol", "Pre Column Waste"))
-        self.flowpath_combo_box.setItemText(1, _translate("CustomProtocol", "Post Column Waste"))
-        self.flowpath_combo_box.setItemText(2, _translate("CustomProtocol", "Flow Through Column"))
-        self.flowpath_combo_box.setItemText(3, _translate("CustomProtocol", "Fraction Column")) 
-        self.valve_inp_combo_box.setItemText(0, _translate("CustomProtocol", "Load"))
-        self.valve_inp_combo_box.setItemText(1, _translate("CustomProtocol", "Buffer"))
-        self.port_combo_box.setItemText(0, _translate("CustomProtocol", "WASH"))
-        self.port_combo_box.setItemText(1, _translate("CustomProtocol", "LOAD_BUFFER"))
-        self.port_combo_box.setItemText(2, _translate("CustomProtocol", "ELUTION"))
-        self.port_combo_box.setItemText(3, _translate("CustomProtocol", "BASE"))
-        self.label_2.setText(_translate("CustomProtocol", "CV"))
-        self.step_num.setText(_translate("CustomProtocol", "{}".format(step_no)))
-        ## Add title for any new widgets above this line
-
-    def _init_widget_actions(self):
-        """Initialize on click actions for the combo box and slider present in the widget"""
-        self.last_flowpath = 0
-        self.volume_val_lbl.setText('{}'.format(1))
-        self.volume_slider.valueChanged.connect(lambda: self.slider_changed(self.volume_slider.value(),
-                                                    self.volume_val_lbl))
-        self.valve_inp_combo_box.activated.connect(lambda: self.onSelectInput(self.valve_inp_combo_box.currentIndex(),
-                                                self.port_combo_box))
-        self.flowpath_combo_box.activated.connect(self.onSelectFlowPath)
-        self.onSelectFlowPath(0)
-        self.volume_val_lbl.setValidator(QtGui.QDoubleValidator())
-
-    def slider_changed(self, value, lbl):
-        """Updates text label beside the slider when slider is moved"""
-        lbl.setText('{}'.format(value))
-
-    def onSelectInput(self, cur_index, port):
-        """Enable port selection if buffer is selected"""
-        if cur_index == 1:
-            port.setEnabled(True)
-        else:
-            port.setEnabled(False)
-
-    def onSelectFlowPath(self, current_index):
-        """
-        Control the enable/disable of widgets based on path selected
-        Call the fraction collector methods to display the selected fractions if pathway is 3
-        Parameters
-        ---------------------------------------
-        current_index: The index of the step, used to determine whether to use fraction/flow column
-        and which text box to use to get the volume to flow
-        """
-        flow_path_map = {0: 'PRECOLUMNWASTE', 1: 'POSTCOLUMNWASTE', 2: 'FLOWCOL', 3: 'FRACCOL'}
-        # ensure that reclicking the same flowpath twice does not mess the fraction collector pathway
-        if self.last_flowpath != current_index:
-            self.last_flowpath = current_index
-            vol = int(self.volume_val_lbl.text())
-            enable_widgets, rejected = self.gui_controller.setFlowPath(self.step_no, flow_path_map[current_index], vol)
-            self.fraction_widgets_enabler(enable_widgets)
-            if rejected:
-                self.flowpath_combo_box.setCurrentIndex(0)
-                self.last_flowpath = 0
-        
-    def fraction_widgets_enabler(self, is_enabled):
-        self.volume_val_lbl.setEnabled(is_enabled)
-        self.volume_slider.setEnabled(is_enabled)
 
 if __name__ == "__main__":
     import sys

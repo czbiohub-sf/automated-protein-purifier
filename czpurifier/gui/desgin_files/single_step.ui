@@ -93,12 +93,12 @@
       </item>
       <item>
        <property name="text">
-        <string>Fraction Column</string>
+        <string>Flow Through Column</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Flow Through Column</string>
+        <string>Fraction Column</string>
        </property>
       </item>
      </widget>
@@ -144,22 +144,22 @@
       </property>
       <item>
        <property name="text">
-        <string>Wash</string>
+        <string>WASH</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Load Buffer</string>
+        <string>LOAD_BUFFER</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Elution</string>
+        <string>ELUTION</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Base</string>
+        <string>BASE</string>
        </property>
       </item>
      </widget>
@@ -172,7 +172,7 @@
        </font>
       </property>
       <property name="text">
-       <string>ml</string>
+       <string>CV</string>
       </property>
      </widget>
     </item>
@@ -197,12 +197,6 @@
         <height>16777215</height>
        </size>
       </property>
-      <property name="inputMask">
-       <string>9999</string>
-      </property>
-      <property name="text">
-       <string>2</string>
-      </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
@@ -221,9 +215,6 @@
        <font>
         <pointsize>18</pointsize>
        </font>
-      </property>
-      <property name="text">
-       <string>1</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
