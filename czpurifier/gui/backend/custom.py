@@ -9,16 +9,16 @@ from signal import signal, SIGUSR1
 from time import sleep
 
 
-class Ui_CustomProtocol(Ui_CustomWindow):
-    def __init__(self, CustomProtocol, dev_process, columnsize, percolumncalib):
-        self.CustomProtocol = CustomProtocol
+class BackEnd_CustomWindow(Ui_CustomWindow):
+    def __init__(self, CustomWindow, dev_process, columnsize, percolumncalib):
+        self.CustomWindow = CustomWindow
         self.columnsize = columnsize
         self.percolumncalib = percolumncalib
         signal(SIGUSR1, self.startProgressBar)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
         self.gui_controller.columnsize = 1 if columnsize == '1mL' else 5
-        super().setupUi(self.CustomProtocol)
+        super().setupUi(self.CustomWindow)
         self.initEvents()
 
     def initEvents(self):
@@ -94,7 +94,7 @@ class Ui_CustomProtocol(Ui_CustomWindow):
 
     def onClickClose(self):
         """Closes the purification window when close is clicked"""
-        self.CustomProtocol.close()
+        self.CustomWindow.close()
 
     def onClickAddStep(self):
         """Creates a new widget to add the input parameters"""
@@ -361,8 +361,8 @@ class Ui_CustomProtocol(Ui_CustomWindow):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    CustomProtocol = QtWidgets.QMainWindow()
-    ui = Ui_CustomProtocol()
-    ui.setupUi(CustomProtocol)
-    CustomProtocol.show()
+    CustomWindow = QtWidgets.QMainWindow()
+    ui = Ui_CustomWindow()
+    ui.setupUi(CustomWindow)
+    CustomWindow.show()
     sys.exit(app.exec_())

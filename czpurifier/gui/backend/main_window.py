@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from purification import BackEnd_Purification
-from custom_protocol import Ui_CustomProtocol
+from custom_protocol import BackEnd_CustomWindow
 from calibration import BackEnd_CalibrationWindow
 from czpurifier.gui.control import GUI_Controller
 from czpurifier.gui.frontend import Ui_MainWindow
@@ -114,7 +114,7 @@ class BackEnd_MainWindow(Ui_MainWindow):
         Opens the other scripts window
         """
         self.oth_sc_window = QtWidgets.QMainWindow()
-        self.oth_sc_ui = Ui_CustomProtocol(self.oth_sc_window, self.gui_controller.device_process, self.columnsize, self.percolumn)
+        self.oth_sc_ui = BackEnd_CustomWindow(self.oth_sc_window, self.gui_controller.device_process, self.columnsize, self.percolumn)
         self.oth_sc_window.show() 
     
     def onClick_close_btn(self):
