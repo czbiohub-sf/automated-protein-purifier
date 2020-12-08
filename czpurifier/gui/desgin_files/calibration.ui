@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CalibrationProtocol</class>
- <widget class="QMainWindow" name="CalibrationProtocol">
+ <class>CalibrationWindow</class>
+ <widget class="QMainWindow" name="CalibrationWindow">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -40,9 +40,6 @@
           <width>85</width>
           <height>85</height>
          </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton#stop_btn {border-radius:42;border-width: 2px;background-color: #ed1c24; color:white; font-size:20px; border: 1px solid #808080}\nQPushButton:pressed#stop_btn{background-color:#A9A9A9}\nQPushButton:disabled#stop_btn{background-color:#696969}</string>
         </property>
         <property name="text">
          <string>STOP</string>
