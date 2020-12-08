@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FractionCollector</class>
- <widget class="QMainWindow" name="FractionCollector">
+ <class>FractionWindow</class>
+ <widget class="QMainWindow" name="FractionWindow">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Fraction Collector</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QPushButton#flowth1_btn {

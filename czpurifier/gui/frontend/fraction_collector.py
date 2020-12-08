@@ -11,19 +11,20 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_FractionCollector(object):
-    def setupUi(self, FractionCollector):
-        FractionCollector.setObjectName("FractionCollector")
-        FractionCollector.resize(800, 281)
+class Ui_FractionWindow(object):
+    def setupUi(self, FractionWindow):
+        FractionWindow.setObjectName("FractionWindow")
+        FractionWindow.setWindowModality(QtCore.Qt.ApplicationModal)
+        FractionWindow.resize(800, 281)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(FractionCollector.sizePolicy().hasHeightForWidth())
-        FractionCollector.setSizePolicy(sizePolicy)
-        FractionCollector.setStyleSheet("QPushButton#flowth1_btn {\n"
+        sizePolicy.setHeightForWidth(FractionWindow.sizePolicy().hasHeightForWidth())
+        FractionWindow.setSizePolicy(sizePolicy)
+        FractionWindow.setStyleSheet("QPushButton#flowth1_btn {\n"
 "    border-radius:50\n"
 "}")
-        self.centralwidget = QtWidgets.QWidget(FractionCollector)
+        self.centralwidget = QtWidgets.QWidget(FractionWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -274,30 +275,30 @@ class Ui_FractionCollector(object):
         self.set_fraction_col_btn.setObjectName("set_fraction_col_btn")
         self.horizontalLayout_5.addWidget(self.set_fraction_col_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
-        FractionCollector.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(FractionCollector)
+        FractionWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(FractionWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
         self.menubar.setObjectName("menubar")
-        FractionCollector.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(FractionCollector)
+        FractionWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(FractionWindow)
         self.statusbar.setObjectName("statusbar")
-        FractionCollector.setStatusBar(self.statusbar)
+        FractionWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(FractionCollector)
-        QtCore.QMetaObject.connectSlotsByName(FractionCollector)
+        self.retranslateUi(FractionWindow)
+        QtCore.QMetaObject.connectSlotsByName(FractionWindow)
 
-    def retranslateUi(self, FractionCollector):
+    def retranslateUi(self, FractionWindow):
         _translate = QtCore.QCoreApplication.translate
-        FractionCollector.setWindowTitle(_translate("FractionCollector", "MainWindow"))
-        self.label.setText(_translate("FractionCollector", "Fraction Position:"))
-        self.set_fraction_col_btn.setText(_translate("FractionCollector", "Set"))
+        FractionWindow.setWindowTitle(_translate("FractionWindow", "Fraction Collector"))
+        self.label.setText(_translate("FractionWindow", "Fraction Position:"))
+        self.set_fraction_col_btn.setText(_translate("FractionWindow", "Set"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    FractionCollector = QtWidgets.QMainWindow()
-    ui = Ui_FractionCollector()
-    ui.setupUi(FractionCollector)
-    FractionCollector.show()
+    FractionWindow = QtWidgets.QMainWindow()
+    ui = Ui_FractionWindow()
+    ui.setupUi(FractionWindow)
+    FractionWindow.show()
     sys.exit(app.exec_())
