@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from czpurifier.gui.frontend import Ui_Purification
 from fraction_col_gui import Ui_FractionColumn
-from buffer_param_gui import Ui_BuffersWindow
+from buffer_param_gui import BackEnd_BuffersWindow
 from os import chdir, path, getpid, kill
 from signal import signal, SIGUSR1
 from time import sleep
@@ -270,7 +270,7 @@ class BackEnd_Purification(Ui_Purification):
     
     def startbufferWdw(self):
         self.bufferwdw = QtWidgets.QMainWindow()
-        self.bufferwdw_ui = Ui_BuffersWindow(self.bufferwdw, self.gui_controller, self.protocol_buffers())
+        self.bufferwdw_ui = BackEnd_BuffersWindow(self.bufferwdw, self.gui_controller, self.protocol_buffers())
         self.bufferwdw.show()
 
     def onClickPauseHold(self, is_pause):
