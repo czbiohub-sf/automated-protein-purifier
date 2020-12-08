@@ -136,7 +136,6 @@ class Ui_FractionWindow(object):
         sizePolicy.setHeightForWidth(self.flowth1_btn.sizePolicy().hasHeightForWidth())
         self.flowth1_btn.setSizePolicy(sizePolicy)
         self.flowth1_btn.setMinimumSize(QtCore.QSize(60, 60))
-        self.flowth1_btn.setText("")
         self.flowth1_btn.setObjectName("flowth1_btn")
         self.horizontalLayout_2.addWidget(self.flowth1_btn)
         self.flowth2_btn = QtWidgets.QPushButton(self.centralwidget)
