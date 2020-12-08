@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from purification_gui import Ui_Purification
+from purification_gui import BackEnd_Purification
 from custom_protocol import Ui_CustomProtocol
 from calib_protocol import Ui_CalibrationProtocol
 from czpurifier.gui.control import GUI_Controller
@@ -106,7 +106,7 @@ class BackEnd_MainWindow(Ui_MainWindow):
         Opens the purification window 
         """
         self.purifier = QtWidgets.QMainWindow()
-        self.purifier_ui = Ui_Purification(self.purifier, self.gui_controller.device_process, self.columnsize, self.percolumn)
+        self.purifier_ui = BackEnd_Purification(self.purifier, self.gui_controller.device_process, self.columnsize, self.percolumn)
         self.purifier.show()
 
     def onClick_otherscripts_btn(self):
