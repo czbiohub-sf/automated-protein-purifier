@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from czpurifier.gui.frontend import Ui_BuffersWindow
-from czpurifier.gui.control import Controller
+from czpurifier.gui.control import GUI_Controller
 from typing import Type, Dict
 
 
@@ -11,14 +11,14 @@ class BackEnd_BuffersWindow(Ui_BuffersWindow):
     :type Ui_BuffersWindow: QMainWindow Class
     """
 
-    def __init__(self, BuffersWindow: QMainWindow, gui_controller: Type[Controller], 
+    def __init__(self, BuffersWindow, gui_controller: Type[GUI_Controller], 
                 reagent_volume: Dict[str, float]):
         """Display the frontend and initialize the backend
 
         :param BuffersWindow: The window displaying the Ui
         :type BuffersWindow: QMainWindow
         :param gui_controller: Used to get the reagent volume needed
-        :type gui_controller: Type[Controller]
+        :type gui_controller: Type[GUI_Controller]
         :param reagent_volume: Dict{k:v} k = Reagent name, v = volume needed
         :type reagent_volume: Dict[str, float]
         """
