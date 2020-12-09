@@ -7,38 +7,57 @@ from czpurifier.gui.control import GUI_Controller
 from os import chdir, path
 from signal import signal, SIGUSR1
 from time import sleep
+from typing import List, Tuple, Union, Dict
 
 
 class BackEnd_CustomWindow(Ui_CustomWindow):
-    def __init__(self, CustomWindow, dev_process, columnsize, percolumncalib):
+    """Runs the window to create custom protocols
+
+    :param Ui_BuffersWindow: Frontend display of the custom window
+    :type Ui_BuffersWindow: QMainWindow Class
+    """
+
+    def __init__(self, CustomWindow, dev_process: int, 
+                columnsize: str, percolumncalib: List[float]):
+        """Display the frontend and initialize the backend
+
+        :param CustomWindow: The window displaying the Ui
+        :type CustomWindow: QMainWindow
+        :param dev_process: The process id running the device/simulator
+        :type dev_process: int
+        :param columnsize: 1mL or 5mL
+        :type columnsize: str
+        :param percolumncalib: The pump calibration factors
+        :type percolumncalib: List[float]
+        """
+        
         self.CustomWindow = CustomWindow
         self.columnsize = columnsize
         self.percolumncalib = percolumncalib
-        signal(SIGUSR1, self.startProgressBar)
+        signal(SIGUSR1, self.step_finished_signal_handler)
         self.gui_controller = GUI_Controller()
         self.gui_controller.hardware_or_sim(dev_process)
         self.gui_controller.columnsize = 1 if columnsize == '1mL' else 5
         super().setupUi(self.CustomWindow)
-        self.initEvents()
+        self.init_events()
 
-    def initEvents(self):
-        """Initializes all on click actions"""
-        # counts the current step: Needed for adding and removing steps
-        self.step_counter = -1
-        # Contains the parent widget for a step
-        # len(step_widgets) = number of steps
-        self.step_widgets = [] #Qt widget object
-        self.step_widget_objs = [] # AddStep class object (used to extract input params)
-        self.close_btn.clicked.connect(self.onClickClose)
-        self.add_step_btn.clicked.connect(self.onClickAddStep)
-        self.remove_step.clicked.connect(self.onClickRemoveStep)
+    def init_events(self):
+        """Initialize the backend
+        """
+
+        self.step_counter = -1  # counts the current step
+        self.step_widgets = [] #Qt widget object (parent widget list for steps)
+        self.step_widget_objs = [] # BackEnd_StepWidget object (used to extract input params)
+        self.close_btn.clicked.connect(self.on_click_close)
+        self.add_step_btn.clicked.connect(self.on_click_add_step)
+        self.remove_step.clicked.connect(self.on_click_remove_step)
         self.remove_step.setEnabled(False)
         self.rep_num_slider.valueChanged.connect(lambda: self.slider_changed(self.rep_num_slider.value(),
                                                     self.rep_num_lbl))
-        self.start_btn.clicked.connect(self.onClickStart)
-        self.pause_btn.clicked.connect(lambda: self.onClickPauseHold(True))
-        self.hold_btn.clicked.connect(lambda: self.onClickPauseHold(False))
-        self.stop_btn.clicked.connect(self.onClickStop)
+        self.start_btn.clicked.connect(self.on_click_start)
+        self.pause_btn.clicked.connect(lambda: self.on_click_pause_or_hold(True))
+        self.hold_btn.clicked.connect(lambda: self.on_click_pause_or_hold(False))
+        self.stop_btn.clicked.connect(self.on_click_stop)
         self.num_col_combo_box.setCurrentIndex(3)
 
         self.pause_btn.setEnabled(False)
@@ -62,8 +81,8 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         self.status_timer.timeout.connect(self.status_timer_handler)
 
         #Timer for a delay between on start window pop up and checking result
-        self.check_is_sure_timer = QtCore.QTimer()
-        self.check_is_sure_timer.timeout.connect(self.check_is_sure_timer_handler)
+        self.start_process_timer = QtCore.QTimer()
+        self.start_process_timer.timeout.connect(self.start_timer_handler)
 
         #Step display
         self.current_step = 0
@@ -78,26 +97,33 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         self.total_time_timer = QtCore.QTimer()
         self.total_time_timer.timeout.connect(self.total_time_handler)
 
-    def startProgressBar(self, signalNumber, frame):
-        """Start the timer to display the status once purging is completed
-        Enable the pause/hold buttons after purging is completed"""  
+    def step_finished_signal_handler(self, signalNumber, frame):
+        """Signal received after each step finishes, moves to next step
+
+        :raises IndexError: If the current_step is larger than the number
+                    of steps to complete, it means the process finished
+        """
+
         try:
             self.current_step += 1
             self.current_step_display_btn.setText(self.step_output[self.current_step])
-            self.status_timer.stop()
+            self.status_timer_handler()
             self.status_timer.start(self.step_times[self.current_step]*1000)
             self.progressBar.setValue(0)
-        except IndexError:
-            # Reached the final step
-            self._finish_protocol()
-        self._set_actionbtn_enable(True, False)
+        except IndexError:  # Reached the final step
+            self.finish_protocol()
+        self.toggle_action_buttons(True, False)
 
-    def onClickClose(self):
-        """Closes the purification window when close is clicked"""
+    def on_click_close(self):
+        """Closes the custom window when close is clicked
+        """
+
         self.CustomWindow.close()
 
-    def onClickAddStep(self):
-        """Creates a new widget to add the input parameters"""
+    def on_click_add_step(self):
+        """Creates a new widget to add the input parameters
+        """
+
         self.start_btn.setEnabled(True)
         self.step_counter += 1
         self.step_widgets.append(QtWidgets.QWidget(self.scrollAreaWidgetContents))
@@ -108,8 +134,10 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         self.remove_step.setEnabled(True)
         self.widgetscroller_timer.start(50)
 
-    def onClickRemoveStep(self):
-        """Removes the last step that was added"""
+    def on_click_remove_step(self):
+        """Removes the last step that was added
+        """
+
         self.step_widgets[self.step_counter].setParent(None)
         self.step_widgets.pop()
         self.step_widget_objs.pop()
@@ -121,68 +149,108 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
             self.start_btn.setEnabled(False)
     
     def update_scoller(self):
+        """Updates the scroller to point to the newest step added
+        """
+
         end = self.scrollArea.verticalScrollBar().maximum()
         self.scrollArea.verticalScrollBar().setValue(end)
         self.widgetscroller_timer.stop()
 
     def slider_changed(self, value, lbl):
-        """Updates text label beside the slider when slider is moved"""
-        lbl.setText('{}'.format(value))
-    
-    def _generate_run_parameters(self):
-        """Generates an array of the run parameters
+        """Used to update the repetition number text beside the slider
+        """
 
-        Return
-        ----------------------------------
-        [[4, 1, 10],[None, 200, 0],[2, 100, 1],....]"""
-        input_params = []
+        lbl.setText('{}'.format(value))
+
+    def get_setup_parameters(self) -> Tuple[int, str, int]:
+        """Get the parameters needed to setup the protocol script
+
+        :return: [a, b, c]: a = number of columns, b = 1mL/5mL, 
+                c = number of repititions
+        :rtype: Tuple[int, str, int]
+        """
+
         rep = int(self.rep_num_lbl.text())
-        input_params.append([self.num_col_combo_box.currentIndex()+1, self.columnsize, rep])
+        return [self.num_col_combo_box.currentIndex()+1, self.columnsize, rep]
+
+    def get_run_parameters(self) -> List[Tuple[int, float, int]]:
+        """Get the parameters to run the custom protocol script
+
+        :return: A list of input parameters for each step. Each index
+                has a tuple [a, b, c]: a = buffer type index/None for load,
+                b = the volume to pump in CV, c = the flow path index
+        :rtype: [[None, 5.0, 0], [2, 2.0, 1], ...]
+        """
+        
+        input_params = []
         for c in self.step_widget_objs:
             inp = []
             if c.port_combo_box.isEnabled():
                 inp.append(c.port_combo_box.currentIndex())
             else:
                 inp.append(None)
-            inp.append(int(c.volume_val_lbl.text()))
+            inp.append(float(c.volume_val_lbl.text()))
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
-        
-        # Create the per column calibration factor list
-        calibfactor = []
-        for i in range(self.num_col_combo_box.currentIndex()+1):
-            calibfactor.append(self.percolumncalib[i])
+        return input_params
+    
+    def get_pump_calibration_factor(self) -> List[float]:
+        """Cut the calibration factor list to the number of column selected
 
-        return input_params, calibfactor
+        :return: The per column pump calibration factor
+        :rtype: List[float]
+        """
+
+        end_point = self.num_col_combo_box.currentIndex()+1
+        return self.percolumncalib[0:end_point]
 
     def get_step_qlines(self):
-        """Returns a list of all the qline widgets on display. Used to check that no field is empty"""
+        """Returns a list of all the qline widgets on display.
+        
+        Used to check that no field is empty
+        """
+
         return [c.volume_val_lbl for c in self.step_widget_objs]
     
-    def protocol_buffers(self):
-        """Create a dic of all the buffers used and the volume of each"""
+    def protocol_buffers(self) -> Dict[str, float]:
+        """Return a dict of all the reagents used and the volume of each
+
+        :return: dict{a:b}: a = reagent name, b = volume in CV
+        :rtype: Dict[str, float]
+        """
+
         total_buffers = {}
         for c in self.step_widget_objs:
-            key_name = str(c.port_combo_box.currentText()) if c.port_combo_box.isEnabled() else 'LOAD'
-            if key_name in total_buffers:
-                total_buffers[key_name] = total_buffers[key_name] + int(c.volume_val_lbl.text())
+            if c.port_combo_box.isEnabled():
+                key_name = str(c.port_combo_box.currentText())
             else:
-                total_buffers.update({key_name: int(c.volume_val_lbl.text())})
+                key_name = 'LOAD'
+            if key_name in total_buffers:
+                total_buffers[key_name] = total_buffers[key_name] + float(c.volume_val_lbl.text())
+            else:
+                total_buffers.update({key_name: float(c.volume_val_lbl.text())})
         return total_buffers
     
-    def pump_times(self):
-        """Get all the pump times for each step"""
+    def get_pump_times(self):
+        """Get all the pump times for each step
+        """
+
         pump_times = []
         for c in self.step_widget_objs:
-            pump_times.append(int(c.volume_val_lbl.text())*60)
+            pump_times.append(float(c.volume_val_lbl.text())*60)
         # Multiply it with the number of reps so that the pump times repeat for each rep
         pump_times = pump_times*int(self.rep_num_lbl.text())
         self.step_times = self.gui_controller.getPumpTimes(pump_times)
 
     ## Action Button Event Handlers ##
 
-    def _set_param_enable(self, is_enabled):
-        """Enables/Disables all input parameters"""
+    def toggle_parameter_widgets(self, is_enabled: bool):
+        """Enables/Disables all input parameter widgets
+
+        :param is_enabled: True: Enable the widget
+        :type is_enabled: bool
+        """
+
         self.num_col_combo_box.setEnabled(is_enabled)
         self.rep_num_slider.setEnabled(is_enabled)
         for w in self.step_widgets:
@@ -190,95 +258,110 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         self.add_step_btn.setEnabled(is_enabled)
         self.remove_step.setEnabled(is_enabled)
     
-    def _set_actionbtn_enable(self, halt_state, start_state):
-        """Either enables or disables the action buttons"""
+    def toggle_action_buttons(self, halt_state: bool, start_state: bool):
+        """Enables/Disables all action buttons
+
+        :param halt_state: True: enable pause, hold and stop buttons
+        :type halt_state: bool
+        :param start_state: True: enable start button
+        :type start_state: bool
+        """
         self.pause_btn.setEnabled(halt_state)
         self.hold_btn.setEnabled(halt_state)
         self.stop_btn.setEnabled(halt_state)
         self.start_btn.setEnabled(start_state)
 
-    def onClickStart(self):
+    def on_click_start(self):
+        """Initiates starting the custom protocol
+
+        Checks there are no empty text boxes and opens the buffer window
         """
-        1. Pop up to confirm you want to start
-        The following actions are performed after 1s by the check_is_sure_timer handler
-        2. Enable stop and close (other action btns enabled after purging)
-        3. Disable everything that can be edited
-        4. Call _generate_run_parameters() to create the array to pass to controller
-        5. Start the logging and timers for estimated time
-        6. Update the step display
-        7. Run the process
-        """
+    
         if self.gui_controller.checkEmptyQLines(self.get_step_qlines()):
             col_size = 1 if self.columnsize == '1mL' else 5
-            self.gui_controller.columnsize = col_size
-            self.startbufferWdw()
-            self.check_is_sure_timer.start(1000)
+            self.start_buffer_window()
+            self.start_process_timer.start(1000)  # Delay needed for popup to appear
     
-    def startbufferWdw(self):
+    def start_buffer_window(self):
+        """Opens the buffer parameters window
+        """
+
         self.bufferwdw = QtWidgets.QMainWindow()
-        self.bufferwdw_ui = BackEnd_BuffersWindow(self.bufferwdw, self.gui_controller, self.protocol_buffers())
+        self.bufferwdw_ui = BackEnd_BuffersWindow(self.bufferwdw, 
+                                                self.gui_controller, 
+                                                self.protocol_buffers())
         self.bufferwdw.show()
 
-    def onClickPauseHold(self, is_pause):
+    def on_click_pause_or_hold(self, is_pause: bool):
+        """Updates widgets and sends pause/hold signal to process
+
+        :param is_pause: True: pause clicked, False: hold clicked
+        :type is_pause: bool
         """
-        Enables Start button to resume
-        Calls pause_clicked/hold that sends a pause/hold signal to 
-        the process running the purification
-        """
+
         msg = 'pause' if is_pause else 'hold'
-        self.gui_controller.areYouSureMsg(msg)
-        if self.gui_controller.is_sure:
+        if self.gui_controller.areYouSureMsg(msg):
             self.stop_btn.setEnabled(False)
+            
+            # stop total timer and save timestamp
             total_remaining = self.total_time_timer.remainingTime()
             self.total_time_timer.stop()
             self.total_time_timer.setInterval(total_remaining)
-            self.gui_controller.is_sure = None
-            self._set_actionbtn_enable(False, True)
+            
+            # switch start button to resume
+            self.toggle_action_buttons(False, True)
             self.start_btn.disconnect()
             self.start_btn.setText('RESUME')
-            self.start_btn.clicked.connect(self.onClickResume)
+            self.start_btn.clicked.connect(self.on_click_resume)
+
+            # send signal to the script running the protocol
             if is_pause:
                 self.gui_controller.pause_clicked()
             else:
                 self.gui_controller.hold_clicked()
+            
+            # update the status display bar
             self.status_display_btn.setText('on {}'.format(msg))
             self.status_display_btn.setStyleSheet(
                 self.gui_controller.status_display_stylsheet.format(
                 self.gui_controller.status_display_color_halt))
+            
+            # stop the timer for the step and save timestamp
             remaining = self.status_timer.remainingTime()
             self.status_timer.stop()
             self.status_timer.setInterval(remaining)
 
-    def onClickResume(self):
+    def on_click_resume(self):
+        """Updates widgets and sends resume command to script
         """
-        Handles if resume is clicked after paused
-        Sends a signal to the process running purification
-        to resume the protocol
-        """
-        self._set_actionbtn_enable(True, False)
+
+        self.toggle_action_buttons(True, False)
         self.stop_btn.setEnabled(True)
-        self.gui_controller.resume_clicked()
-        self.total_time_timer.start()
+        self.gui_controller.resume_clicked()  # send signal
+        self.total_time_timer.start()  # resume total timer
         self.status_display_btn.setStyleSheet(
             self.gui_controller.status_display_stylsheet.format(
             self.gui_controller.status_display_color_running))
         self.status_display_btn.setText('running')
-        self.status_timer.start()
+        self.status_timer.start()  # resume status timer
 
-    def onClickStop(self):
-        """Signals the script that stop was clicked, to home the device"""
-        self.gui_controller.areYouSureMsg('stop')
-        if self.gui_controller.is_sure:
-            self.gui_controller.is_sure = None
+    def on_click_stop(self):
+        """Sends stop command to script
+        """
+
+        if self.gui_controller.areYouSureMsg('stop'):
             self.current_step_display_btn.setText('STOPPED')
             self.gui_controller.stop_clicked()
-            self._finish_protocol()
+            self.finish_protocol()
     
-    def _finish_protocol(self):
-        """Common protocols between when stop is pressed and once the purification
-        process completes. The window is closed and returned to the main_window"""
+    def finish_protocol(self):
+        """Display that the protocol finished and close window
+        """
+
         self.close_btn.setEnabled(True)
-        self._set_actionbtn_enable(False, False)
+        self.toggle_action_buttons(False, False)
+        self.total_time_timer.stop()
+        self.status_timer.stop()
         msg = QtWidgets.QMessageBox()
         msg.setText('Protocol Completed/Stopped')
         msg.setInformativeText('Click Ok to close the window')
@@ -290,7 +373,8 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
 
     def log_timer_handler(self):
         """Update the logger to display the messages
-        TODO: Move the purifer.log reading to controller (all file reads should be in controller)"""
+        """
+
         chdir(path.dirname(path.realpath(__file__)))
         with open('purifier.log', 'r') as f:
             output = f.read()
@@ -301,12 +385,16 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         self.log_output = output
 
     def status_timer_handler(self):
-        """Starts the timer on the current step"""
-        # Reached the final step
+        """Starts the timer on the current step
+        """
+
+        self.progressBar.setValue(99)
         self.status_timer.stop()
 
     def create_step_label(self):
-        """Create the text output for the status bar"""
+        """Create the text output for the status bar
+        """
+
         step_list = [i for i in range(len(self.step_widget_objs))]
         num_reps = int(self.rep_num_lbl.text())
         step_list = step_list*num_reps
@@ -319,7 +407,9 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
 
 
     def progress_bar_handler(self):
-        """Update the progress bar and estimated time remaining display"""
+        """Update the progress bar and estimated time remaining display
+        """
+
         percen_comp = self.progressBar.value()
         if percen_comp < 100 and self.status_timer.isActive():
             # Calculating time remaining
@@ -330,39 +420,38 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
             self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
         if self.total_time_timer.isActive():
-            lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(self.total_time_timer.remainingTime()/(1000*60))
+            time = self.total_time_timer.remainingTime()/(1000*60)
+            lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(time)
             self.estimated_time_remaining_lbl.setText(lbl)
 
     def total_time_handler(self):
+        """If the total timer finishes before the final signal stop the timer
+        """
+
         self.total_time_timer.stop()
         lbl = 'Less than a minute remaining'
         self.estimated_time_remaining_lbl.setText(lbl)
         
-    def check_is_sure_timer_handler(self):
-        """Runs the start protocol after the 1s timeout"""
-        if self.gui_controller.is_sure:
-            init_params, calib_list = self._generate_run_parameters()
-            self.gui_controller.is_sure = None
+    def start_timer_handler(self):
+        """Runs the start protocol after the 1s timeout
+        """
+        # TODO: update run_purification_script to accept setup and init as separate
+        if self.gui_controller.start_protocol:
+            self.gui_controller.start_protocol = None
+            setup_param = self.get_setup_parameters()
+            init_params = self.get_run_parameters()
+            calib_list = self.get_pump_calibration_factor()
             self.stop_btn.setEnabled(True)
             self.start_btn.setEnabled(False)
             self.close_btn.setEnabled(False)
-            self._set_param_enable(False)
-            self.gui_controller.run_purification_script(False, init_params, calib_list)
+            self.toggle_parameter_widgets(False)
+            self.gui_controller.run_purification_script(False, setup_param, init_params, calib_list)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
-            self.pump_times()
+            self.get_pump_times()
             self.total_time_timer.start(sum(self.step_times)*1000)
             self.create_step_label()
             self.pbar_timer.start(2000)
             self.current_step_display_btn.setText(self.step_output[self.current_step])
             self.status_timer.start(self.step_times[self.current_step]*1000)
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    CustomWindow = QtWidgets.QMainWindow()
-    ui = Ui_CustomWindow()
-    ui.setupUi(CustomWindow)
-    CustomWindow.show()
-    sys.exit(app.exec_())
