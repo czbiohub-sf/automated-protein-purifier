@@ -162,27 +162,20 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
 
         lbl.setText('{}'.format(value))
 
-    def get_setup_parameters(self) -> Tuple[int, str, int]:
-        """Get the parameters needed to setup the protocol script
-
-        :return: [a, b, c]: a = number of columns, b = 1mL/5mL, 
-                c = number of repititions
-        :rtype: Tuple[int, str, int]
-        """
-
-        rep = int(self.rep_num_lbl.text())
-        return [self.num_col_combo_box.currentIndex()+1, self.columnsize, rep]
-
-    def get_run_parameters(self) -> List[Tuple[int, float, int]]:
+    def get_run_parameters(self):
         """Get the parameters to run the custom protocol script
 
-        :return: A list of input parameters for each step. Each index
-                has a tuple [a, b, c]: a = buffer type index/None for load,
-                b = the volume to pump in CV, c = the flow path index
-        :rtype: [[None, 5.0, 0], [2, 2.0, 1], ...]
+        :return: A list of input parameters for each step. The first
+                index has the setup parameters [no columns, column size, num repeats]
+                The following index has a tuple [a, b, c]: a = buffer type 
+                index/None for load, b = the volume to pump in CV, c = the flow path index
+        :rtype: [[3, 1mL, 5], [None, 5.0, 0], [2, 2.0, 1], ...]
         """
         
         input_params = []
+        rep = int(self.rep_num_lbl.text())
+        input_params.append([self.num_col_combo_box.currentIndex()+1, 
+                            self.columnsize, rep])
         for c in self.step_widget_objs:
             inp = []
             if c.port_combo_box.isEnabled():
@@ -435,10 +428,9 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
     def start_timer_handler(self):
         """Runs the start protocol after the 1s timeout
         """
-        # TODO: update run_purification_script to accept setup and init as separate
+
         if self.gui_controller.start_protocol:
             self.gui_controller.start_protocol = None
-            setup_param = self.get_setup_parameters()
             init_params = self.get_run_parameters()
             calib_list = self.get_pump_calibration_factor()
             self.stop_btn.setEnabled(True)
