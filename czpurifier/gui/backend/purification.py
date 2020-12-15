@@ -6,7 +6,7 @@ from signal import signal, SIGUSR1
 from time import sleep
 from math import ceil
 from czpurifier.gui.control import GUI_Controller
-
+from typing import List, Dict
 
 class BackEnd_Purification(Ui_PurificationWindow):
     """Runs the window to run basic protocols
@@ -332,10 +332,8 @@ class BackEnd_Purification(Ui_PurificationWindow):
         """
 
         msg = 'pause' if is_pause else 'hold'
-        self.gui_controller.areYouSureMsg(msg)
-        if self.gui_controller.is_sure:
+        if self.gui_controller.areYouSureMsg(msg):
             self.stop_btn.setEnabled(False)
-            self.gui_controller.is_sure = None
             remaining = self.status_timer.remainingTime()
             self.status_timer.stop()
             self.status_timer.setInterval(remaining)
@@ -374,17 +372,14 @@ class BackEnd_Purification(Ui_PurificationWindow):
         """Updates widgets and sends skip command to script
         """
         
-        self.gui_controller.areYouSureMsg('skip to next step')
-        if self.gui_controller.is_sure:
-            self.gui_controller.is_sure = None
+       
+        if  self.gui_controller.areYouSureMsg('skip to next step'):
             self.gui_controller.skip_clicked()
 
     def on_click_stop(self):
         """Signals the script that stop was clicked, to home the device"""
 
-        self.gui_controller.areYouSureMsg('stop')
-        if self.gui_controller.is_sure:
-            self.gui_controller.is_sure = None
+        if self.gui_controller.areYouSureMsg('stop'):
             self.current_step_display_btn.setText('STOPPED')
             self.gui_controller.stop_clicked()
             self.finish_protocol()
@@ -467,9 +462,9 @@ class BackEnd_Purification(Ui_PurificationWindow):
     def check_is_sure_timer_handler(self):
         """Runs the start protocol after the 1s timeout
         """
-        
-        if self.gui_controller.is_sure:
-            self.gui_controller.is_sure = None
+
+        if self.gui_controller.start_protocol:
+            self.gui_controller.start_protocol = None
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
             self.close_btn.setEnabled(False)

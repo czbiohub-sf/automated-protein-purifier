@@ -69,7 +69,7 @@ class GUI_Controller:
         self.init_fraction_collector_params()
         self.columnsize = None
         self.flow_rate_correction = None
-        self.is_sure = None
+        self.start_protocol = None
 
     ###################
     # TCP Connections #
@@ -150,12 +150,11 @@ class GUI_Controller:
         msg.setText('Are you sure you want to {}'.format(action))
         msg.setIcon(QMessageBox.Question)
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        msg.buttonClicked.connect(self._msgbtn)
-        msg.exec()
-    
-    def _msgbtn(self, i):
-        """Returns the result from the are you sure pop up"""
-        self.is_sure = True if 'ok' in i.text().lower() else False
+        ret = msg.exec()
+        if ret == QMessageBox.Ok:
+            return True
+        else:
+            return False
 
     def buffer_needed(self, protocol_buffers):
         """Adds the buffers needed for the protocol with purging and cleanup
