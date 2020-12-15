@@ -45,6 +45,12 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         """Initialize the backend
         """
 
+        # Writes to the purifier.log to create an empty log
+        # The log file is read and displayed on the gui
+        chdir(path.dirname(path.realpath(__file__)))
+        with open('purifier.log', 'w') as f:
+            f.close()
+
         self.step_counter = -1  # counts the current step
         self.step_widgets = [] #Qt widget object (parent widget list for steps)
         self.step_widget_objs = [] # BackEnd_StepWidget object (used to extract input params)
