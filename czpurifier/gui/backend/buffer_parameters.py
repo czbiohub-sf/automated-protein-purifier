@@ -43,8 +43,8 @@ class BackEnd_BuffersWindow(Ui_BuffersWindow):
         self.wash_fc_slider.valueChanged.connect(lambda: self.slider_changed(2))
         self.elution_fc_slider.valueChanged.connect(lambda: self.slider_changed(3))
 
-        self.start_btn.clicked.connect(lambda: self.onClick_start_or_cancel(True))
-        self.cancel_btn.clicked.connect(lambda: self.onClick_start_or_cancel(False))
+        self.start_btn.clicked.connect(lambda: self.on_click_start_or_cancel(True))
+        self.cancel_btn.clicked.connect(lambda: self.on_click_start_or_cancel(False))
         self.flow_rate_cor_question.clicked.connect(self.onClick_define_flowrate_correction)
 
         self.display_reagents_volume(reagent_volume)
@@ -63,7 +63,7 @@ class BackEnd_BuffersWindow(Ui_BuffersWindow):
 
         self.fc_txtbox[indx].setText('{}'.format(self.sliders[indx].value()))
 
-    def onClick_start_or_cancel(self, is_start: bool):
+    def on_click_start_or_cancel(self, is_start: bool):
         """Closes the window when start or cancel is clicked
 
         :param is_start: True: Raises the start flag
@@ -77,7 +77,7 @@ class BackEnd_BuffersWindow(Ui_BuffersWindow):
             else: 
                 is_start = False
                 close = False
-        self.gui_controller.is_sure = is_start
+        self.gui_controller.start_protocol = is_start
         if close:
             self.BuffersWindow.close()
     
