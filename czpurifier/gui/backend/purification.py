@@ -43,6 +43,12 @@ class BackEnd_Purification(Ui_PurificationWindow):
         """Initialize the backend
         """
 
+        # Writes to the purifier.log to create an empty log
+        # The log file is read and displayed on the gui
+        chdir(path.dirname(path.realpath(__file__)))
+        with open('purifier.log', 'w') as f:
+            f.close()
+
         # Parsed when start is clicked to determine the input parameters for run purification
         # Key: Name of the widget, Value: True = textbox widget, False = combobox widget
         self.input_param = {self.num_col_combo_box: False, self.columnsize: None,

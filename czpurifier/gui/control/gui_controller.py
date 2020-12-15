@@ -24,18 +24,14 @@ class GUI_Controller:
             - Flow Throw Columns: 4 larger columns on the fraction collector
             - Fraction Columns: 10 smaller columns on the fraction collector
         """
-        logging.basicConfig(filename='purifier.log', filemode='a', format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+        logging.basicConfig(filename='purifier.log', filemode='a', 
+                            format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
         # The process is None if connected to the device or it holds the process object for the simulator
         self.device_process = None
         # The object that runs the controller and its PID
         self.ctrl_proc = None
         self.controller_interface_PID = None
-
-        # Writes to the purifier.log to create an empty log
-        # The log file is read and displayed on the gui
         chdir(path.dirname(path.realpath(__file__)))
-        with open('purifier.log', 'w') as f:
-            f.close()
         # Open the json file that contains all the defualt parameters
         with open('purification_parameters.json', 'r') as f:
             self._p = load(f)
@@ -49,10 +45,11 @@ class GUI_Controller:
         # The controller_ip is saved in the json file as pure1/pure2 based on the hardware
         # The controller_ip is overwritten to a local address if the simulation mode is selected
         self.controller_ip = self._p['PURIFIER_IP']['ip']
-        #self.controller_ip = '127.0.0.1'
         # Default actual per column volumes for 1mL col size
-        self.actualvol1mL = [self._p['PUMP1']['1mL'], self._p['PUMP2']['1mL'], self._p['PUMP3']['1mL'], self._p['PUMP4']['1mL']]
-        self.actualvol5mL = [self._p['PUMP1']['5mL'], self._p['PUMP2']['5mL'], self._p['PUMP3']['5mL'], self._p['PUMP4']['5mL']]
+        self.actualvol1mL = [self._p['PUMP1']['1mL'], self._p['PUMP2']['1mL'], 
+                            self._p['PUMP3']['1mL'], self._p['PUMP4']['1mL']]
+        self.actualvol5mL = [self._p['PUMP1']['5mL'], self._p['PUMP2']['5mL'], 
+                            self._p['PUMP3']['5mL'], self._p['PUMP4']['5mL']]
 
         #Stylesheets used for displaying the status
         self.status_display_color_running = '#3CB371'
@@ -101,15 +98,18 @@ class GUI_Controller:
         targ = RunPurification if is_basic_purification else RunCustomProtocol
         if self.device_process is not None:
             kill(self.device_process.pid, SIGUSR1)
-        self.ctrl_proc = Process(target=targ, args=(parameters, calib_list, self.getFractionParameters(), 
-                                    self.flow_rate_correction, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=targ, args=(parameters, calib_list, 
+                                    self.getFractionParameters(), self.flow_rate_correction, 
+                                    self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
     
     def run_calibration_protocol(self, columnsize, calib_list, num_cols):
         """Runs the calibration protocol"""
-        self.ctrl_proc = Process(target=RunCalibrationProtocol, args = (columnsize, calib_list, num_cols, self.controller_ip, getpid(),))
+        self.ctrl_proc = Process(target=RunCalibrationProtocol, 
+                                args = (columnsize, calib_list, num_cols, 
+                                self.controller_ip, getpid(),))
         self.ctrl_proc.daemon = True
         self.ctrl_proc.start()
         self.controller_interface_PID = self.ctrl_proc.pid
@@ -278,7 +278,9 @@ class GUI_Controller:
             col_limit_cv = 50 if self.columnsize == 1 else 10
         else:
             col_limit_cv = 1
-        pathway_array = self.fracflow_objs[id].add_path(pathway_array, col_limit_cv, num_needed, last_volume)
+        pathway_array = self.fracflow_objs[id].add_path(pathway_array, 
+                                                        col_limit_cv, num_needed, 
+                                                        last_volume)
         return self.fracflow_objs[id].selectedList
 
     def okay_vol_checker(self, vol, col_limit):
