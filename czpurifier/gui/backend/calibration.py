@@ -78,8 +78,7 @@ class BackEnd_CalibrationWindow(Ui_CalibrationWindow):
         """Signals the script that stop was clicked, to home the device
         """
 
-        self.gui_controller.areYouSureMsg('stop')
-        if self.gui_controller.is_sure:
+        if self.gui_controller.areYouSureMsg('stop'):
             self.gui_controller.is_sure = None
             self.gui_controller.stop_clicked()
             self.CalibrationWindow.close()

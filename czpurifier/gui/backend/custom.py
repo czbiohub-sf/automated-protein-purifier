@@ -437,7 +437,7 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
             self.start_btn.setEnabled(False)
             self.close_btn.setEnabled(False)
             self.toggle_parameter_widgets(False)
-            self.gui_controller.run_purification_script(False, setup_param, init_params, calib_list)
+            self.gui_controller.run_purification_script(False, init_params, calib_list)
             self.status_display_btn.setEnabled(True)
             self.status_display_btn.setText('running')
             self.current_step_display_btn.setEnabled(True)
