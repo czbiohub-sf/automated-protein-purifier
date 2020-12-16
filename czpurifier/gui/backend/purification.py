@@ -215,14 +215,14 @@ class BackEnd_Purification(Ui_PurificationWindow):
                 [number of columns, column size, equil volume, equil flowpath,
                 load vol, load flowpath, wash volume, wash flowpath, 
                 elute vol, elute flowpath]
-        :rtype: [2, '1mL', 50.0, 2, ...]
+        :rtype: [2, '1mL', 50, 2, ...]
         """
 
         run_param = []
         for widget in self.input_param:
             if self.input_param[widget]:
                 # Handle text inputs
-                run_param.append(float(widget.text()))
+                run_param.append(int(widget.text()))
             elif self.input_param[widget] is None:
                 # handle the columnsize
                 run_param.append(widget)
@@ -230,8 +230,7 @@ class BackEnd_Purification(Ui_PurificationWindow):
                 # Handle combo box
                 run_param.append(widget.currentIndex())
         # +1 needs to be added to the number of pumps
-        # and convert to int
-        run_param[0] = int(run_param[0]) + 1
+        run_param[0] = run_param[0] + 1
         return run_param
 
     def get_pump_calibration_factor(self) -> List[float]:
@@ -248,16 +247,16 @@ class BackEnd_Purification(Ui_PurificationWindow):
         """Calculates an estimate time for each step
         """
 
-        step_times = [float(self.equil_vol_val.text()), float(self.load_vol_val.text()),
-                    float(self.wash_vol_val.text()), float(self.elute_vol_val.text())]
+        step_times = [int(self.equil_vol_val.text()), int(self.load_vol_val.text()),
+                    int(self.wash_vol_val.text()), int(self.elute_vol_val.text())]
         step_times = [i*60 for i in step_times]
         self.step_times = self.gui_controller.getPumpTimes(step_times)
 
-    def protocol_buffers(self) -> Dict[str, float]:
+    def protocol_buffers(self) -> Dict[str, int]:
         """Return a dict of all the reagents used and the volume of each
 
         :return: dict{a:b}: a = reagent name, b = volume in CV
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, int]
         """
 
         return  {'LOAD_BUFFER': int(self.equil_vol_val.text()),
