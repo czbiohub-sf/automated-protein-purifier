@@ -15,7 +15,7 @@ class RunCustomProtocol():
         self.gui_pid = gui_pid
         self.ui = UICommands()
         self.ui.connect(input_param[0][1], ip, input_param[0][0], calib_list)
-
+        self.last_multiplier = 1 # keeps track of last multiplier for calibration
         self.buffers = ['WASH', 'LOAD_BUFFER', 'ELUTION', 'BASE']
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
@@ -60,14 +60,17 @@ class RunCustomProtocol():
             self.ui.selectLoad()
             # correction called to reset back to the original per column calibration
             # per column calibration is done using the LOAD
-            self.ui.flowRateCorrection(self.per_column_calib)
+            correction_factor = [1/self.last_multiplier]*len(self.per_column_calib)
+            self.last_multiplier = 1
+            self.ui.flowRateCorrection(correction_factor)
         else:
             self.ui.selectBuffers()
             p_name = self.buffers[step_param[0]]
             self.ui.selectPort(p_name)
             # multiply the buffer calibration factor with the per column calibration factor
             # to set the new flow rate to incorporate both calibration rates
-            correction_factor = [i*self.buffer_calib[p_name] for i in self.per_column_calib]
+            correction_factor = [self.buffer_calib[p_name]/self.last_multiplier]*len(self.per_column_calib)
+            self.last_multiplier = self.buffer_calib[p_name]
             self.ui.flowRateCorrection(correction_factor)
         
         # 2. If fraction/flow, run the stage

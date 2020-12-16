@@ -13,6 +13,7 @@ class RunPurification():
         self.buffer_calib = buffer_calib
         self.per_column_calib = calib_list
         self.num_pumps = input_param[0]
+        self.last_multiplier = 1
 
         self.waste_close_cmds = [self.ui.closePreColumnWaste, self.ui.closePostColumnWaste]
         self.waste_open_cmds = [self.ui.openPreColumnWaste, self.ui.openPostColumnWaste]
@@ -65,14 +66,17 @@ class RunPurification():
             self.ui.selectLoad()
             # correction called to reset back to the original per column calibration
             # per column calibration is done using the LOAD
-            self.ui.flowRateCorrection(self.per_column_calib)
+            correction_factor = [1/self.last_multiplier]*len(self.per_column_calib)
+            self.last_multiplier = 1
+            self.ui.flowRateCorrection(correction_factor)
         else:
             p_name = process_name if process_name == 'WASH' or process_name == 'ELUTION' else 'LOAD_BUFFER'
             self.ui.selectBuffers()
             self.ui.selectPort(p_name)
             # multiply the buffer calibration factor with the per column calibration factor
             # to set the new flow rate to incorporate both calibration rates
-            correction_factor = [i*self.buffer_calib[p_name] for i in self.per_column_calib]
+            correction_factor = [self.buffer_calib[p_name]/self.last_multiplier]*len(self.per_column_calib)
+            self.last_multiplier = self.buffer_calib[p_name]
             self.ui.flowRateCorrection(correction_factor)
 
         if parameters[1] > 1:
