@@ -409,19 +409,23 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
         """Update the progress bar and estimated time remaining display
         """
 
-        percen_comp = self.progressBar.value()
-        if percen_comp < 100 and self.status_timer.isActive():
-            # Calculating time remaining
-            time_remaining = (self.status_timer.remainingTime())/1000
-            percen_comp = (1-(time_remaining/self.step_times[self.current_step]))*100
-            percen_comp = 0 if percen_comp < 0 else percen_comp
-            self.progressBar.setValue(percen_comp)
-            self.progressLabel.setText('{:.1f}%'.format(percen_comp))
+        try:
+            percen_comp = self.progressBar.value()
+            if percen_comp < 100 and self.status_timer.isActive():
+                # Calculating time remaining
+                time_remaining = (self.status_timer.remainingTime())/1000
+                percen_comp = (1-(time_remaining/self.step_times[self.current_step]))*100
+                percen_comp = 0 if percen_comp < 0 else percen_comp
+                self.progressBar.setValue(percen_comp)
+                self.progressLabel.setText('{:.1f}%'.format(percen_comp))
 
-        if self.total_time_timer.isActive():
-            time = self.total_time_timer.remainingTime()/(1000*60)
-            lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(time)
-            self.estimated_time_remaining_lbl.setText(lbl)
+            if self.total_time_timer.isActive():
+                time = self.total_time_timer.remainingTime()/(1000*60)
+                lbl = 'Estimated Time: {0:.2f} min(s) remaining'.format(time)
+                self.estimated_time_remaining_lbl.setText(lbl)
+        except IndexError:
+            pass
+
 
     def total_time_handler(self):
         """If the total timer finishes before the final signal stop the timer
