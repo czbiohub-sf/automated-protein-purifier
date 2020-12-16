@@ -175,7 +175,7 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
                 index has the setup parameters [no columns, column size, num repeats]
                 The following index has a tuple [a, b, c]: a = buffer type 
                 index/None for load, b = the volume to pump in CV, c = the flow path index
-        :rtype: [[3, 1mL, 5], [None, 5.0, 0], [2, 2.0, 1], ...]
+        :rtype: [[3, 1mL, 5], [None, 5, 0], [2, 2, 1], ...]
         """
         
         input_params = []
@@ -188,7 +188,7 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
                 inp.append(c.port_combo_box.currentIndex())
             else:
                 inp.append(None)
-            inp.append(float(c.volume_val_lbl.text()))
+            inp.append(int(c.volume_val_lbl.text()))
             inp.append(c.flowpath_combo_box.currentIndex())
             input_params.append(inp)
         return input_params
@@ -211,11 +211,11 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
 
         return [c.volume_val_lbl for c in self.step_widget_objs]
     
-    def protocol_buffers(self) -> Dict[str, float]:
+    def protocol_buffers(self) -> Dict[str, int]:
         """Return a dict of all the reagents used and the volume of each
 
         :return: dict{a:b}: a = reagent name, b = volume in CV
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, int]
         """
 
         total_buffers = {}
@@ -225,9 +225,9 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
             else:
                 key_name = 'LOAD'
             if key_name in total_buffers:
-                total_buffers[key_name] = total_buffers[key_name] + float(c.volume_val_lbl.text())
+                total_buffers[key_name] = total_buffers[key_name] + int(c.volume_val_lbl.text())
             else:
-                total_buffers.update({key_name: float(c.volume_val_lbl.text())})
+                total_buffers.update({key_name: int(c.volume_val_lbl.text())})
         return total_buffers
     
     def get_pump_times(self):
@@ -236,7 +236,7 @@ class BackEnd_CustomWindow(Ui_CustomWindow):
 
         pump_times = []
         for c in self.step_widget_objs:
-            pump_times.append(float(c.volume_val_lbl.text())*60)
+            pump_times.append(int(c.volume_val_lbl.text())*60)
         # Multiply it with the number of reps so that the pump times repeat for each rep
         pump_times = pump_times*int(self.rep_num_lbl.text())
         self.step_times = self.gui_controller.getPumpTimes(pump_times)
