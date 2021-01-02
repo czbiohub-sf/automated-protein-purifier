@@ -151,6 +151,27 @@ class UICommands():
         """Move rotary valve to specified position."""
         self.ci.selectPort(port_name)
 
+    ############################
+    #   SERIAL FORMAT VALVES   #
+    ############################
+
+    def serialFlowTo2ndColumn(self, state: bool):
+        """Pass output of column 1 to input of column 2."""
+        valves_to_2nd = 0b11110000
+        self.ci.getInputStates()
+        if state is True:
+            target_states = self.ci.input_states | valves_to_2nd
+        else:
+            target_states = self.ci.input_states & ~valves_to_2nd
+        self.ci.setInputStates(target_states)
+
+    def serialOpen2ndPreColumnWaste(self):
+        """Open pre-column waste valves on serial column."""
+        valves_pre_waste_serial = 0b00001010
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states & ~valves_pre_waste_serial
+        self.ci.setWasteStates(target_states)
+
     ##########################
     #   FRACTION COLLECTOR   #
     ##########################
@@ -161,7 +182,7 @@ class UICommands():
     #############
     #   PUMPS   #
     #############
-    def pump(self, col_vol: float):
+    def pump(self, col_vol: float, pumps: list = []):
         """
         Run pumps for the specified column volumes.
         - Check for the pause flag before and after pumping is started
@@ -175,8 +196,14 @@ class UICommands():
         """
         if self._pause_flag:
             self._remainInPlace(True)
-        for pump in range(self.pumps):
-            self.ci.startPumping(pump)
+
+        if pumps == []:
+            for pump in range(self.pumps):
+                self.ci.startPumping(pump)
+        else:
+            for pump in pumps:
+                self.ci.startPumping(pump)
+
         for c in range(col_vol * 60):
             if self._pause_flag:
                 logging.info("Pausing pumps")
@@ -198,6 +225,12 @@ class UICommands():
                     self.ci.startPumping(pump)
             sleep(1)
         self.ci.stopPumping()
+
+    def flowRateCorrection(self, corr_factor: list):
+        """Apply correction factor to pump flow rates."""
+        self.ci.getFlowRates()
+        for pump in range(self.pumps):
+            self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)
 
     ####################
     # SIGNAL HANDLERS #
@@ -226,10 +259,3 @@ class UICommands():
         self.disconnect()
         signal(SIGTERM, self._SIGTERM_default)
         kill(getpid(), SIGTERM)
-        
-     
-    def flowRateCorrection(self, corr_factor: list):
-        """Apply correction factor to pump flow rates."""
-        self.ci.getFlowRates()
-        for pump in range(self.pumps):
-            self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)
