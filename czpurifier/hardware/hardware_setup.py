@@ -7,7 +7,7 @@ from .pump_controller import PumpControllerTic
 from .rotary_controller import RotaryControllerTic
 from .valve_controller import ValveControllerMCP23017
 from pyconfighandler import validateConfig
-from pymotors import TicStepper, TicStage
+from pymotors import TicStage
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -205,10 +205,9 @@ class PurifierHardwareSetup():
         vol_frac = int(config[config_mode]['VOLUME_FRAC'])
         vol_flwthru = int(config[config_mode]['VOLUME_FLWTHRU'])
 
-        motor = TicStepper(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=rpm)
-        motor.setCurrentLimit(motor_current)
-        stage = TicStage(ticStepper=motor, microStepFactor=micros)
-        stage.enable()
+        stage = TicStage(com_type='I2C', port_params=bus, address=addr, input_steps_per_rev=steps_rev, input_rpm=rpm, micro_step_factor=micros)
+        stage.setCurrentLimit(motor_current)
+        stage.enable = True
 
         position_map = {}
         for i in range(0, num_frac):
