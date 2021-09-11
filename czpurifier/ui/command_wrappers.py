@@ -1,7 +1,13 @@
 from time import sleep
 from enum import Enum, auto
+from signal import signal, SIGQUIT, SIGSTOP, SIGUSR1, SIGUSR2, SIGTERM, getsignal
+from os import kill, getpid
 from czpurifier.middleware import ControllerInterface
+import logging
+from logging import NullHandler
 
+log = logging.getLogger(__name__)
+log.addHandler(NullHandler())
 
 class UICommands():
     """Command wrappers for purifier ControllerInterface."""
@@ -10,6 +16,17 @@ class UICommands():
         self.ci = ControllerInterface(timeout)
         self.pumps = 0
         self.alias = ''
+
+        # Assign signals and handlers
+        self._pause_flag = False
+        self._pumps_are_paused = False
+        self._hold_flag = False
+        self._skip_flag = False
+        self._SIGTERM_default = getsignal(SIGTERM)
+        signal(SIGQUIT, self._raisePauseFlag)
+        signal(SIGUSR1, self._raiseHoldFlag)
+        signal(SIGUSR2, self._raiseSkipFlag)
+        signal(SIGTERM, self._softStop)
 
     def __del__(self):
         if self.alias:
@@ -134,6 +151,27 @@ class UICommands():
         """Move rotary valve to specified position."""
         self.ci.selectPort(port_name)
 
+    ############################
+    #   SERIAL FORMAT VALVES   #
+    ############################
+
+    def serialFlowTo2ndColumn(self, state: bool):
+        """Pass output of column 1 to input of column 2."""
+        valves_to_2nd = 0b11110000
+        self.ci.getInputStates()
+        if state is True:
+            target_states = self.ci.input_states | valves_to_2nd
+        else:
+            target_states = self.ci.input_states & ~valves_to_2nd
+        self.ci.setInputStates(target_states)
+
+    def serialOpen2ndPreColumnWaste(self):
+        """Open pre-column waste valves on serial column."""
+        valves_pre_waste_serial = 0b00001010
+        self.ci.getWasteStates()
+        target_states = self.ci.waste_states & ~valves_pre_waste_serial
+        self.ci.setWasteStates(target_states)
+
     ##########################
     #   FRACTION COLLECTOR   #
     ##########################
@@ -144,11 +182,48 @@ class UICommands():
     #############
     #   PUMPS   #
     #############
-    def pump(self, col_vol: float):
-        """Run pumps for the specified column volumes."""
-        for pump in range(self.pumps):
-            self.ci.startPumping(pump)
-        sleep(col_vol * 60)
+    def pump(self, col_vol: float, pumps: list = []):
+        """
+        Run pumps for the specified column volumes.
+        - Check for the pause flag before and after pumping is started
+        If the pause flag is up, the script it suspended in the location,
+        the pumps are closed, till resume signal is recieved
+        - Check for the hold flag when pumps are running, if flag is up,
+        the script suspends in position keeping the pumps running, till
+        resume signal is recieved
+        - Check for the skip flag, if flag is up, break out of the pump
+        loop and finish pumping
+        """
+        if self._pause_flag:
+            self._remainInPlace(True)
+
+        if pumps == []:
+            for pump in range(self.pumps):
+                self.ci.startPumping(pump)
+        else:
+            for pump in pumps:
+                self.ci.startPumping(pump)
+
+        for c in range(col_vol * 60):
+            if self._pause_flag:
+                logging.info("Pausing pumps")
+                self.ci.stopPumping()
+                self._pumps_are_paused = True
+                self._remainInPlace(True)
+            if self._hold_flag:
+                logging.info("Holding pumps")
+                self._remainInPlace(False)
+            if self._skip_flag:
+                logging.info("Skipping to next step")
+                self._skip_flag = False
+                self.ci.stopPumping()
+                return True
+            if self._pumps_are_paused:
+                logging.info("Restarting pumps")
+                self._pumps_are_paused = False
+                for pump in range(self.pumps):
+                    self.ci.startPumping(pump)
+            sleep(1)
         self.ci.stopPumping()
 
     def flowRateCorrection(self, corr_factor: list):
@@ -156,3 +231,31 @@ class UICommands():
         self.ci.getFlowRates()
         for pump in range(self.pumps):
             self.ci.setFlowRates(self.ci.flow_rates[pump] * corr_factor[pump], pump)
+
+    ####################
+    # SIGNAL HANDLERS #
+    ###################
+    def _raisePauseFlag(self, signalNumber, frame):
+        """Raise pause flag if SIGQUIT recieved"""
+        self._pause_flag = True
+    
+    def _raiseHoldFlag(self, signalNumber, frame):
+        """Raise hold flag if SIGUSR1 recieved"""
+        self._hold_flag = True
+
+    def _remainInPlace(self, is_pump):
+        """Suspend script at location if pause/hold flag is up"""
+        if is_pump:
+            self._pause_flag = False
+        else:
+            self._hold_flag = False
+        kill(getpid(), SIGSTOP)
+    
+    def _raiseSkipFlag(self, signalNumber, frame):
+        self._skip_flag = True
+
+    def _softStop(self, signalNumber, frame):
+        """Safely disconnects the interface when stop is called"""
+        self.disconnect()
+        signal(SIGTERM, self._SIGTERM_default)
+        kill(getpid(), SIGTERM)

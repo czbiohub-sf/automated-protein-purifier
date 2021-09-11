@@ -1,0 +1,117 @@
+# Instrument setup (do not change)
+#!/usr/bin/env python
+
+import logging
+from time import sleep
+from czpurifier.ui import UICommands
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+
+# Define columns (type and number)
+ui = UICommands()
+ui.connect('1mL', 'pure1.local', 2,[10/10,10/2])
+
+# Purge bubbles
+print("****************************")
+print("*******START")
+print("****************************")
+print(" ")
+print("Purging bubbles")
+print("   Select load")
+ui.selectLoad()
+print("   Pump 1")
+ui.pump(1,[0])
+print("   Select buffers")
+ui.selectBuffers()
+print("   Select port ELUTION")
+ui.selectPort('ELUTION')
+print("   Pump 1")
+ui.pump(1,[0])
+print("   Select port WASH")
+ui.selectPort('WASH')
+print("   Pump 1")
+ui.pump(1,[0])
+
+# note: in future will use a separate buffer 'DESALT_BUFFER' for Column 2
+print("Load buffer")
+print("   Select port LOAD_BUFFER")
+ui.selectPort('LOAD_BUFFER')
+print("   Pump 1")
+ui.pump(1,[0])
+ui.selectPort('DESALT_BUFFER')
+ui.pump(1,[1])
+print("   Close pre-column waste")
+ui.closePreColumnWaste()
+
+# prepare to flush tubing connecting Col1 and Col2 with Elution buffer
+print("Flush tubing from col1 to col2")
+print("   Select port ELUTION")
+ui.selectPort('ELUTION')
+print("   Pump 1 [0]")
+ui.pump(1,[0])
+print("   Open 2nd pre-column waste")
+ui.serialOpen2ndPreColumnWaste()
+print("   Pump 1 [0]")
+ui.pump(1,[0])
+print("   Close pre-column waste")
+ui.closePreColumnWaste()
+
+# equilibrate Col 1 and Col2 in Load_buffer.  Will have separate Desalt_buffer in future
+print("Equilibrate col 1 and col 2 in load buffer")
+print("   Select port LOAD_BUFFER")
+ui.selectPort('LOAD_BUFFER')
+print("   Pump 10 [0]")
+
+ui.selectPort('DESALT_BUFFER')
+ui.pump(10,[0,1])
+
+# Run purification protocol: LOAD Col 1
+print("Load Col 1")
+print("   Select load")
+ui.selectLoad()
+print("   Pump 1 [0]")
+ui.pump(50,[0])
+
+# Run purification protocol: WASH
+print("Wash")
+print("   Select buffers")
+ui.selectBuffers()
+print("   Select port WASH")
+ui.selectPort('WASH')
+print("   Pump 1 [0]")
+ui.pump(1,[0])
+print("   Close post-column waste")
+ui.closePostColumnWaste()
+
+# Run purification protocol: ELUTION 1st fraction
+print("Elute 1st fraction")
+print("   Select port ELUTION")
+ui.selectPort('ELUTION')
+print("   Select fraction Frac1")
+ui.selectFraction('Frac1')
+print("   Pump 1 [0]")
+ui.pump(1,[0])
+
+# Fractions 2-4 sent to Col 2
+print("Send fraction 2-4 to col 2")
+print("   Serial flow to 2nd col")
+ui.serialFlowTo2ndColumn(True)
+print("   Select frction FLOW1")
+ui.selectFraction('Flow1')
+print("   Pump 3 [0]")
+ui.pump(3, [0])
+ui.serialFlowTo2ndColumn(False)
+
+# Elute from desalt column
+print("Elute from 2nd col")
+print("   Select port LOAD_BUFFER")
+ui.selectPort('LOAD_BUFFER')
+print("   Select fraction Flow2")
+ui.selectFraction('Flow2')
+print("   Pump 4 [1]")
+ui.pump(4,[1])
+
+print("Select fraction Safe")
+ui.selectFraction('Safe')
+
+print("**********END*******")
+
