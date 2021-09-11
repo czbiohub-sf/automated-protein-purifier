@@ -3,7 +3,7 @@
 import logging
 from time import sleep
 from czpurifier.ui import UICommands
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')# Define columns (type and number)
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG, datefmt='%H:%M:%S')# Define columns (type and number)
 ui = UICommands()
 ui.connect('1mL', 'pure1.local', 2,[10/10,7/1])# Purge bubbles
 ui.selectLoad()
