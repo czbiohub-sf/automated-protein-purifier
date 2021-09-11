@@ -14,6 +14,10 @@ ui.selectBuffers()
 ui.closePreColumnWaste()
 
 # Run base wash
+ui.selectLoad()
+ui.selectBuffers()
 ui.selectPort('BASE')
-ui.pump(10)
+ui.selectPort('ELUTION')
+ui.selectPort('WASH')
+ui.selectPort('LOAD_BUFFER')
 
