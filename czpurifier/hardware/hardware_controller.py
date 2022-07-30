@@ -1,7 +1,7 @@
 """Methods for controlling purifier hardware."""
 
 from .hardware_setup import PurifierHardwareSetup
-from .mock_hardware_setup import MockHardwareSetup
+#from .mock_hardware_setup import MockHardwareSetup
 import logging
 from logging import NullHandler
 from time import sleep
@@ -23,8 +23,9 @@ class HardwareController():
     """
 
     def __init__(self, hw_config_file_path, config_mode, run_simulator = False):
-        
-        setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
+
+        setup = PurifierHardwareSetup()
+#        setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
         self.subunits = {}
         self.collector_homed = False
         self.rotary_homed = False
@@ -86,8 +87,8 @@ class HardwareController():
 
     def homeFracCollector(self):
         """Home the fraction collector."""
-        self.subunits['FRAC_COLLECTOR']._ticStepper.home(self.subunits['FRAC_HOME_DIR'])
-        while not self.subunits['FRAC_COLLECTOR']._ticStepper.isHomed():
+        self.subunits['FRAC_COLLECTOR'].home(self.subunits['FRAC_HOME_DIR'])
+        while not self.subunits['FRAC_COLLECTOR'].isHomed():
             sleep(0.01)  # Calling isHomed too frequently can crash the I2C bus
         self.collector_homed = True
         log.info('Fraction collector homed.')

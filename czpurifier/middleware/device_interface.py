@@ -22,13 +22,17 @@ class DeviceInterface():
 
     def __init__(self, ip_address='127.0.0.1', timeout_recv=1):
         # Set sockets for receiving and transmitting data.
-        context = zmq.Context()
-        self.socket_availability = context.socket(zmq.PUSH)
+        log.info("Attempting to connect to IP address: %s", str(ip_address))
+        self._context = zmq.Context()
+        self.socket_availability = self._context.socket(zmq.PUSH)
         self.socket_availability.bind("tcp://" + ip_address + ":5000")
-        self.socket_data_in = context.socket(zmq.PULL)
+        log.info("Availabilty broadcast port online at port 5000.")
+        self.socket_data_in = self._context.socket(zmq.PULL)
         self.socket_data_in.bind("tcp://" + ip_address + ":5100")
-        self.socket_data_out = context.socket(zmq.PUSH)
+        log.info("Data-in port online at port 5100.")
+        self.socket_data_out = self._context.socket(zmq.PUSH)
         self.socket_data_out.bind("tcp://" + ip_address + ":5200")
+        log.info("Data-out port online at port 5200.")
 
         # Set other class parameters.
         self._device_id = None
@@ -37,6 +41,11 @@ class DeviceInterface():
         self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "config/autopurifier_hardware.config")
         self.cmd_dict = {}
         self.initCmdDict()
+    
+    def __del__(self):
+        "Release ports upon termination."
+        self._context.term()
+        log.info("Communication ports terminated.")
 
     def autorun(self):
         """Loop > Wait for data and execute. Signal if device is available."""
@@ -147,7 +156,7 @@ class DeviceInterface():
         data_waiting = self.socket_data_in.poll(timeout=self.timeout_recv * 1000)
         if data_waiting:
             data = self.socket_data_in.recv_string().split(',')
-            logging.debug('Received data: ' + str(data))
+            log.debug('Received data: ' + str(data))
             return data
 
     def sendData(self, data):
@@ -159,10 +168,9 @@ class DeviceInterface():
             A python object to be transmitted.
         """
         self.socket_data_out.send_pyobj([self._device_id, data])
-        logging.debug('Transmitted data: %s', str(data))
+        log.debug('Transmitted data: %s', str(data))
 
     def signalAvailability(self):
         """Put data on 'availability' socket if device not in use."""
         if self._device_id is None:
             self.socket_availability.send_string('')
-            logging.debug('Signalled availability.')

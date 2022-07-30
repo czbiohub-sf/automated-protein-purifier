@@ -47,6 +47,7 @@ class UICommands():
         alias : str
             Alias to give machine for communication purposes.
         """
+        log.debug("Connecting to address/alias {}/{}".format(address,alias))
         self.ci.connect(address, alias)
         if self.ci.devices:
             self.alias = alias
@@ -179,20 +180,20 @@ class UICommands():
             self.ci.startPumping(pump)
         for c in range(col_vol * 60):
             if self._pause_flag:
-                logging.info("Pausing pumps")
+                log.info("Pausing pumps")
                 self.ci.stopPumping()
                 self._pumps_are_paused = True
                 self._remainInPlace(True)
             if self._hold_flag:
-                logging.info("Holding pumps")
+                log.info("Holding pumps")
                 self._remainInPlace(False)
             if self._skip_flag:
-                logging.info("Skipping to next step")
+                log.info("Skipping to next step")
                 self._skip_flag = False
                 self.ci.stopPumping()
                 return True
             if self._pumps_are_paused:
-                logging.info("Restarting pumps")
+                log.info("Restarting pumps")
                 self._pumps_are_paused = False
                 for pump in range(self.pumps):
                     self.ci.startPumping(pump)

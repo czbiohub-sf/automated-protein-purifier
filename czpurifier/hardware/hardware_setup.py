@@ -7,7 +7,7 @@ from .pump_controller import PumpControllerTic
 from .rotary_controller import RotaryControllerTic
 from .valve_controller import ValveControllerMCP23017
 from pyconfighandler import validateConfig
-from pymotors import TicStage
+from pymotors import TicStage, TicStepper
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -209,16 +209,16 @@ class PurifierHardwareSetup():
         stage.setCurrentLimit(motor_current)
         stage.enable = True
 
-        position_map = {}
+        position_map_dict = {}
         for i in range(0, num_frac):
-            position_map['Frac' + str(i + 1)] = pos_frac1 + offset_frac * i
+            position_map_dict['Frac' + str(i + 1)] = pos_frac1 + offset_frac * i
 
         for i in range(0, num_flwthru):
-            position_map['Flow' + str(i + 1)] = pos_flwthru1 + offset_flwthru * i
+            position_map_dict['Flow' + str(i + 1)] = pos_flwthru1 + offset_flwthru * i
 
-        position_map['Safe'] = pos_safe
+        position_map_dict['Safe'] = pos_safe
 
-        stage.setIndexedPositions(positionMap=position_map)
+        stage.setIndexedPositions(position_map=position_map_dict)
         frac_collector = {'FRAC_COLLECTOR': stage, 'FRAC_HOME_DIR': frac_home_dir, 'VOL_FRAC': vol_frac, 'VOL_FLOWTHRU': vol_flwthru, }
 
         return frac_collector

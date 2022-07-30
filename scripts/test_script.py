@@ -1,8 +1,8 @@
-#!/Users/samia.sama/Documents/Protein_Purifier/venv/bin/python3.7
+#!/usr/bin/env python
 import logging
 from czpurifier.ui import UICommands
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Setup
 ui = UICommands()
@@ -23,12 +23,12 @@ ui.pump(1)
 ui.closePreColumnWaste()
 
 # Run purification protocol
-ui.pump(10)
+ui.pump(1)
 ui.selectLoad()
-ui.pump(45)
+ui.pump(1)
 ui.selectBuffers()
 ui.selectPort('WASH')
-ui.pump(40)
+ui.pump(1)
 ui.selectPort('ELUTION')
 ui.selectFraction('Frac1')
 ui.pump(1)
@@ -55,4 +55,4 @@ ui.selectFraction('Safe')
 
 # Run cleanup
 ui.selectPort('BASE')
-ui.pump(10)
+ui.pump(1)

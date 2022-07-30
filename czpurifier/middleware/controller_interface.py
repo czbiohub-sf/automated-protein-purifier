@@ -31,10 +31,16 @@ class ControllerInterface():
         self.devices = {}
         self.timeout = timeout
         # Communication interface
-        context = zmq.Context()
-        self._socket_availability = context.socket(zmq.PULL)
-        self._socket_data_out = context.socket(zmq.PUSH)
-        self._socket_data_in = context.socket(zmq.PULL)
+        self._context = zmq.Context()
+        self._socket_availability = self._context.socket(zmq.PULL)
+        self._socket_data_out = self._context.socket(zmq.PUSH)
+        self._socket_data_in = self._context.socket(zmq.PULL)
+
+    def __del__(self):
+        "Release ports upon termination."
+        self._context.term()
+        log.info("Device port manager terminated.")
+
 
     ######################
     # Hardware Interface #
@@ -53,10 +59,10 @@ class ControllerInterface():
         if alias not in self.devices:
             available = self.pollDeviceAvailability(address)
             if available:
-                logging.info("Device at `%s` is available.", address)
+                log.info("Device at `%s` is available.", address)
                 self.hardConnect(address, alias)
             else:
-                logging.info("Device at `%s` not available.", address)
+                log.info("Device at `%s` not available.", address)
 
     def hardConnect(self, address: str, alias: str = 'device'):
         """Connect to sockets at address and save address.
@@ -75,7 +81,7 @@ class ControllerInterface():
         self.devices[alias] = address
         data_out = 'connect,' + alias
         self.send(data_out, self._okayResponseChecker)
-        logging.info("Device at `%s` connected as `%s`.", address, alias)
+        log.info("Device at `%s` connected as `%s`.", address, alias)
 
     def disconnect(self, alias: str = 'device'):
         """Disconnect from a currently connected device.
@@ -90,7 +96,7 @@ class ControllerInterface():
             protocol_address = 'tcp://' + self.devices[alias]
             self._socket_data_out.disconnect(protocol_address + ':5100')
             self._socket_data_in.disconnect(protocol_address + ':5200')
-            logging.info("Device with alias `%s` has been disconnected.", alias)
+            log.info("Device with alias `%s` has been disconnected.", alias)
             del self.devices[alias]
         except KeyError:
             log.warning('Device with alias `%s` is not connected.', alias)
@@ -109,10 +115,10 @@ class ControllerInterface():
     def loadConfig(self):
         """Load a configuration on all connected devices."""
         if self.config_mode:
-            logging.info("Loading configuration `%s`.", self.config_mode)
+            log.info("Loading configuration `%s`.", self.config_mode)
             self.send('loadConfig,' + self.config_mode, self._okayResponseChecker)
         else:
-            logging.warning("Set config_mode parameter before calling.")
+            log.warning("Set config_mode parameter before calling.")
 
     def send(self, command, response_func):
         """Transmit and receive data.
@@ -157,14 +163,14 @@ class ControllerInterface():
 
     def _tx(self, data_out: str):
         self._socket_data_out.send_string(data_out)
-        logging.debug('Transmitted data: %s', data_out)
+        log.debug('Transmitted data: %s', data_out)
 
     def _rx(self):
         resp = []
         resp_waiting = self._socket_data_in.poll(timeout=self.timeout)
         if resp_waiting:
             resp = self._socket_data_in.recv_pyobj()
-            logging.debug('Received data: %s', str(resp))
+            log.debug('Received data: %s', str(resp))
         else:
             resp = ['Response not received']
         return resp
@@ -182,7 +188,7 @@ class ControllerInterface():
 
     def getPositions(self):
         """Request fraction collector position names."""
-        logging.info("Updating position labels from fraction collector.")
+        log.info("Updating position labels from fraction collector.")
         cmd_to_send = 'reportFracCollectorPositions'
         send_response_to = self._updatePositions
         self.send(cmd_to_send, send_response_to)
@@ -195,17 +201,17 @@ class ControllerInterface():
         indexed_position : str
             Position name to travel to.
         """
-        logging.info("Moving fraction collector to position `%s`.", indexed_position)
+        log.info("Moving fraction collector to position `%s`.", indexed_position)
         if indexed_position in self.position_names:
             cmd_to_send = 'moveFracCollector,' + indexed_position
             send_response_to = self._okayResponseChecker
             self.send(cmd_to_send, send_response_to)
         else:
-            logging.warning("Position `%s` is not recognized.", indexed_position)
+            log.warning("Position `%s` is not recognized.", indexed_position)
 
     def homeFrac(self):
         """Home the fraction collector."""
-        logging.info("Homing fraction collector.")
+        log.info("Homing fraction collector.")
         cmd_to_send = 'homeFracCollector'
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -223,14 +229,14 @@ class ControllerInterface():
 
     def getPorts(self):
         """Request port names of the selector valve."""
-        logging.info("Updating port names of selector valve.")
+        log.info("Updating port names of selector valve.")
         cmd_to_send = 'reportRotaryPorts'
         send_response_to = self._updatePorts
         self.send(cmd_to_send, send_response_to)
 
     def getCurrentPort(self):
         """Request port name of current port."""
-        logging.info("Updating current port.")
+        log.info("Updating current port.")
         cmd_to_send = 'getCurrentPort'
         send_response_to = self._updateCurrPort
         self.send(cmd_to_send, send_response_to)
@@ -243,14 +249,14 @@ class ControllerInterface():
         indexed_port : str
             Port to move to.
         """
-        logging.info("Moving to port `%s`.", indexed_port)
+        log.info("Moving to port `%s`.", indexed_port)
         cmd_to_send = 'moveRotaryValve,' + indexed_port
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
     def homePorts(self):
         """Home the selector valve."""
-        logging.info("Homing selector valve.")
+        log.info("Homing selector valve.")
         cmd_to_send = 'homeRotaryValve'
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -265,7 +271,7 @@ class ControllerInterface():
         port_name : str
             Name to give specified port position.
         """
-        logging.info("Port `%s` now named `%s`.", str(port_num), str(port_name))
+        log.info("Port `%s` now named `%s`.", str(port_num), str(port_name))
         cmd_to_send = 'renameRotaryPort,' + str(port_num) + ',' + port_name
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -290,14 +296,14 @@ class ControllerInterface():
 
     def getPumpStatus(self):
         """Request current status of pumps."""
-        logging.info("Updating current pump status..")
+        log.info("Updating current pump status..")
         cmd_to_send = 'getPumpStatus'
         send_response_to = self._updatePumpStatus
         self.send(cmd_to_send, send_response_to)
 
     def getFlowRates(self):
         """Request current flow rates of pumps."""
-        logging.info("Updating flow rates.")
+        log.info("Updating flow rates.")
         cmd_to_send = 'getFlowRate'
         send_response_to = self._updateFlowRates
         self.send(cmd_to_send, send_response_to)
@@ -305,10 +311,10 @@ class ControllerInterface():
     def setFlowRates(self, flow_rate, pump=-1):
         """Set flow rates of pumps."""
         if pump > -1:
-            logging.info("Flow rate set to `%s` on pump `%s`.", str(flow_rate), str(pump))
+            log.info("Flow rate set to `%s` on pump `%s`.", str(flow_rate), str(pump))
             cmd_to_send = 'setFlowRate,' + str(flow_rate) + ',' + str(pump)
         else:
-            logging.info("Flow rate set to `%s`.", str(flow_rate))
+            log.info("Flow rate set to `%s`.", str(flow_rate))
             cmd_to_send = 'setFlowRate,' + str(flow_rate)
 
         send_response_to = self._okayResponseChecker
@@ -317,10 +323,10 @@ class ControllerInterface():
     def startPumping(self, pump=-1):
         """Start pumping all pumps."""
         if pump > -1:
-            logging.info("Starting pump `%s`.", str(pump))
+            log.info("Starting pump `%s`.", str(pump))
             cmd_to_send = 'startPumping,' + str(pump)
         else:
-            logging.info("Starting all pumps.")
+            log.info("Starting all pumps.")
             cmd_to_send = 'startPumping'
 
         send_response_to = self._okayResponseChecker
@@ -328,7 +334,7 @@ class ControllerInterface():
 
     def stopPumping(self):
         """Stop all pumps."""
-        logging.info("Stopping flow.")
+        log.info("Stopping flow.")
         cmd_to_send = 'stopPumping'
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
@@ -353,28 +359,28 @@ class ControllerInterface():
 
     def getInputStates(self):
         """Request current states of input solenoid valves."""
-        logging.info("Updating input valve states.")
+        log.info("Updating input valve states.")
         cmd_to_send = 'getInputValves'
         send_response_to = self._updateInput
         self.send(cmd_to_send, send_response_to)
 
     def getWasteStates(self):
         """Request current states of waste solenoid valves."""
-        logging.info("Updating waste valve states.")
+        log.info("Updating waste valve states.")
         cmd_to_send = 'getWasteValves'
         send_response_to = self._updateWaste
         self.send(cmd_to_send, send_response_to)
 
     def setInputStates(self, target_states: int):
         """Set states of input solenoid valves."""
-        logging.info("Setting input valves to `%s`.", str(target_states))
+        log.info("Setting input valves to `%s`.", str(target_states))
         cmd_to_send = 'setInputValves,' + str(target_states)
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
 
     def setWasteStates(self, target_states: int):
         """Set states of waste solenoid valves."""
-        logging.info("Setting waste valves to `%s`.", str(target_states))
+        log.info("Setting waste valves to `%s`.", str(target_states))
         cmd_to_send = 'setWasteValves,' + str(target_states)
         send_response_to = self._okayResponseChecker
         self.send(cmd_to_send, send_response_to)
