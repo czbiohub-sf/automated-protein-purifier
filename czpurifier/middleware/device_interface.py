@@ -26,13 +26,13 @@ class DeviceInterface():
         self._context = zmq.Context()
         self.socket_availability = self._context.socket(zmq.PUSH)
         self.socket_availability.bind("tcp://" + ip_address + ":5000")
-        log.info("Availabilty broadcast port online at port 5000.")
+        log.debug("Availabilty broadcast port online at port 5000.")
         self.socket_data_in = self._context.socket(zmq.PULL)
         self.socket_data_in.bind("tcp://" + ip_address + ":5100")
-        log.info("Data-in port online at port 5100.")
+        log.debug("Data-in port online at port 5100.")
         self.socket_data_out = self._context.socket(zmq.PUSH)
         self.socket_data_out.bind("tcp://" + ip_address + ":5200")
-        log.info("Data-out port online at port 5200.")
+        log.debug("Data-out port online at port 5200.")
 
         # Set other class parameters.
         self._device_id = None
@@ -45,7 +45,7 @@ class DeviceInterface():
     def __del__(self):
         "Release ports upon termination."
         self._context.term()
-        log.info("Communication ports terminated.")
+        log.warn("Communication ports terminated.")
 
     def autorun(self):
         """Loop > Wait for data and execute. Signal if device is available."""
@@ -130,6 +130,7 @@ class DeviceInterface():
         config_mode : str
             Configuration option listed in config file.
         """
+        log.debug('Initializing hardware controller with config mode: %s', config_mode)
         Hardware = HardwareController(self.hardware_config_file, config_mode)
         self.cmd_dict.update({'reportFracCollectorPositions': Hardware.reportFracCollectorPositions,
                               'moveFracCollector': Hardware.moveFracCollector,

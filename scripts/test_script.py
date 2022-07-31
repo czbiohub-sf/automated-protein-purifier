@@ -2,11 +2,11 @@
 import logging
 from czpurifier.ui import UICommands
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename='purifier_client.log', filemode='a', level=logging.DEBUG)
 
 # Setup
 ui = UICommands()
-ui.connect('1mL', '127.0.0.1')
+ui.connect('1mL', 'pure1.local')
 
 # Purge bubbles from lines
 ui.selectLoad()
