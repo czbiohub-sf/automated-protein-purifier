@@ -38,8 +38,8 @@ class ControllerInterface():
 
     def __del__(self):
         "Release ports upon termination."
-        self._context.term()
-        log.info("Device port manager terminated.")
+        self._context.destroy()
+
 
 
     ######################
@@ -91,6 +91,7 @@ class ControllerInterface():
         alias : str
             Alias of device given when connecting.
         """
+        log.info("Disconnecting client from server.")
         try:
             self.send('disconnect', self._okayResponseChecker)
             protocol_address = 'tcp://' + self.devices[alias]

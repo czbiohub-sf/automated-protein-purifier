@@ -22,7 +22,7 @@ class DeviceInterface():
 
     def __init__(self, ip_address='127.0.0.1', timeout_recv=1):
         # Set sockets for receiving and transmitting data.
-        log.info("Attempting to connect to IP address: %s", str(ip_address))
+        log.info("Assigning ports on IP address: %s", str(ip_address))
         self._context = zmq.Context()
         self.socket_availability = self._context.socket(zmq.PUSH)
         self.socket_availability.bind("tcp://" + ip_address + ":5000")
@@ -33,6 +33,7 @@ class DeviceInterface():
         self.socket_data_out = self._context.socket(zmq.PUSH)
         self.socket_data_out.bind("tcp://" + ip_address + ":5200")
         log.debug("Data-out port online at port 5200.")
+        log.info("Port configuration complete.")
 
         # Set other class parameters.
         self._device_id = None
@@ -41,23 +42,31 @@ class DeviceInterface():
         self.hardware_config_file = resource_filename(Requirement.parse("czpurifier"), "config/autopurifier_hardware.config")
         self.cmd_dict = {}
         self.initCmdDict()
+        log.info("Configuration file location: {}".format(self.hardware_config_file))
     
     def __del__(self):
         "Release ports upon termination."
-        self._context.term()
-        log.warn("Communication ports terminated.")
+        self._context.destroy()
 
     def autorun(self):
         """Loop > Wait for data and execute. Signal if device is available."""
-        while True:
-            self.signalAvailability()
-            data_in = self.receiveData()
-            if data_in is not None:
-                resp = self.executeCall(data_in)
-                self.sendData(resp)
-                if self._disconnect:
-                    self._device_id = None
-                    self._disconnect = False
+        try:
+            while True:
+                self.signalAvailability()
+                data_in = self.receiveData()
+                if data_in is not None:
+                    resp = self.executeCall(data_in)
+                    self.sendData(resp)
+                    if self._disconnect:
+                        self._device_id = None
+                        self._disconnect = False
+        except KeyboardInterrupt as e:
+            logging.error('Program interrupted by user.')
+        except Exception as e:
+            logging.error('Error encountered: {}'.format(e))
+        finally:        
+            log.info("Releasing purifier communication ports.")
+            self.__del__()
 
     def connect(self, device_id):
         """Make device unavailable by granting it a device ID.

@@ -2,7 +2,7 @@
 import logging
 from czpurifier.ui import UICommands
 
-logging.basicConfig(filename='purifier_client.log', filemode='a', level=logging.DEBUG)
+logging.basicConfig(filename='/home/pi/ProteinPurifier/purifier_client.log', filemode='a', format='%(asctime)s %(levelname)s: %(message)s [%(name)s]', level=logging.DEBUG, datefmt='%H:%M:%S')
 
 # Setup
 ui = UICommands()
@@ -56,3 +56,5 @@ ui.selectFraction('Safe')
 # Run cleanup
 ui.selectPort('BASE')
 ui.pump(1)
+
+ui.disconnect()
