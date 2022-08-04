@@ -25,7 +25,7 @@ class HardwareController():
     def __init__(self, hw_config_file_path, config_mode, run_simulator = False):
 
         setup = PurifierHardwareSetup()
-#        setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
+ #       setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
         self.subunits = {}
         self.collector_homed = False
         self.rotary_homed = False

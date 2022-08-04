@@ -205,7 +205,7 @@ class UICommands():
             for pump in pumps:
                 self.ci.startPumping(pump)
 
-        for c in range(col_vol * 60):
+        for c in range(round(col_vol * 60)):
             if self._pause_flag:
                 log.info("Pausing pumps")
                 self.ci.stopPumping()

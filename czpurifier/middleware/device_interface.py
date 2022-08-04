@@ -61,9 +61,9 @@ class DeviceInterface():
                         self._device_id = None
                         self._disconnect = False
         except KeyboardInterrupt as e:
-            logging.error('Program interrupted by user.')
+            log.error('Program interrupted by user.')
         except Exception as e:
-            logging.error('Error encountered: {}'.format(e))
+            log.exception('Error encountered.')
         finally:        
             log.info("Releasing purifier communication ports.")
             self.__del__()
