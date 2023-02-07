@@ -4,7 +4,7 @@ from logging.config import fileConfig
 import socket
 from czpurifier.middleware import DeviceInterface
 
-fileConfig(fname="/home/pi/ProteinPurifier/scripts/logger_server.config", disable_existing_loggers=False)
+fileConfig(fname="/home/pi/ProteinPurifier/config/logger_server.config", disable_existing_loggers=False)
 logger = logging.root
 #logging.basicConfig(filename='/home/pi/ProteinPurifier/purifier.log', filemode='a', format='%(asctime)s %(levelname)s: %(message)s [%(name)s]', level=logging.INFO, datefmt='%H:%M:%S')
 

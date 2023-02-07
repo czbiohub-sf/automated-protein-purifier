@@ -1,7 +1,7 @@
 """Methods for controlling purifier hardware."""
 
 from .hardware_setup import PurifierHardwareSetup
-#from .mock_hardware_setup import MockHardwareSetup
+from .mock_hardware_setup import MockHardwareSetup
 import logging
 from logging import NullHandler
 from time import sleep
@@ -24,8 +24,7 @@ class HardwareController():
 
     def __init__(self, hw_config_file_path, config_mode, run_simulator = False):
 
-        setup = PurifierHardwareSetup()
- #       setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
+        setup = MockHardwareSetup() if run_simulator else PurifierHardwareSetup()
         self.subunits = {}
         self.collector_homed = False
         self.rotary_homed = False

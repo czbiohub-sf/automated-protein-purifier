@@ -24,8 +24,8 @@ class GUI_Controller:
             - Flow Throw Columns: 4 larger columns on the fraction collector
             - Fraction Columns: 10 smaller columns on the fraction collector
         """
-        logging.basicConfig(filename='purifier.log', filemode='a', 
-                            format='%(asctime)s %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+        fileConfig(fname="/home/pi/ProteinPurifier/config/client.config", disable_existing_loggers=False)
+        logger = logging.root
         # The process is None if connected to the device or it holds the process object for the simulator
         self.device_process = None
         # The object that runs the controller and its PID
@@ -33,7 +33,7 @@ class GUI_Controller:
         self.controller_interface_PID = None
         chdir(path.dirname(path.realpath(__file__)))
         # Open the json file that contains all the defualt parameters
-        with open('purification_parameters.json', 'r') as f:
+        with open("/home/pi/ProteinPurifier/config/gui_purification_parameters.json", 'r') as f:
             self._p = load(f)
         # Default parameters for the basic purification window
         self.default_param = [self._p['NUM_COL']['default'],
