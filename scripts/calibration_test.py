@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Setup
 ui = UICommands()
-ui.connect('5mL', 'pure2.local', 4)
+ui.connect('1mL', 'pure1.local', 2)
 
 # Purge bubbles from lines
 ui.pump(1)
@@ -16,10 +16,8 @@ ui.closePostColumnWaste()
 
 ui.selectFraction("Frac1")
 ui.pump(1)
-ui.selectFraction("Frac2")
-ui.pump(1)
-ui.selectFraction("Frac3")
-ui.pump(1)
+ui.selectFraction("Flow1")
+ui.pump(5)
 
 ui.selectFraction("Safe")
 ui.disconnect()

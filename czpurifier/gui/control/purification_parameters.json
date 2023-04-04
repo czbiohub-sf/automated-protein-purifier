@@ -1,6 +1,6 @@
 {
     "PURIFIER_IP":{
-        "ip": "pure2.local"
+        "ip": "pure1.local"
     },
     "PUMP1":{
         "1mL": 10,

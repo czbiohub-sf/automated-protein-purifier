@@ -119,7 +119,7 @@ class RotaryControllerTic(RotaryController):
             Advance to the port in the forward direction if True.
 
         """
-        denoise_counts = 3
+        denoise_counts = 2
         counts_low = 0
         counts_high = 0
 
@@ -134,13 +134,13 @@ class RotaryControllerTic(RotaryController):
                 counts_low += 1
             else:
                 counts_low = 0
-            sleep(.002)
+            sleep(.001)
         while counts_high < denoise_counts:
             if self._readAnalog() < self._thresh[0]:
                 counts_high += 1
             else:
                 counts_high = 0
-            sleep(.002)
+            sleep(.001)
         self._motor.stop()
         self._motor.setCurrentLimit(0)
 
