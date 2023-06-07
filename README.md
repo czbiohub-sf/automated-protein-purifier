@@ -1,7 +1,7 @@
 # ProteinPurifier
 
 ## Introduction
-This repository contains the Python application and custom **czpurifier** package that have been designed for automated protein purification by the CZ Biohub - SF Bioengineering team. All utilities support Python 3.7. Note that newer versions of Python are not compatible.
+This repository contains the Python application and custom **czpurifier** package that have been designed for automated protein purification by the CZ Biohub - SF Bioengineering team. All utilities support Python 3.7.
 
 *This is a public snapshot of the automated protein purification repo as described in our 2023 preprint **PREPRINT LINK**.*
 
