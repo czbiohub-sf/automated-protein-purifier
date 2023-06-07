@@ -1,7 +1,21 @@
 # ProteinPurifier
 
 ## Introduction
-This repository contains the Python application and custom **czpurifier** package that have been designed for the automated protein purification project undertaken by the CZ Biohub Bioengineering team. All utilities support Python 3.7+.
+This repository contains the Python application and custom **czpurifier** package that have been designed for automated protein purification by the CZ Biohub - SF Bioengineering team. All utilities support Python 3.7. Note that newer versions of Python are not compatible.
+
+*This is a public snapshot of the automated protein purification repo as described in our 2023 preprint **PREPRINT LINK**.*
+
+Maintenance of this repo is the responsibility of Robert Puccinelli. Please direct any communication to Robert Puccinelli via creation of an Issue at the project repo **FINAL REPO NAME ISSUES LINK**.
+
+This source describes Open Hardware, which is licensed under the CERN-OHL-W v2. 
+
+Electronics hardware is described in the supplementary information of the publication.
+
+CAD designs are provided in Onshape **ONSHAPE PUBLIC LINK**.
+
+Software is licensed under BSD 3-Clause.
+
+Copyright Chan Zuckerberg Biohub - San Francisco 2023.
 
 ## Contents
 
