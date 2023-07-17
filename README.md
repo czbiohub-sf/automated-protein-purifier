@@ -11,7 +11,7 @@ This source describes Open Hardware, which is licensed under the CERN-OHL-W v2.
 
 Electronics hardware is described in the supplementary information of the publication.
 
-CAD designs are provided in Onshape **ONSHAPE PUBLIC LINK**.
+CAD designs are provided in [Onshape](https://cad.onshape.com/documents/768143c17dda5be636f2c7b2/v/b03159dbe387f6c073f53195/e/caf0bd7f2f19e0ffc6ed1810?renderMode=0&uiState=64b5bd342745b83f09798af7).
 
 Software is licensed under BSD 3-Clause.
 
