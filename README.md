@@ -55,7 +55,7 @@ Copyright Chan Zuckerberg Biohub - San Francisco 2023.
 * __RunCustomProtocol__ - Runs the purifier using the inputs from the custom protocol window
 
 ### Data Files
-* __purification_parameters.json__ - Holds the default parameters for purification window and default calibration settings
+* __purification_parameters.json__ - Holds the default parameters for gui window and default calibration settings
 
 ### Scripts
 * __device_setup.py__ - Called by Linux service to activate purifier software
@@ -79,7 +79,7 @@ NOTE: Developers may want to install the module with __pip install -e .__ so tha
     >> sudo apt-get update<br>
     >> sudo apt-get install python3-pyqt5<br>
 2. Create and/or activate a virtual environment in a convenient location with Python3
-3. Install module (__pip install git+https://github.com/czbiohub/ProteinPurifier__)
+3. Install module (__pip install git+https://github.com/czbiohub-sf/automated-protein-purifier__)
 
 NOTE: It is unclear that module can be tested for completeness if directly installed.
 
@@ -90,17 +90,12 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 4. Update module (__pip install . --upgrade__)
 
 ### Updating Without Cloning
-1. Update module (__pip install git+https://github.com/czbiohub/ProteinPurifier --upgrade__)
+1. Update module (__pip install git+https://github.com/czbiohub-sf/automated-protein-purifier --upgrade__)
 
 ### Using GUI
-1. If running the GUI for the first time, locate ProteinPurifier/czpurifier/ui/purification_parameters.json and update the PURIFIER_IP to refer to the ip of the device
+1. If running the GUI for the first time, locate automated-protein-purifier/czpurifier/ui/purification_parameters.json and update the PURIFIER_IP to refer to the ip of the device
 2. Go to the base of the directory and run:
     >> python3 czpurifier/ui/main_window_gui.py
-
-### Using Module
-1. Edit files to include `import czpurifier` or a variant such as `from czpurifier import ValveControllerI2c`
-2. Activate virtual environment with module installed
-3. Execute python script or application
 
 ### Using Module
 1. Edit files to include `import czpurifier` or a variant such as `from czpurifier import {class_name}`
@@ -108,6 +103,6 @@ NOTE: It is unclear that module can be tested for completeness if directly insta
 3. Execute python script or application
 
 ## Usage
-The user interface was designed to simplify operation and strips away most arguments needed to operate the machine. A list of methods and basic examples of how to use them can be found at: https://github.com/czbiohub/ProteinPurifier/tree/master/czpurifier/ui
+The user interface was designed to simplify operation and strips away most arguments needed to operate the machine. A list of methods and basic examples of how to use them can be found at: https://github.com/czbiohub-sf/automated-protein-purifier/tree/master/czpurifier/ui
 
-Scripts that have been used for set up, clean up or various experiments can be found at: https://github.com/czbiohub/ProteinPurifier/tree/master/scripts
+Scripts that have been used for set up, clean up or various experiments can be found at: https://github.com/czbiohub-sf/automated-protein-purifier/tree/master/scripts
