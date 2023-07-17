@@ -5,7 +5,7 @@ This repository contains the Python application and custom **czpurifier** packag
 
 *This is a public snapshot of the automated protein purification repo as described in our 2023 preprint **PREPRINT LINK**.*
 
-Maintenance of this repo is the responsibility of Robert Puccinelli. Please direct any communication to Robert Puccinelli via creation of an Issue at the project repo **FINAL REPO NAME ISSUES LINK**.
+Maintenance of this repo is the responsibility of Robert Puccinelli. Please direct any communication to Robert Puccinelli via creation of an [issue](https://github.com/czbiohub-sf/automated-protein-purifier/issues).
 
 This source describes Open Hardware, which is licensed under the CERN-OHL-W v2. 
 
@@ -60,22 +60,6 @@ Copyright Chan Zuckerberg Biohub - San Francisco 2023.
 ### Scripts
 * __device_setup.py__ - Called by Linux service to activate purifier software
 * __test_script.py__ - Example purification protocol
-
-## Dependencies
-PurifierHardwareSetup :: pymotors<br>
-PurifierHardwareSetup :: pyconfighandler<br>
-ValveControllerI2c :: smbus2<br>
-ControllerInterface :: zmq<br>
-DeviceInterface :: zmq<br>
-SimulatorInterface :: zmq<br>
-GUI_Controller :: zmq<br>
-GUI_Controller :: PyQt5<br>
-Ui_Purification :: PyQt5<br>
-Ui_CustomProtocol :: PyQt5<br>
-AddStep :: PyQt5<br>
-Ui_FractionColumn :: PyQt5<br>
-Ui_BuffersWindow :: PyQt5<br>
-
 
 ## Installation and Use
 ### Installing Module
